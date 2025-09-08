@@ -1,0 +1,149 @@
+package ca.realitywargames.mysterybox.ui.screens.profile
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import ca.realitywargames.mysterybox.ui.navigation.NavRoutes
+import ca.realitywargames.mysterybox.ui.viewmodel.UserViewModel
+
+@Composable
+fun ProfileScreen(
+    userViewModel: UserViewModel,
+    navController: NavHostController
+) {
+    val currentUser by userViewModel.currentUser.collectAsState()
+    val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (isLoggedIn && currentUser != null) {
+            // Logged in user profile
+            val user = currentUser // Extract to local variable for smart cast
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Default.Person,
+                        contentDescription = null,
+                        modifier = Modifier.size(64.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = user?.name ?: "",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+
+                    Text(
+                        text = user?.email ?: "",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (user?.isHost == true) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Text(
+                                text = "Host",
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Profile options
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                ListItem(
+                    headlineContent = { Text("Settings") },
+                    leadingContent = {
+                        Icon(Icons.Default.Settings, contentDescription = null)
+                    },
+                    modifier = Modifier.clickable {
+                        navController.navigate(NavRoutes.SETTINGS)
+                    }
+                )
+            }
+        } else {
+            // Not logged in - show account creation suggestions
+            Spacer(modifier = Modifier.height(64.dp))
+
+            Icon(
+                Icons.Default.Person,
+                contentDescription = null,
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.outline
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Create Your Account",
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Sign up to sync your purchased mysteries across devices and keep track of your favorite games.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = { navController.navigate(NavRoutes.REGISTER) },
+                modifier = Modifier.fillMaxWidth(0.8f)
+            ) {
+                Text("Create Account")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedButton(
+                onClick = { navController.navigate(NavRoutes.LOGIN) },
+                modifier = Modifier.fillMaxWidth(0.8f)
+            ) {
+                Text("Sign In")
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "You can browse mysteries and join parties without an account!",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
