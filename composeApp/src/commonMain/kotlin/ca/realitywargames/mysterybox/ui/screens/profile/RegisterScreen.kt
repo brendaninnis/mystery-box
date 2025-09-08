@@ -1,22 +1,22 @@
 package ca.realitywargames.mysterybox.ui.screens.profile
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
-import ca.realitywargames.mysterybox.ui.theme.MysteryGradient
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import ca.realitywargames.mysterybox.ui.components.AuthButton
+import ca.realitywargames.mysterybox.ui.components.AuthForm
+import ca.realitywargames.mysterybox.ui.components.BaseScreen
+import ca.realitywargames.mysterybox.ui.components.EmailTextField
+import ca.realitywargames.mysterybox.ui.components.ErrorText
+import ca.realitywargames.mysterybox.ui.components.NameTextField
+import ca.realitywargames.mysterybox.ui.components.PasswordTextField
 import ca.realitywargames.mysterybox.ui.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,110 +37,41 @@ fun RegisterScreen(
         userViewModel.clearError()
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
-        topBar = {
-            TopAppBar(
-                title = { Text("Register") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                )
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(MysteryGradient)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-            Text(
-                text = "Join Mystery Box",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 32.dp)
-            )
-
-            OutlinedTextField(
+    BaseScreen(
+        title = "Register",
+        onBackClick = onBackClick
+    ) {
+        AuthForm(title = "Join Mystery Box") {
+            NameTextField(
                 value = name,
-                onValueChange = { name = it },
-                label = { Text("Name") },
-                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                onValueChange = { name = it }
             )
 
-            OutlinedTextField(
+            EmailTextField(
                 value = email,
-                onValueChange = { email = it },
-                label = { Text("Email") },
-                leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                onValueChange = { email = it }
             )
 
-            OutlinedTextField(
+            PasswordTextField(
                 value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") },
-                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                onValueChange = { password = it }
             )
 
-            error?.let {
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
+            ErrorText(error)
 
-            Button(
+            AuthButton(
+                text = "Register",
                 onClick = {
                     userViewModel.register(email, password, name)
                     // For demo purposes, navigate immediately
                     onRegisterSuccess()
                 },
                 enabled = !isAuthenticating && email.isNotBlank() && password.isNotBlank() && name.isNotBlank(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            ) {
-                if (isAuthenticating) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text("Register")
-                }
-            }
+                isLoading = isAuthenticating
+            )
 
             TextButton(onClick = onNavigateToLogin) {
                 Text("Already have an account? Login")
-            }
             }
         }
     }

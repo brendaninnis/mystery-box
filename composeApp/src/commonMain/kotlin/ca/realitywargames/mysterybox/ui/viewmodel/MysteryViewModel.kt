@@ -2,7 +2,7 @@ package ca.realitywargames.mysterybox.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import ca.realitywargames.mysterybox.data.di.AppContainer
-import ca.realitywargames.mysterybox.data.models.*
+import ca.realitywargames.mysterybox.data.models.MysteryPackage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

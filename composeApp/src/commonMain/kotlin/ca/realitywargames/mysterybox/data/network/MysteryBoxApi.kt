@@ -1,15 +1,33 @@
 package ca.realitywargames.mysterybox.data.network
 
-import ca.realitywargames.mysterybox.data.models.*
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import ca.realitywargames.mysterybox.data.models.Accusation
+import ca.realitywargames.mysterybox.data.models.ApiResponse
+import ca.realitywargames.mysterybox.data.models.CreatePartyRequest
+import ca.realitywargames.mysterybox.data.models.Difficulty
+import ca.realitywargames.mysterybox.data.models.Evidence
+import ca.realitywargames.mysterybox.data.models.GameState
+import ca.realitywargames.mysterybox.data.models.JoinPartyRequest
+import ca.realitywargames.mysterybox.data.models.LoginRequest
+import ca.realitywargames.mysterybox.data.models.MysteryPackage
+import ca.realitywargames.mysterybox.data.models.PaginatedResponse
+import ca.realitywargames.mysterybox.data.models.Party
+import ca.realitywargames.mysterybox.data.models.PartyStatus
+import ca.realitywargames.mysterybox.data.models.PurchaseRequest
+import ca.realitywargames.mysterybox.data.models.RegisterRequest
+import ca.realitywargames.mysterybox.data.models.User
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.patch
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
 import kotlin.time.ExperimentalTime
 import kotlinx.serialization.json.Json
-import kotlin.time.Clock
 
 @OptIn(ExperimentalTime::class)
 class MysteryBoxApi(private val httpClient: HttpClient) {

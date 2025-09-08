@@ -1,7 +1,9 @@
 package ca.realitywargames.mysterybox.data.di
 
 import ca.realitywargames.mysterybox.data.network.MysteryBoxApi
-import ca.realitywargames.mysterybox.data.repository.*
+import ca.realitywargames.mysterybox.data.repository.MysteryRepository
+import ca.realitywargames.mysterybox.data.repository.PartyRepository
+import ca.realitywargames.mysterybox.data.repository.UserRepository
 
 object AppContainer {
     private val httpClient = MysteryBoxApi.createHttpClient()

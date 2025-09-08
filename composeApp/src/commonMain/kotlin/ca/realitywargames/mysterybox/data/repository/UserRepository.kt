@@ -1,6 +1,7 @@
 package ca.realitywargames.mysterybox.data.repository
 
-import ca.realitywargames.mysterybox.data.models.*
+import ca.realitywargames.mysterybox.data.models.User
+import ca.realitywargames.mysterybox.data.models.UserPreferences
 import ca.realitywargames.mysterybox.data.network.MysteryBoxApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

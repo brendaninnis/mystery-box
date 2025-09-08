@@ -10,13 +10,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import ca.realitywargames.mysterybox.ui.screens.*
+import ca.realitywargames.mysterybox.ui.screens.MainScreen
 import ca.realitywargames.mysterybox.ui.screens.mysteries.MysteryDetailScreen
-import ca.realitywargames.mysterybox.ui.screens.parties.*
+import ca.realitywargames.mysterybox.ui.screens.parties.PartyCharactersScreen
+import ca.realitywargames.mysterybox.ui.screens.parties.PartyDetailScreen
+import ca.realitywargames.mysterybox.ui.screens.parties.PartyEvidenceScreen
+import ca.realitywargames.mysterybox.ui.screens.parties.PartyInstructionsScreen
+import ca.realitywargames.mysterybox.ui.screens.parties.PartyInventoryScreen
+import ca.realitywargames.mysterybox.ui.screens.parties.PartyInviteScreen
+import ca.realitywargames.mysterybox.ui.screens.parties.PartySolutionScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.LoginScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.RegisterScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.SettingsScreen
-import ca.realitywargames.mysterybox.ui.viewmodel.*
+import ca.realitywargames.mysterybox.ui.viewmodel.MysteryViewModel
+import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
+import ca.realitywargames.mysterybox.ui.viewmodel.UserViewModel
 
 @Composable
 fun NavigationGraph(
