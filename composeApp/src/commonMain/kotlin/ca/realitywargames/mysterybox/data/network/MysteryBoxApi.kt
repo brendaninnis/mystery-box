@@ -154,21 +154,55 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
         return listOf(
             MysteryPackage(
                 id = "1",
-                title = "The Haunted Mansion Mystery",
-                description = "A classic whodunit set in a mysterious mansion",
-                imageUrl = "https://example.com/mansion.jpg",
+                title = "Murder and Dragons",
+                description = "",
+                imageUrl = "https://example.com/castle.jpg",
                 price = 29.99,
                 durationMinutes = 120,
-                minPlayers = 4,
-                maxPlayers = 8,
+                minPlayers = 6,
+                maxPlayers = 20,
                 difficulty = Difficulty.MEDIUM,
-                themes = listOf("Haunted House", "Inheritance", "Family Secrets"),
-                plotSummary = "When wealthy entrepreneur Reginald Harrington dies suddenly...",
+                themes = listOf("Fantasy", "Political Intrigue"),
+                plotSummary = "",
                 characters = emptyList(), // Would be populated in real implementation
                 phases = emptyList(), // Would be populated in real implementation
                 createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
                 updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
-            )
+            ),
+            MysteryPackage(
+                id = "2",
+                title = "[Murder at the school of Witchcraft and Wizardry]",
+                description = "",
+                imageUrl = "https://example.com/wizard-duel.jpg",
+                price = 19.99,
+                durationMinutes = 120,
+                minPlayers = 6,
+                maxPlayers = 16,
+                difficulty = Difficulty.EASY,
+                themes = listOf("Fantasy", "Pop Culture"),
+                plotSummary = "",
+                characters = emptyList(), // Would be populated in real implementation
+                phases = emptyList(), // Would be populated in real implementation
+                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
+                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
+            ),
+            MysteryPackage(
+                id = "3",
+                title = "[Murder at a board game night]",
+                description = "",
+                imageUrl = "https://example.com/mansion.jpg",
+                price = 19.99,
+                durationMinutes = 120,
+                minPlayers = 10,
+                maxPlayers = 24,
+                difficulty = Difficulty.MEDIUM,
+                themes = listOf("Humorous", "Meta"),
+                plotSummary = "",
+                characters = emptyList(), // Would be populated in real implementation
+                phases = emptyList(), // Would be populated in real implementation
+                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
+                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
+            ),
         )
     }
 }
