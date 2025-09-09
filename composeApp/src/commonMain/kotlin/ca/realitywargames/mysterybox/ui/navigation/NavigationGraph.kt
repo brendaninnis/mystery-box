@@ -38,6 +38,8 @@ fun NavigationGraph(
         navController = navController,
         startDestination = NavRoutes.HOME
     ) {
+        val onBack: () -> Unit = { navController.safePopBackStack() }
+
         // Authentication screens - ensure only one instance on stack
         composable(NavRoutes.LOGIN) {
             LoginScreen(
@@ -50,9 +52,7 @@ fun NavigationGraph(
                     navController.popBackStack(NavRoutes.LOGIN, inclusive = true)
                     navController.navigate(NavRoutes.REGISTER)
                 },
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                onBackClick = onBack
             )
         }
 
@@ -67,9 +67,7 @@ fun NavigationGraph(
                     navController.popBackStack(NavRoutes.REGISTER, inclusive = true)
                     navController.navigate(NavRoutes.LOGIN)
                 },
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                onBackClick = onBack
             )
         }
 
@@ -91,7 +89,7 @@ fun NavigationGraph(
                 mysteryId = mysteryId,
                 navController = navController,
                 viewModel = viewModel { MysteryViewModel() },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBack
             )
         }
 
@@ -105,7 +103,7 @@ fun NavigationGraph(
                 partyId = partyId,
                 navController = navController,
                 viewModel = viewModel { PartyViewModel() },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBack
             )
         }
 
@@ -113,7 +111,7 @@ fun NavigationGraph(
             SettingsScreen(
                 userViewModel = userViewModel,
                 navController = navController,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBack
             )
         }
 
@@ -127,7 +125,7 @@ fun NavigationGraph(
                 partyId = partyId,
                 navController = navController,
                 viewModel = viewModel { PartyViewModel() },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBack
             )
         }
 
@@ -140,7 +138,7 @@ fun NavigationGraph(
                 partyId = partyId,
                 navController = navController,
                 viewModel = viewModel { PartyViewModel() },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBack
             )
         }
 
@@ -153,7 +151,7 @@ fun NavigationGraph(
                 partyId = partyId,
                 navController = navController,
                 viewModel = viewModel { PartyViewModel() },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBack
             )
         }
 
@@ -166,7 +164,7 @@ fun NavigationGraph(
                 partyId = partyId,
                 navController = navController,
                 viewModel = viewModel { PartyViewModel() },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBack
             )
         }
 
@@ -179,7 +177,7 @@ fun NavigationGraph(
                 partyId = partyId,
                 navController = navController,
                 viewModel = viewModel { PartyViewModel() },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBack
             )
         }
 
@@ -192,7 +190,7 @@ fun NavigationGraph(
                 partyId = partyId,
                 navController = navController,
                 viewModel = viewModel { PartyViewModel() },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = onBack
             )
         }
     }
