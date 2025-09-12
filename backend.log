@@ -1,0 +1,189 @@
+Reusing configuration cache.
+> Task :shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :backend:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:jvmProcessResources NO-SOURCE
+> Task :shared:processJvmMainResources SKIPPED
+> Task :backend:processResources UP-TO-DATE
+> Task :shared:compileKotlinJvm UP-TO-DATE
+> Task :shared:compileJvmMainJava NO-SOURCE
+> Task :shared:jvmMainClasses UP-TO-DATE
+> Task :shared:jvmJar UP-TO-DATE
+> Task :backend:compileKotlin UP-TO-DATE
+> Task :backend:compileJava NO-SOURCE
+> Task :backend:classes UP-TO-DATE
+
+> Task :backend:run
+10:11:45.023 [main] INFO ktor.application -- Autoreload is disabled because the development mode is off.
+10:11:45.187 [main] DEBUG com.zaxxer.hikari.HikariConfig -- Driver class org.postgresql.Driver found in Thread context class loader jdk.internal.loader.ClassLoaders$AppClassLoader@18ff02e4
+10:11:45.191 [main] DEBUG com.zaxxer.hikari.HikariConfig -- HikariPool-1 - configuration:
+10:11:45.197 [main] DEBUG com.zaxxer.hikari.HikariConfig -- allowPoolSuspension.............false
+10:11:45.197 [main] DEBUG com.zaxxer.hikari.HikariConfig -- autoCommit......................true
+10:11:45.197 [main] DEBUG com.zaxxer.hikari.HikariConfig -- catalog.........................none
+10:11:45.197 [main] DEBUG com.zaxxer.hikari.HikariConfig -- connectionInitSql...............none
+10:11:45.197 [main] DEBUG com.zaxxer.hikari.HikariConfig -- connectionTestQuery.............none
+10:11:45.198 [main] DEBUG com.zaxxer.hikari.HikariConfig -- connectionTimeout...............30000
+10:11:45.198 [main] DEBUG com.zaxxer.hikari.HikariConfig -- dataSource......................none
+10:11:45.198 [main] DEBUG com.zaxxer.hikari.HikariConfig -- dataSourceClassName.............none
+10:11:45.198 [main] DEBUG com.zaxxer.hikari.HikariConfig -- dataSourceJNDI..................none
+10:11:45.199 [main] DEBUG com.zaxxer.hikari.HikariConfig -- dataSourceProperties............{password=<masked>}
+10:11:45.199 [main] DEBUG com.zaxxer.hikari.HikariConfig -- driverClassName................."org.postgresql.Driver"
+10:11:45.199 [main] DEBUG com.zaxxer.hikari.HikariConfig -- exceptionOverrideClassName......none
+10:11:45.199 [main] DEBUG com.zaxxer.hikari.HikariConfig -- healthCheckProperties...........{}
+10:11:45.199 [main] DEBUG com.zaxxer.hikari.HikariConfig -- healthCheckRegistry.............none
+10:11:45.199 [main] DEBUG com.zaxxer.hikari.HikariConfig -- idleTimeout.....................600000
+10:11:45.199 [main] DEBUG com.zaxxer.hikari.HikariConfig -- initializationFailTimeout.......1
+10:11:45.199 [main] DEBUG com.zaxxer.hikari.HikariConfig -- isolateInternalQueries..........false
+10:11:45.199 [main] DEBUG com.zaxxer.hikari.HikariConfig -- jdbcUrl.........................jdbc:postgresql://localhost:5432/mysterybox_dev
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- keepaliveTime...................0
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- leakDetectionThreshold..........0
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- maxLifetime.....................1800000
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- maximumPoolSize.................10
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- metricRegistry..................none
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- metricsTrackerFactory...........none
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- minimumIdle.....................5
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- password........................<masked>
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- poolName........................"HikariPool-1"
+10:11:45.200 [main] DEBUG com.zaxxer.hikari.HikariConfig -- readOnly........................false
+10:11:45.201 [main] DEBUG com.zaxxer.hikari.HikariConfig -- registerMbeans..................false
+10:11:45.201 [main] DEBUG com.zaxxer.hikari.HikariConfig -- scheduledExecutor...............none
+10:11:45.201 [main] DEBUG com.zaxxer.hikari.HikariConfig -- schema..........................none
+10:11:45.201 [main] DEBUG com.zaxxer.hikari.HikariConfig -- threadFactory...................internal
+10:11:45.201 [main] DEBUG com.zaxxer.hikari.HikariConfig -- transactionIsolation............default
+10:11:45.201 [main] DEBUG com.zaxxer.hikari.HikariConfig -- username........................"postgres"
+10:11:45.201 [main] DEBUG com.zaxxer.hikari.HikariConfig -- validationTimeout...............5000
+10:11:45.205 [main] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-1 - Starting...
+10:11:45.259 [main] INFO com.zaxxer.hikari.pool.HikariPool -- HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@37eeec90
+10:11:45.259 [main] INFO com.zaxxer.hikari.HikariDataSource -- HikariPool-1 - Start completed.
+10:11:45.292 [main] INFO org.flywaydb.core.internal.license.VersionPrinter -- Flyway Community Edition 9.22.3 by Redgate
+10:11:45.292 [main] INFO org.flywaydb.core.internal.license.VersionPrinter -- See release notes here: https://rd.gt/416ObMi
+10:11:45.292 [main] INFO org.flywaydb.core.internal.license.VersionPrinter -- 
+10:11:45.293 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.ClassPathScanner -- Scanning for classpath resources at 'classpath:db/callback' ...
+10:11:45.293 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.ClassPathScanner -- Determining location urls for classpath:db/callback using ClassLoader jdk.internal.loader.ClassLoaders$AppClassLoader@18ff02e4 ...
+10:11:45.293 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.ClassPathScanner -- Unable to resolve location classpath:db/callback.
+10:11:45.293 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.ClassPathScanner -- Scanning for classpath resources at 'classpath:db/migrations' ...
+10:11:45.293 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.ClassPathScanner -- Determining location urls for classpath:db/migrations using ClassLoader jdk.internal.loader.ClassLoaders$AppClassLoader@18ff02e4 ...
+10:11:45.293 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.ClassPathScanner -- Scanning URL: file:/Users/brendaninnis/Projects/mystery-box-2/backend/build/resources/main/db/migrations
+10:11:45.293 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.FileSystemClassPathLocationScanner -- Scanning starting at classpath root in filesystem: /Users/brendaninnis/Projects/mystery-box-2/backend/build/resources/main/
+10:11:45.293 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.FileSystemClassPathLocationScanner -- Scanning for resources in path: /Users/brendaninnis/Projects/mystery-box-2/backend/build/resources/main/db/migrations (db/migrations)
+10:11:45.294 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.ClassPathScanner -- Found resource: db/migrations/V1__Initial_schema.sql
+10:11:45.294 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.ClassPathScanner -- Found resource: db/migrations/V2__Sample_data.sql
+10:11:45.294 [main] DEBUG org.flywaydb.core.internal.scanner.classpath.ClassPathScanner -- Scanning for classes at classpath:db/migrations
+10:11:45.295 [main] DEBUG org.flywaydb.core.internal.resource.ResourceNameValidator -- Validating V1__Initial_schema.sql
+10:11:45.296 [main] DEBUG org.flywaydb.core.internal.resource.ResourceNameValidator -- Validating V2__Sample_data.sql
+10:11:45.298 [main] INFO org.flywaydb.core.FlywayExecutor -- Database: jdbc:postgresql://localhost:5432/mysterybox_dev (PostgreSQL 14.17)
+10:11:45.298 [main] DEBUG org.flywaydb.core.FlywayExecutor -- Driver: PostgreSQL JDBC Driver 42.7.1
+10:11:45.298 [main] DEBUG org.flywaydb.core.FlywayExecutor -- DDL Transactions Supported: true
+10:11:45.299 [main] DEBUG org.flywaydb.core.internal.schemahistory.SchemaHistoryFactory -- Schemas: 
+10:11:45.299 [main] DEBUG org.flywaydb.core.internal.schemahistory.SchemaHistoryFactory -- Default schema: null
+10:11:45.302 [main] DEBUG org.flywaydb.core.internal.callback.SqlScriptCallbackFactory -- Scanning for SQL callbacks ...
+10:11:45.307 [main] DEBUG org.flywaydb.core.internal.command.DbValidate -- Validating migrations ...
+10:11:45.311 [main] DEBUG org.flywaydb.core.internal.scanner.Scanner -- Filtering out resource: db/migrations/V1__Initial_schema.sql (filename: V1__Initial_schema.sql)
+10:11:45.311 [main] DEBUG org.flywaydb.core.internal.scanner.Scanner -- Filtering out resource: db/migrations/V2__Sample_data.sql (filename: V2__Sample_data.sql)
+10:11:45.312 [main] DEBUG org.flywaydb.core.internal.scanner.Scanner -- Filtering out resource: db/migrations/V1__Initial_schema.sql (filename: V1__Initial_schema.sql)
+10:11:45.312 [main] DEBUG org.flywaydb.core.internal.scanner.Scanner -- Filtering out resource: db/migrations/V2__Sample_data.sql (filename: V2__Sample_data.sql)
+10:11:45.321 [main] INFO org.flywaydb.core.internal.command.DbValidate -- Successfully validated 2 migrations (execution time 00:00.013s)
+10:11:45.323 [main] DEBUG org.flywaydb.core.internal.command.DbSchemas -- Skipping creation of existing schema: "public"
+10:11:45.328 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool -- HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5dc6150b
+10:11:45.331 [main] INFO org.flywaydb.core.internal.command.DbMigrate -- Current version of schema "public": 2
+10:11:45.332 [main] INFO org.flywaydb.core.internal.command.DbMigrate -- Schema "public" is up to date. No migration necessary.
+10:11:45.334 [main] DEBUG org.flywaydb.core.FlywayExecutor -- Memory usage: 27 of 584M
+10:11:45.345 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool -- HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@573e7e7b
+10:11:45.362 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool -- HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@123cfaf8
+10:11:45.365 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool -- HikariPool-1 - Before cleanup stats (total=4, active=0, idle=4, waiting=0)
+10:11:45.365 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool -- HikariPool-1 - After cleanup  stats (total=4, active=0, idle=4, waiting=0)
+10:11:45.378 [HikariPool-1 connection adder] DEBUG com.zaxxer.hikari.pool.HikariPool -- HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7fbfdbf9
+10:11:45.415 [main] INFO ktor.application -- Application started in 0.407 seconds.
+10:11:45.417 [main] DEBUG io.netty.util.internal.logging.InternalLoggerFactory -- Using SLF4J as the default logging framework
+10:11:45.425 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- -Dio.netty.noUnsafe: false
+10:11:45.425 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- Java version: 23
+10:11:45.426 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- sun.misc.Unsafe.theUnsafe: available
+10:11:45.426 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- sun.misc.Unsafe.copyMemory: available
+10:11:45.426 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- sun.misc.Unsafe.storeFence: available
+10:11:45.426 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- java.nio.Buffer.address: available
+10:11:45.427 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- direct buffer constructor: unavailable: Reflective setAccessible(true) disabled
+10:11:45.427 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- java.nio.Bits.unaligned: available, true
+10:11:45.427 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable: class io.netty.util.internal.PlatformDependent0$7 cannot access class jdk.internal.misc.Unsafe (in module java.base) because module java.base does not export jdk.internal.misc to unnamed module @69b2283a
+10:11:45.428 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- java.nio.DirectByteBuffer.<init>(long, {int,long}): unavailable
+10:11:45.428 [main] DEBUG io.netty.util.internal.PlatformDependent -- sun.misc.Unsafe: available
+10:11:45.428 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.tmpdir: /var/folders/2p/_m0ywbcn7dx_zg1z9xpy5zq80000gn/T (java.io.tmpdir)
+10:11:45.428 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.bitMode: 64 (sun.arch.data.model)
+10:11:45.428 [main] DEBUG io.netty.util.internal.PlatformDependent -- Platform: MacOS
+10:11:45.429 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.maxDirectMemory: -1 bytes
+10:11:45.429 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.uninitializedArrayAllocationThreshold: -1
+10:11:45.430 [main] DEBUG io.netty.util.internal.CleanerJava9 -- java.nio.ByteBuffer.cleaner(): available
+10:11:45.430 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.noPreferDirect: false
+10:11:45.432 [main] DEBUG io.netty.util.internal.NativeLibraryLoader -- -Dio.netty.native.workdir: /var/folders/2p/_m0ywbcn7dx_zg1z9xpy5zq80000gn/T (io.netty.tmpdir)
+10:11:45.432 [main] DEBUG io.netty.util.internal.NativeLibraryLoader -- -Dio.netty.native.deleteLibAfterLoading: true
+10:11:45.432 [main] DEBUG io.netty.util.internal.NativeLibraryLoader -- -Dio.netty.native.tryPatchShadedId: true
+10:11:45.432 [main] DEBUG io.netty.util.internal.NativeLibraryLoader -- -Dio.netty.native.detectNativeLibraryDuplicates: true
+10:11:45.444 [main] DEBUG io.netty.channel.MultithreadEventLoopGroup -- -Dio.netty.eventLoopThreads: 24
+10:11:45.447 [main] DEBUG io.netty.util.concurrent.GlobalEventExecutor -- -Dio.netty.globalEventExecutor.quietPeriodSeconds: 1
+10:11:45.448 [main] DEBUG io.netty.util.internal.InternalThreadLocalMap -- -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+10:11:45.448 [main] DEBUG io.netty.util.internal.InternalThreadLocalMap -- -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+10:11:45.450 [main] DEBUG io.netty.channel.nio.NioEventLoop -- -Dio.netty.noKeySetOptimization: false
+10:11:45.450 [main] DEBUG io.netty.channel.nio.NioEventLoop -- -Dio.netty.selectorAutoRebuildThreshold: 512
+10:11:45.452 [main] DEBUG io.netty.util.internal.PlatformDependent -- org.jctools-core.MpscChunkedArrayQueue: available
+10:11:45.461 [main] DEBUG io.netty.channel.DefaultChannelId -- -Dio.netty.processId: 55390 (auto-detected)
+10:11:45.463 [main] DEBUG io.netty.util.NetUtil -- -Djava.net.preferIPv4Stack: false
+10:11:45.463 [main] DEBUG io.netty.util.NetUtil -- -Djava.net.preferIPv6Addresses: false
+10:11:45.466 [main] DEBUG io.netty.util.NetUtilInitializations -- Loopback interface: lo0 (lo0, 0:0:0:0:0:0:0:1%lo0)
+10:11:45.467 [main] DEBUG io.netty.util.NetUtil -- Failed to get SOMAXCONN from sysctl and file /proc/sys/net/core/somaxconn. Default: 128
+10:11:45.467 [main] DEBUG io.netty.channel.DefaultChannelId -- -Dio.netty.machineId: 32:c6:47:ff:fe:2c:c3:e7 (auto-detected)
+10:11:45.471 [main] DEBUG io.netty.util.ResourceLeakDetector -- -Dio.netty.leakDetection.level: simple
+10:11:45.471 [main] DEBUG io.netty.util.ResourceLeakDetector -- -Dio.netty.leakDetection.targetRecords: 4
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.numHeapArenas: 24
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.numDirectArenas: 24
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.pageSize: 8192
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.maxOrder: 9
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.chunkSize: 4194304
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.smallCacheSize: 256
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.normalCacheSize: 64
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.maxCachedBufferCapacity: 32768
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.cacheTrimInterval: 8192
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.cacheTrimIntervalMillis: 0
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.useCacheForAllThreads: false
+10:11:45.478 [main] DEBUG io.netty.buffer.PooledByteBufAllocator -- -Dio.netty.allocator.maxCachedByteBuffersPerChunk: 1023
+10:11:45.482 [main] DEBUG io.netty.buffer.ByteBufUtil -- -Dio.netty.allocator.type: pooled
+10:11:45.482 [main] DEBUG io.netty.buffer.ByteBufUtil -- -Dio.netty.threadLocalDirectBufferSize: 0
+10:11:45.482 [main] DEBUG io.netty.buffer.ByteBufUtil -- -Dio.netty.maxThreadLocalCharBufferSize: 16384
+10:11:45.482 [main] DEBUG io.netty.bootstrap.ChannelInitializerExtensions -- -Dio.netty.bootstrap.extensions: null
+Exception in thread "main" java.net.BindException: Address already in use
+	at java.base/sun.nio.ch.Net.bind0(Native Method)
+	at java.base/sun.nio.ch.Net.bind(Net.java:565)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.netBind(ServerSocketChannelImpl.java:344)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:301)
+	at io.netty.channel.socket.nio.NioServerSocketChannel.doBind(NioServerSocketChannel.java:141)
+	at io.netty.channel.AbstractChannel$AbstractUnsafe.bind(AbstractChannel.java:562)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.bind(DefaultChannelPipeline.java:1334)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeBind(AbstractChannelHandlerContext.java:600)
+	at io.netty.channel.AbstractChannelHandlerContext.bind(AbstractChannelHandlerContext.java:579)
+	at io.netty.channel.DefaultChannelPipeline.bind(DefaultChannelPipeline.java:973)
+	at io.netty.channel.AbstractChannel.bind(AbstractChannel.java:260)
+	at io.netty.bootstrap.AbstractBootstrap$2.run(AbstractBootstrap.java:380)
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:173)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:166)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:569)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.ktor.server.netty.EventLoopGroupProxy$Companion.create$lambda$1$lambda$0(NettyApplicationEngine.kt:296)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+
+> Task :backend:run FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':backend:run'.
+> Process 'command '/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/bin/java'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 7s
+5 actionable tasks: 1 executed, 4 up-to-date
+Configuration cache entry reused.

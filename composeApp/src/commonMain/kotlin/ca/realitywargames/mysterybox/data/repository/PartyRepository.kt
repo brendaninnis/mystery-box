@@ -1,11 +1,11 @@
 package ca.realitywargames.mysterybox.data.repository
 
-import ca.realitywargames.mysterybox.data.models.CreatePartyRequest
-import ca.realitywargames.mysterybox.data.models.Guest
-import ca.realitywargames.mysterybox.data.models.GuestStatus
-import ca.realitywargames.mysterybox.data.models.JoinPartyRequest
-import ca.realitywargames.mysterybox.data.models.Party
-import ca.realitywargames.mysterybox.data.models.PartyStatus
+import ca.realitywargames.mysterybox.shared.models.CreatePartyRequest
+import ca.realitywargames.mysterybox.shared.models.Guest
+import ca.realitywargames.mysterybox.shared.models.GuestStatus
+import ca.realitywargames.mysterybox.shared.models.JoinPartyRequest
+import ca.realitywargames.mysterybox.shared.models.Party
+import ca.realitywargames.mysterybox.shared.models.PartyStatus
 import ca.realitywargames.mysterybox.data.network.MysteryBoxApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

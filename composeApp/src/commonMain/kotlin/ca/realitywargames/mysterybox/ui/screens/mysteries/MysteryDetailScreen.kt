@@ -45,10 +45,10 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ca.realitywargames.mysterybox.data.models.CharacterRole
-import ca.realitywargames.mysterybox.data.models.CharacterTemplate
-import ca.realitywargames.mysterybox.data.models.Difficulty
-import ca.realitywargames.mysterybox.data.models.MysteryPackage
+import ca.realitywargames.mysterybox.shared.models.CharacterRole
+import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
+import ca.realitywargames.mysterybox.shared.models.Difficulty
+import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
 import ca.realitywargames.mysterybox.ui.navigation.NavRoutes
 import ca.realitywargames.mysterybox.ui.viewmodel.MysteryViewModel

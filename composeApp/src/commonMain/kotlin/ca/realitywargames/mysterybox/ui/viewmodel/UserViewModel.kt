@@ -2,8 +2,8 @@ package ca.realitywargames.mysterybox.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import ca.realitywargames.mysterybox.data.di.AppContainer
-import ca.realitywargames.mysterybox.data.models.User
-import ca.realitywargames.mysterybox.data.models.UserPreferences
+import ca.realitywargames.mysterybox.shared.models.User
+import ca.realitywargames.mysterybox.shared.models.UserPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

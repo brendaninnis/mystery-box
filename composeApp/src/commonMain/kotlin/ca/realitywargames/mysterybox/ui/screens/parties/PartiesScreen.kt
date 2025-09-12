@@ -43,8 +43,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ca.realitywargames.mysterybox.data.models.Party
-import ca.realitywargames.mysterybox.data.models.PartyStatus
+import ca.realitywargames.mysterybox.shared.models.Party
+import ca.realitywargames.mysterybox.shared.models.PartyStatus
 import ca.realitywargames.mysterybox.ui.navigation.NavRoutes
 import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
 import kotlinx.datetime.TimeZone

@@ -2,9 +2,9 @@ package ca.realitywargames.mysterybox.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import ca.realitywargames.mysterybox.data.di.AppContainer
-import ca.realitywargames.mysterybox.data.models.CreatePartyRequest
-import ca.realitywargames.mysterybox.data.models.JoinPartyRequest
-import ca.realitywargames.mysterybox.data.models.Party
+import ca.realitywargames.mysterybox.shared.models.CreatePartyRequest
+import ca.realitywargames.mysterybox.shared.models.JoinPartyRequest
+import ca.realitywargames.mysterybox.shared.models.Party
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

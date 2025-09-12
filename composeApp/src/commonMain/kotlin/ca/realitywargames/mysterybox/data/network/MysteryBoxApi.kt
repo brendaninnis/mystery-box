@@ -1,20 +1,6 @@
 package ca.realitywargames.mysterybox.data.network
 
-import ca.realitywargames.mysterybox.data.models.Accusation
-import ca.realitywargames.mysterybox.data.models.ApiResponse
-import ca.realitywargames.mysterybox.data.models.CreatePartyRequest
-import ca.realitywargames.mysterybox.data.models.Difficulty
-import ca.realitywargames.mysterybox.data.models.Evidence
-import ca.realitywargames.mysterybox.data.models.GameState
-import ca.realitywargames.mysterybox.data.models.JoinPartyRequest
-import ca.realitywargames.mysterybox.data.models.LoginRequest
-import ca.realitywargames.mysterybox.data.models.MysteryPackage
-import ca.realitywargames.mysterybox.data.models.PaginatedResponse
-import ca.realitywargames.mysterybox.data.models.Party
-import ca.realitywargames.mysterybox.data.models.PartyStatus
-import ca.realitywargames.mysterybox.data.models.PurchaseRequest
-import ca.realitywargames.mysterybox.data.models.RegisterRequest
-import ca.realitywargames.mysterybox.data.models.User
+import ca.realitywargames.mysterybox.shared.models.*
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -33,7 +19,7 @@ import kotlinx.serialization.json.Json
 class MysteryBoxApi(private val httpClient: HttpClient) {
 
     companion object {
-        private const val BASE_URL = "https://api.mysterybox.com/v1" // Replace with actual API URL
+        private const val BASE_URL = "http://localhost:8080/api/v1" // Local development URL
 
         fun createHttpClient(): HttpClient {
             return HttpClient {
@@ -49,7 +35,7 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
     }
 
     // Auth endpoints
-    suspend fun login(request: LoginRequest): ApiResponse<User> {
+    suspend fun login(request: LoginRequest): ApiResponse<Map<String, kotlinx.serialization.json.JsonElement>> {
         return httpClient.post("$BASE_URL/auth/login") {
             contentType(ContentType.Application.Json)
             setBody(request)

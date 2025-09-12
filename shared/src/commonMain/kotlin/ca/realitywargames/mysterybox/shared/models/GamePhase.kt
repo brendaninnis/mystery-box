@@ -1,4 +1,4 @@
-package ca.realitywargames.mysterybox.data.models
+package ca.realitywargames.mysterybox.shared.models
 
 import kotlinx.serialization.Serializable
 

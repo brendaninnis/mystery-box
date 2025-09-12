@@ -1,8 +1,8 @@
 package ca.realitywargames.mysterybox.data.repository
 
-import ca.realitywargames.mysterybox.data.models.Difficulty
-import ca.realitywargames.mysterybox.data.models.MysteryPackage
-import ca.realitywargames.mysterybox.data.models.PaginatedResponse
+import ca.realitywargames.mysterybox.shared.models.Difficulty
+import ca.realitywargames.mysterybox.shared.models.MysteryPackage
+import ca.realitywargames.mysterybox.shared.models.PaginatedResponse
 import ca.realitywargames.mysterybox.data.network.MysteryBoxApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

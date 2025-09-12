@@ -1,0 +1,69 @@
+package ca.realitywargames.mysterybox.backend.repositories
+
+import at.favre.lib.crypto.bcrypt.BCrypt
+import ca.realitywargames.mysterybox.backend.models.UserDAO
+import ca.realitywargames.mysterybox.backend.models.Users
+import ca.realitywargames.mysterybox.shared.models.User
+import ca.realitywargames.mysterybox.shared.models.UserPreferences
+import kotlinx.datetime.Clock
+import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.sql.andWhere
+import org.jetbrains.exposed.sql.select
+import java.util.*
+
+class UserRepository {
+
+    suspend fun findByEmail(email: String): User? {
+        return Users.select { Users.email eq email }
+            .singleOrNull()
+            ?.let { UserDAO.wrapRow(it).toUser() }
+    }
+
+    suspend fun findById(id: String): User? {
+        return try {
+            UserDAO.findById(UUID.fromString(id))?.toUser()
+        } catch (e: IllegalArgumentException) {
+            null // Invalid UUID format
+        }
+    }
+
+    suspend fun createUser(
+        email: String,
+        passwordHash: String,
+        name: String,
+        isHost: Boolean = false
+    ): User {
+        return UserDAO.new {
+            this.email = email
+            this.passwordHash = passwordHash
+            this.name = name
+            this.isHost = isHost
+            this.preferences = Json.encodeToString(UserPreferences.serializer(), UserPreferences())
+        }.toUser()
+    }
+
+    suspend fun updateUserPreferences(userId: String, preferences: UserPreferences): User? {
+        return try {
+            val dao = UserDAO.findById(UUID.fromString(userId))
+            dao?.apply {
+                this.preferences = Json.encodeToString(UserPreferences.serializer(), preferences)
+                this.updatedAt = Clock.System.now()
+            }?.toUser()
+        } catch (e: IllegalArgumentException) {
+            null // Invalid UUID format
+        }
+    }
+
+    suspend fun verifyCredentials(email: String, password: String): User? {
+        val dao = Users.select { Users.email eq email }.singleOrNull()
+            ?.let { UserDAO.wrapRow(it) }
+
+        if (dao != null) {
+            val result = at.favre.lib.crypto.bcrypt.BCrypt.verifyer().verify(password.toCharArray(), dao.passwordHash)
+            if (result.verified) {
+                return dao.toUser()
+            }
+        }
+        return null
+    }
+}

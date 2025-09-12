@@ -31,8 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ca.realitywargames.mysterybox.data.models.Party
-import ca.realitywargames.mysterybox.data.models.PartyStatus
+import ca.realitywargames.mysterybox.shared.models.Party
+import ca.realitywargames.mysterybox.shared.models.PartyStatus
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
 import ca.realitywargames.mysterybox.ui.components.GameActionCard
 import ca.realitywargames.mysterybox.ui.navigation.NavRoutes

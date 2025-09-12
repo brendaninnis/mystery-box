@@ -2,15 +2,15 @@ package ca.realitywargames.mysterybox.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import ca.realitywargames.mysterybox.data.di.AppContainer
-import ca.realitywargames.mysterybox.data.models.Accusation
-import ca.realitywargames.mysterybox.data.models.AssignedCharacter
-import ca.realitywargames.mysterybox.data.models.CharacterRole
-import ca.realitywargames.mysterybox.data.models.CharacterTemplate
-import ca.realitywargames.mysterybox.data.models.Clue
-import ca.realitywargames.mysterybox.data.models.Evidence
-import ca.realitywargames.mysterybox.data.models.GamePhase
-import ca.realitywargames.mysterybox.data.models.GameState
-import ca.realitywargames.mysterybox.data.models.Party
+import ca.realitywargames.mysterybox.shared.models.Accusation
+import ca.realitywargames.mysterybox.shared.models.AssignedCharacter
+import ca.realitywargames.mysterybox.shared.models.CharacterRole
+import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
+import ca.realitywargames.mysterybox.shared.models.Clue
+import ca.realitywargames.mysterybox.shared.models.Evidence
+import ca.realitywargames.mysterybox.shared.models.GamePhase
+import ca.realitywargames.mysterybox.shared.models.GameState
+import ca.realitywargames.mysterybox.shared.models.Party
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
