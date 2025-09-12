@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.savedstate.read
 import ca.realitywargames.mysterybox.ui.screens.MainScreen
 import ca.realitywargames.mysterybox.ui.screens.mysteries.MysteryDetailScreen
 import ca.realitywargames.mysterybox.ui.screens.parties.PartyCharactersScreen
@@ -97,7 +98,6 @@ fun NavigationGraph(
             route = NavRoutes.PARTY_DETAIL,
             arguments = listOf(navArgument("partyId") { type = NavType.StringType })
         ) { backStackEntry ->
-            // For demo purposes, use a default value
             val partyId = "party1" // Default party ID
             PartyDetailScreen(
                 partyId = partyId,
@@ -120,7 +120,7 @@ fun NavigationGraph(
             route = NavRoutes.PARTY_INVITE,
             arguments = listOf(navArgument("partyId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val partyId = backStackEntry.arguments?.getString("partyId") ?: "party1"
+            val partyId = "party1" // Default party ID
             PartyInviteScreen(
                 partyId = partyId,
                 navController = navController,
@@ -133,7 +133,7 @@ fun NavigationGraph(
             route = NavRoutes.PARTY_INSTRUCTIONS,
             arguments = listOf(navArgument("partyId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val partyId = backStackEntry.arguments?.getString("partyId") ?: "party1"
+            val partyId = "party1" // Default party ID            
             PartyInstructionsScreen(
                 partyId = partyId,
                 navController = navController,
@@ -146,7 +146,7 @@ fun NavigationGraph(
             route = NavRoutes.PARTY_CHARACTERS,
             arguments = listOf(navArgument("partyId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val partyId = backStackEntry.arguments?.getString("partyId") ?: "party1"
+            val partyId = "party1" // Default party ID
             PartyCharactersScreen(
                 partyId = partyId,
                 navController = navController,
@@ -159,7 +159,7 @@ fun NavigationGraph(
             route = NavRoutes.PARTY_INVENTORY,
             arguments = listOf(navArgument("partyId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val partyId = backStackEntry.arguments?.getString("partyId") ?: "party1"
+            val partyId = "party1" // Default party ID
             PartyInventoryScreen(
                 partyId = partyId,
                 navController = navController,
@@ -172,7 +172,7 @@ fun NavigationGraph(
             route = NavRoutes.PARTY_EVIDENCE,
             arguments = listOf(navArgument("partyId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val partyId = backStackEntry.arguments?.getString("partyId") ?: "party1"
+            val partyId = "party1" // Default party ID
             PartyEvidenceScreen(
                 partyId = partyId,
                 navController = navController,
@@ -185,7 +185,7 @@ fun NavigationGraph(
             route = NavRoutes.PARTY_SOLUTION,
             arguments = listOf(navArgument("partyId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val partyId = backStackEntry.arguments?.getString("partyId") ?: "party1"
+            val partyId = "party1" // Default party ID
             PartySolutionScreen(
                 partyId = partyId,
                 navController = navController,
