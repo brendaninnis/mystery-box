@@ -15,41 +15,41 @@ dependencies {
     implementation(project(":shared"))
 
     // Ktor server
-    implementation("io.ktor:ktor-server-core-jvm:2.3.7")
-    implementation("io.ktor:ktor-server-netty-jvm:2.3.7")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.7")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.7")
-    implementation("io.ktor:ktor-server-cors-jvm:2.3.7")
-    implementation("io.ktor:ktor-server-call-logging-jvm:2.3.7")
-    implementation("io.ktor:ktor-server-status-pages:2.3.7")
-    implementation("io.ktor:ktor-server-auth-jvm:2.3.7")
-    implementation("io.ktor:ktor-server-auth-jwt-jvm:2.3.7")
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.server.serialization.kotlinx.json)
+    implementation(libs.ktor.server.cors)
+    implementation(libs.ktor.server.call.logging)
+    implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.server.auth)
+    implementation(libs.ktor.server.auth.jwt)
 
     // Database
-    implementation("org.jetbrains.exposed:exposed-core:0.46.0")
-    implementation("org.jetbrains.exposed:exposed-dao:0.46.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.46.0")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.46.0")
-    implementation("org.postgresql:postgresql:42.7.1")
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.kotlin.datetime)
+    implementation(libs.postgresql)
+    implementation(libs.hikaricp)
 
     // Database migrations
-    implementation("org.flywaydb:flyway-core:9.22.3")
+    implementation(libs.flyway.core)
 
     // Password hashing
-    implementation("at.favre.lib:bcrypt:0.10.2")
+    implementation(libs.bcrypt)
 
     // JSON
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    implementation(libs.kotlinx.serialization.json.jvm)
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.4.14")
+    implementation(libs.logback.classic)
 
     // Test dependencies
-    testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.7")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.21")
-    testImplementation("org.testcontainers:postgresql:1.19.3")
-    testImplementation("org.testcontainers:junit-jupiter:1.19.3")
+    testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.kotlin.testJunit)
+    testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.testcontainers.junit.jupiter)
 }
 
 application {
