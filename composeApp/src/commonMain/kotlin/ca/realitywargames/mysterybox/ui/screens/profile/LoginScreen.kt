@@ -17,7 +17,6 @@ import ca.realitywargames.mysterybox.ui.components.EmailTextField
 import ca.realitywargames.mysterybox.ui.components.ErrorText
 import ca.realitywargames.mysterybox.ui.components.PasswordTextField
 import ca.realitywargames.mysterybox.ui.viewmodel.UserViewModel
-import androidx.compose.ui.text.input.TextFieldValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

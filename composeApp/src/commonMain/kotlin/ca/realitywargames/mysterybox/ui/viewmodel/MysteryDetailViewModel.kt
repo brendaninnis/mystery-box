@@ -1,15 +1,11 @@
 package ca.realitywargames.mysterybox.ui.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import ca.realitywargames.mysterybox.data.di.AppContainer
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.ui.state.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 class MysteryDetailViewModel(private val mysteryId: String) : BaseViewModel() {
 

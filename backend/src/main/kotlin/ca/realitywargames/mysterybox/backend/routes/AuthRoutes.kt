@@ -1,14 +1,22 @@
 package ca.realitywargames.mysterybox.backend.routes
 
 import ca.realitywargames.mysterybox.backend.utils.DependencyInjection
-import ca.realitywargames.mysterybox.shared.models.*
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import ca.realitywargames.mysterybox.shared.models.ApiResponse
+import ca.realitywargames.mysterybox.shared.models.ErrorResponse
+import ca.realitywargames.mysterybox.shared.models.LoginRequest
+import ca.realitywargames.mysterybox.shared.models.LoginResponse
+import ca.realitywargames.mysterybox.shared.models.RegisterRequest
+import ca.realitywargames.mysterybox.shared.models.User
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.post
+import io.ktor.server.routing.route
 
 fun Route.authRoutes() {
     val authService = DependencyInjection.authService

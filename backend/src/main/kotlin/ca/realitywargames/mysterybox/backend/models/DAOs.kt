@@ -1,10 +1,15 @@
 package ca.realitywargames.mysterybox.backend.models
 
-import ca.realitywargames.mysterybox.shared.models.*
+import ca.realitywargames.mysterybox.shared.models.CharacterRole
+import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
+import ca.realitywargames.mysterybox.shared.models.Difficulty
+import ca.realitywargames.mysterybox.shared.models.GamePhase
+import ca.realitywargames.mysterybox.shared.models.MysteryPackage
+import ca.realitywargames.mysterybox.shared.models.User
+import ca.realitywargames.mysterybox.shared.models.UserPreferences
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import kotlinx.serialization.json.Json
 import java.util.*
 

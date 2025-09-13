@@ -23,7 +23,6 @@ import ca.realitywargames.mysterybox.ui.screens.profile.LoginScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.RegisterScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.SettingsScreen
 import ca.realitywargames.mysterybox.ui.viewmodel.MysteryDetailViewModel
-import ca.realitywargames.mysterybox.ui.viewmodel.MysteryListViewModel
 import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
 import ca.realitywargames.mysterybox.ui.viewmodel.UserViewModel
 

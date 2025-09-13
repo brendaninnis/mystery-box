@@ -2,11 +2,13 @@ package ca.realitywargames.mysterybox.backend.plugins
 
 import ca.realitywargames.mysterybox.shared.models.ApiResponse
 import ca.realitywargames.mysterybox.shared.models.ErrorResponse
-import io.ktor.http.*
-import io.ktor.server.application.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.application.log
 import io.ktor.server.plugins.statuspages.StatusPages
-import io.ktor.server.request.*
-import io.ktor.server.response.*
+import io.ktor.server.request.uri
+import io.ktor.server.response.respond
 import kotlinx.serialization.SerializationException
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.postgresql.util.PSQLException

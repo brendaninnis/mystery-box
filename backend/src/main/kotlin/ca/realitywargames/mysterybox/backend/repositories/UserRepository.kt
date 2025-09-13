@@ -6,13 +6,10 @@ import ca.realitywargames.mysterybox.shared.models.User
 import ca.realitywargames.mysterybox.shared.models.UserPreferences
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 class UserRepository {
 

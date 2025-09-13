@@ -10,7 +10,7 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
+import java.util.UUID
 
 class MysteryRepository {
 

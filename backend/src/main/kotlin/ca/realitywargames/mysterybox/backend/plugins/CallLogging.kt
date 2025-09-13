@@ -3,7 +3,8 @@ package ca.realitywargames.mysterybox.backend.plugins
 import io.ktor.server.application.*
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.origin
-import io.ktor.server.request.*
+import io.ktor.server.request.httpMethod
+import io.ktor.server.request.uri
 import org.slf4j.event.Level
 
 fun Application.configureCallLogging() {

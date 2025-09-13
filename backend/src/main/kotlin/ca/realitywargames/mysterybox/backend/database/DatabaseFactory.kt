@@ -2,7 +2,6 @@ package ca.realitywargames.mysterybox.backend.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.config.HoconApplicationConfig
 import org.flywaydb.core.Flyway

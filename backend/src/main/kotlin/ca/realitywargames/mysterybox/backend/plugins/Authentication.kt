@@ -1,11 +1,12 @@
 package ca.realitywargames.mysterybox.backend.plugins
 
-import ca.realitywargames.mysterybox.backend.services.AuthService
 import ca.realitywargames.mysterybox.backend.utils.DependencyInjection
 import com.auth0.jwt.JWT
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
 
 fun Application.configureAuthentication() {
     val authService = DependencyInjection.authService
