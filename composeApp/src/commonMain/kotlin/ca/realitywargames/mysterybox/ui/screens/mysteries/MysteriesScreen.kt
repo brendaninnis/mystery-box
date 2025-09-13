@@ -33,18 +33,18 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.ui.navigation.NavRoutes
-import ca.realitywargames.mysterybox.ui.viewmodel.MysteryViewModel
+import ca.realitywargames.mysterybox.ui.state.UiState
+import ca.realitywargames.mysterybox.ui.viewmodel.MysteryListViewModel
 
 @Composable
 fun MysteriesScreen(
     navController: NavHostController,
-    viewModel: MysteryViewModel
+    viewModel: MysteryListViewModel
 ) {
-    val mysteryPackages by viewModel.mysteryPackages.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val state by viewModel.mysteries.collectAsState()
 
-    when {
-        isLoading -> {
+    when (val s = state) {
+        UiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -54,7 +54,7 @@ fun MysteriesScreen(
             }
         }
 
-        mysteryPackages.isEmpty() -> {
+        is UiState.Success -> if (s.data.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -72,15 +72,13 @@ fun MysteriesScreen(
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
-        }
-
-        else -> {
+        } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(mysteryPackages) { mysteryPackage ->
+                items(s.data) { mysteryPackage ->
                     MysteryPackageCard(
                         mysteryPackage = mysteryPackage,
                         onClick = {
@@ -88,6 +86,20 @@ fun MysteriesScreen(
                         }
                     )
                 }
+            }
+        }
+        is UiState.Error -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = s.message,
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
     }

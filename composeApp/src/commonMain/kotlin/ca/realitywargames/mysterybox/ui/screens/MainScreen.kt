@@ -36,7 +36,7 @@ import ca.realitywargames.mysterybox.ui.screens.mysteries.MysteriesScreen
 import ca.realitywargames.mysterybox.ui.screens.parties.PartiesScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.ProfileScreen
 import ca.realitywargames.mysterybox.ui.theme.MysteryGradient
-import ca.realitywargames.mysterybox.ui.viewmodel.MysteryViewModel
+import ca.realitywargames.mysterybox.ui.viewmodel.MysteryListViewModel
 import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
 import ca.realitywargames.mysterybox.ui.viewmodel.UserViewModel
 
@@ -180,7 +180,7 @@ fun MainScreen(
             when (selectedTab) {
                 Tab.MYSTERIES -> MysteriesScreen(
                     navController = navController,
-                    viewModel = viewModel { MysteryViewModel() }
+                    viewModel = viewModel { MysteryListViewModel() }
                 )
                 Tab.PARTIES -> PartiesScreen(
                     navController = navController,

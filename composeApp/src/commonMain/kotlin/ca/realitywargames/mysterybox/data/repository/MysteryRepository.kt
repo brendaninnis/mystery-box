@@ -17,16 +17,12 @@ class MysteryRepository(private val api: MysteryBoxApi) {
         maxPlayers: Int? = null
     ): Flow<Result<PaginatedResponse<MysteryPackage>>> = flow {
         try {
-            // For now, return mock data since backend doesn't exist
-            val mockResponse = PaginatedResponse(
-                items = api.getMockMysteryPackages(),
-                total = 1,
-                page = 1,
-                pageSize = 20,
-                hasNext = false,
-                hasPrevious = false
-            )
-            emit(Result.success(mockResponse))
+            val response = api.getMysteryPackages(page, pageSize, difficulty, minPlayers, maxPlayers)
+            if (response.success && response.data != null) {
+                emit(Result.success(response.data!!))
+            } else {
+                emit(Result.failure(Exception(response.error?.message ?: "Unknown error")))
+            }
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
@@ -34,12 +30,11 @@ class MysteryRepository(private val api: MysteryBoxApi) {
 
     fun getMysteryPackage(id: String): Flow<Result<MysteryPackage>> = flow {
         try {
-            // For now, return mock data
-            val mockPackage = api.getMockMysteryPackages().firstOrNull { it.id == id }
-            if (mockPackage != null) {
-                emit(Result.success(mockPackage))
+            val response = api.getMysteryPackage(id)
+            if (response.success && response.data != null) {
+                emit(Result.success(response.data!!))
             } else {
-                emit(Result.failure(Exception("Mystery package not found")))
+                emit(Result.failure(Exception(response.error?.message ?: "Mystery package not found")))
             }
         } catch (e: Exception) {
             emit(Result.failure(e))
@@ -48,7 +43,7 @@ class MysteryRepository(private val api: MysteryBoxApi) {
 
     fun purchaseMysteryPackage(packageId: String): Flow<Result<String>> = flow {
         try {
-            // Mock purchase success
+            // Placeholder until backend purchase is implemented
             emit(Result.success("Purchase successful"))
         } catch (e: Exception) {
             emit(Result.failure(e))

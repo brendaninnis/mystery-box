@@ -3,6 +3,8 @@ package ca.realitywargames.mysterybox.data.repository
 import ca.realitywargames.mysterybox.shared.models.User
 import ca.realitywargames.mysterybox.shared.models.UserPreferences
 import ca.realitywargames.mysterybox.data.network.MysteryBoxApi
+import ca.realitywargames.mysterybox.shared.models.LoginRequest
+import ca.realitywargames.mysterybox.shared.models.RegisterRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.time.Clock
@@ -15,19 +17,13 @@ class UserRepository(private val api: MysteryBoxApi) {
 
     fun login(email: String, password: String): Flow<Result<User>> = flow {
         try {
-            // Mock login for development
-            val mockUser = User(
-                id = "user1",
-                email = email,
-                name = "John Doe",
-                avatarUrl = null,
-                isHost = true,
-                preferences = UserPreferences(),
-                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
-            )
-            currentUser = mockUser
-            emit(Result.success(mockUser))
+            val response = api.login(LoginRequest(email, password))
+            if (response.success && response.data != null) {
+                currentUser = response.data!!.user
+                emit(Result.success(response.data!!.user))
+            } else {
+                emit(Result.failure(Exception(response.error?.message ?: "Login failed")))
+            }
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
@@ -35,19 +31,13 @@ class UserRepository(private val api: MysteryBoxApi) {
 
     fun register(email: String, password: String, name: String): Flow<Result<User>> = flow {
         try {
-            // Mock registration
-            val mockUser = User(
-                id = "user_12345",
-                email = email,
-                name = name,
-                avatarUrl = null,
-                isHost = false,
-                preferences = UserPreferences(),
-                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
-            )
-            currentUser = mockUser
-            emit(Result.success(mockUser))
+            val response = api.register(RegisterRequest(email = email, password = password, name = name))
+            if (response.success && response.data != null) {
+                currentUser = response.data!!
+                emit(Result.success(response.data!!))
+            } else {
+                emit(Result.failure(Exception(response.error?.message ?: "Registration failed")))
+            }
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
@@ -55,7 +45,13 @@ class UserRepository(private val api: MysteryBoxApi) {
 
     fun getCurrentUser(): Flow<Result<User?>> = flow {
         try {
-            emit(Result.success(currentUser))
+            val response = api.getCurrentUser()
+            if (response.success) {
+                currentUser = response.data
+                emit(Result.success(response.data))
+            } else {
+                emit(Result.success(null))
+            }
         } catch (e: Exception) {
             emit(Result.failure(e))
         }

@@ -9,17 +9,27 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.request.headers
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlin.time.ExperimentalTime
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
+import ca.realitywargames.mysterybox.data.network.apiBaseUrl
 
 @OptIn(ExperimentalTime::class)
 class MysteryBoxApi(private val httpClient: HttpClient) {
 
+    private var authToken: String? = null
+
+    fun setAuthToken(token: String?) {
+        authToken = token
+    }
+
     companion object {
-        private const val BASE_URL = "http://localhost:8080/api/v1" // Local development URL
+        private val BASE_URL get() = apiBaseUrl
 
         fun createHttpClient(): HttpClient {
             return HttpClient {
@@ -35,7 +45,7 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
     }
 
     // Auth endpoints
-    suspend fun login(request: LoginRequest): ApiResponse<Map<String, kotlinx.serialization.json.JsonElement>> {
+    suspend fun login(request: LoginRequest): ApiResponse<LoginResponse> {
         return httpClient.post("$BASE_URL/auth/login") {
             contentType(ContentType.Application.Json)
             setBody(request)
@@ -49,8 +59,18 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
         }.body()
     }
 
+    @Serializable
+    data class LoginResponse(
+        val user: User,
+        val token: String
+    )
+
     suspend fun getCurrentUser(): ApiResponse<User> {
-        return httpClient.get("$BASE_URL/auth/me").body()
+        return httpClient.get("$BASE_URL/auth/me") {
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
+        }.body()
     }
 
     // Mystery packages endpoints
@@ -61,7 +81,7 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
         minPlayers: Int? = null,
         maxPlayers: Int? = null
     ): ApiResponse<PaginatedResponse<MysteryPackage>> {
-        return httpClient.get("$BASE_URL/mystery-packages") {
+        return httpClient.get("$BASE_URL/mysteries") {
             parameter("page", page)
             parameter("pageSize", pageSize)
             difficulty?.let { parameter("difficulty", it.name) }
@@ -71,7 +91,7 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
     }
 
     suspend fun getMysteryPackage(id: String): ApiResponse<MysteryPackage> {
-        return httpClient.get("$BASE_URL/mystery-packages/$id").body()
+        return httpClient.get("$BASE_URL/mysteries/$id").body()
     }
 
     suspend fun purchaseMysteryPackage(request: PurchaseRequest): ApiResponse<String> {
@@ -132,63 +152,5 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
             contentType(ContentType.Application.Json)
             setBody(accusation)
         }.body()
-    }
-
-    // Mock data for development (since backend doesn't exist yet)
-    fun getMockMysteryPackages(): List<MysteryPackage> {
-        // This will be removed once the backend is implemented
-        return listOf(
-            MysteryPackage(
-                id = "1",
-                title = "Murder and Dragons",
-                description = "",
-                imageUrl = "https://example.com/castle.jpg",
-                price = 29.99,
-                durationMinutes = 120,
-                minPlayers = 6,
-                maxPlayers = 20,
-                difficulty = Difficulty.MEDIUM,
-                themes = listOf("Fantasy", "Political Intrigue"),
-                plotSummary = "",
-                characters = emptyList(), // Would be populated in real implementation
-                phases = emptyList(), // Would be populated in real implementation
-                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
-            ),
-            MysteryPackage(
-                id = "2",
-                title = "[Murder at the school of Witchcraft and Wizardry]",
-                description = "",
-                imageUrl = "https://example.com/wizard-duel.jpg",
-                price = 19.99,
-                durationMinutes = 120,
-                minPlayers = 6,
-                maxPlayers = 16,
-                difficulty = Difficulty.EASY,
-                themes = listOf("Fantasy", "Pop Culture"),
-                plotSummary = "",
-                characters = emptyList(), // Would be populated in real implementation
-                phases = emptyList(), // Would be populated in real implementation
-                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
-            ),
-            MysteryPackage(
-                id = "3",
-                title = "[Murder at a board game night]",
-                description = "",
-                imageUrl = "https://example.com/mansion.jpg",
-                price = 19.99,
-                durationMinutes = 120,
-                minPlayers = 10,
-                maxPlayers = 24,
-                difficulty = Difficulty.MEDIUM,
-                themes = listOf("Humorous", "Meta"),
-                plotSummary = "",
-                characters = emptyList(), // Would be populated in real implementation
-                phases = emptyList(), // Would be populated in real implementation
-                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
-            ),
-        )
     }
 }

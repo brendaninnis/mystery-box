@@ -10,7 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.savedstate.read
 import ca.realitywargames.mysterybox.ui.screens.MainScreen
 import ca.realitywargames.mysterybox.ui.screens.mysteries.MysteryDetailScreen
 import ca.realitywargames.mysterybox.ui.screens.parties.PartyCharactersScreen
@@ -23,7 +22,8 @@ import ca.realitywargames.mysterybox.ui.screens.parties.PartySolutionScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.LoginScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.RegisterScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.SettingsScreen
-import ca.realitywargames.mysterybox.ui.viewmodel.MysteryViewModel
+import ca.realitywargames.mysterybox.ui.viewmodel.MysteryDetailViewModel
+import ca.realitywargames.mysterybox.ui.viewmodel.MysteryListViewModel
 import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
 import ca.realitywargames.mysterybox.ui.viewmodel.UserViewModel
 
@@ -84,12 +84,11 @@ fun NavigationGraph(
             route = NavRoutes.MYSTERY_DETAIL,
             arguments = listOf(navArgument("mysteryId") { type = NavType.StringType })
         ) { backStackEntry ->
-            // For demo purposes, use a default value
-            val mysteryId = "1" // Default mystery ID
+            val mysteryId = backStackEntry.arguments?.getString("mysteryId") ?: return@composable
             MysteryDetailScreen(
                 mysteryId = mysteryId,
                 navController = navController,
-                viewModel = viewModel { MysteryViewModel() },
+                viewModel = viewModel { MysteryDetailViewModel(mysteryId) },
                 onBackClick = onBack
             )
         }
