@@ -5,7 +5,7 @@ import ca.realitywargames.mysterybox.backend.models.MysteryPackages
 import ca.realitywargames.mysterybox.shared.models.Difficulty
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.shared.models.PaginatedResponse
-import kotlinx.serialization.encodeToString
+import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll
@@ -42,7 +42,8 @@ class MysteryRepository {
             val totalCount = query.count()
 
             val packages = query
-                .limit(pageSize, offset.toLong())
+                .limit(pageSize)
+                .offset(offset.toLong())
                 .map { MysteryPackageDAO.wrapRow(it).toMysteryPackage() }
 
             PaginatedResponse(
@@ -67,6 +68,7 @@ class MysteryRepository {
     }
 
     suspend fun createMysteryPackage(packageData: MysteryPackage): MysteryPackage {
+        val now = Clock.System.now()
         return transaction {
             MysteryPackageDAO.new {
                 title = packageData.title
@@ -81,6 +83,8 @@ class MysteryRepository {
                 themes = Json.encodeToString(packageData.themes)
                 plotSummary = packageData.plotSummary
                 isAvailable = packageData.isAvailable
+                createdAt = now
+                updatedAt = now
             }.toMysteryPackage()
         }
     }

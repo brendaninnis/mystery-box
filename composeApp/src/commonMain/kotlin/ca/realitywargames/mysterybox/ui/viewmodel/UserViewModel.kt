@@ -30,12 +30,14 @@ class UserViewModel : BaseViewModel() {
         viewModelScope.launch {
             try {
                 _isAuthenticating.value = true
+                setError(null)
                 repository.login(email, password).collect { result ->
                     result.onSuccess { user ->
                         _currentUser.value = user
                         _isLoggedIn.value = true
+                        setError(null)
                     }.onFailure { exception ->
-                        // Handle error
+                        setError(exception.message ?: "Login failed. Please check your credentials.")
                     }
                 }
             } finally {
@@ -48,12 +50,14 @@ class UserViewModel : BaseViewModel() {
         viewModelScope.launch {
             try {
                 _isAuthenticating.value = true
+                setError(null)
                 repository.register(email, password, name).collect { result ->
                     result.onSuccess { user ->
                         _currentUser.value = user
                         _isLoggedIn.value = true
+                        setError(null)
                     }.onFailure { exception ->
-                        // Handle error
+                        setError(exception.message ?: "Registration failed. Please try again.")
                     }
                 }
             } finally {

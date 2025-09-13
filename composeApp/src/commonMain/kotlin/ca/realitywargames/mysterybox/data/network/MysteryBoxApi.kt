@@ -59,12 +59,6 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
         }.body()
     }
 
-    @Serializable
-    data class LoginResponse(
-        val user: User,
-        val token: String
-    )
-
     suspend fun getCurrentUser(): ApiResponse<User> {
         return httpClient.get("$BASE_URL/auth/me") {
             headers {

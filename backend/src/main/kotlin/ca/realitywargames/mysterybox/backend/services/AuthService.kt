@@ -15,9 +15,12 @@ class AuthService(
     private val config: ApplicationConfig
 ) {
 
-    val jwtSecret = config.property("jwt.secret").getString()
-    val jwtIssuer = config.property("jwt.issuer").getString()
-    val jwtAudience = config.property("jwt.audience").getString()
+    val jwtSecret = config.propertyOrNull("jwt.secret")?.getString()
+        ?: config.property("jwt.default.secret").getString()
+    val jwtIssuer = config.propertyOrNull("jwt.issuer")?.getString()
+        ?: config.property("jwt.default.issuer").getString()
+    val jwtAudience = config.propertyOrNull("jwt.audience")?.getString()
+        ?: config.property("jwt.default.audience").getString()
     val algorithm = Algorithm.HMAC256(jwtSecret)
 
     suspend fun register(request: RegisterRequest): Result<User> {

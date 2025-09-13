@@ -41,6 +41,12 @@ data class RegisterRequest(
 )
 
 @Serializable
+data class LoginResponse(
+    val user: User,
+    val token: String
+)
+
+@Serializable
 data class JoinPartyRequest(
     val inviteCode: String,
     val name: String,

@@ -20,6 +20,10 @@ object DependencyInjection {
     val mysteryService = MysteryService(mysteryRepository)
 
     // JWT Algorithm for auth plugin
-    val algorithm = Algorithm.HMAC256(config.property("jwt.secret").getString())
-    val jwtIssuer = config.property("jwt.issuer").getString()
+    val algorithm = Algorithm.HMAC256(
+        config.propertyOrNull("jwt.secret")?.getString()
+            ?: config.property("jwt.default.secret").getString()
+    )
+    val jwtIssuer = config.propertyOrNull("jwt.issuer")?.getString()
+        ?: config.property("jwt.default.issuer").getString()
 }

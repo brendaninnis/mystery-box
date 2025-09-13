@@ -31,8 +31,17 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     val isAuthenticating by userViewModel.isAuthenticating.collectAsState()
+    val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
     val error by userViewModel.error.collectAsState()
 
+    // Navigate to main screen when registration succeeds
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            onRegisterSuccess()
+        }
+    }
+
+    // Clear error when screen loads
     LaunchedEffect(Unit) {
         userViewModel.clearError()
     }
@@ -44,17 +53,20 @@ fun RegisterScreen(
         AuthForm(title = "Join Mystery Box") {
             NameTextField(
                 value = name,
-                onValueChange = { name = it }
+                onValueChange = { name = it },
+                isError = error != null && name.isNotBlank()
             )
 
             EmailTextField(
                 value = email,
-                onValueChange = { email = it }
+                onValueChange = { email = it },
+                isError = error != null && email.isNotBlank()
             )
 
             PasswordTextField(
                 value = password,
-                onValueChange = { password = it }
+                onValueChange = { password = it },
+                isError = error != null && password.isNotBlank()
             )
 
             ErrorText(error)
@@ -62,11 +74,9 @@ fun RegisterScreen(
             AuthButton(
                 text = "Register",
                 onClick = {
-                    userViewModel.register(email, password, name)
-                    // For demo purposes, navigate immediately
-                    onRegisterSuccess()
+                    userViewModel.register(email.trim(), password, name.trim())
                 },
-                enabled = !isAuthenticating && email.isNotBlank() && password.isNotBlank() && name.isNotBlank(),
+                enabled = !isAuthenticating && isFormValid(name, email, password),
                 isLoading = isAuthenticating
             )
 
@@ -75,4 +85,19 @@ fun RegisterScreen(
             }
         }
     }
+}
+
+// Form validation functions
+private fun isFormValid(name: String, email: String, password: String): Boolean {
+    return name.isNotBlank() &&
+           email.isNotBlank() &&
+           password.isNotBlank() &&
+           isValidEmail(email) &&
+           password.length >= 6 &&
+           name.length >= 2
+}
+
+private fun isValidEmail(email: String): Boolean {
+    val emailRegex = Regex("^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})")
+    return emailRegex.matches(email)
 }

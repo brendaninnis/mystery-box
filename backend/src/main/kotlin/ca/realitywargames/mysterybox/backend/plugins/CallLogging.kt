@@ -1,7 +1,7 @@
 package ca.realitywargames.mysterybox.backend.plugins
 
 import io.ktor.server.application.*
-import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.origin
 import io.ktor.server.request.*
 import org.slf4j.event.Level

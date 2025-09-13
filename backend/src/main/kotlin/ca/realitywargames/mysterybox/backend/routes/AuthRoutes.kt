@@ -46,17 +46,14 @@ fun Route.authRoutes() {
                     call.respond(
                         ApiResponse(
                             success = true,
-                            data = mapOf(
-                                "user" to user,
-                                "token" to token
-                            )
+                            data = LoginResponse(user = user, token = token)
                         )
                     )
                 },
                 onFailure = { error ->
                     call.respond(
                         status = HttpStatusCode.Unauthorized,
-                        ApiResponse<Map<String, Any>>(
+                        ApiResponse<LoginResponse>(
                             success = false,
                             error = ErrorResponse(
                                 code = "LOGIN_FAILED",

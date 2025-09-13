@@ -34,6 +34,7 @@ fun AuthTextField(
     leadingIcon: ImageVector,
     keyboardType: KeyboardType = KeyboardType.Text,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    isError: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
@@ -43,6 +44,7 @@ fun AuthTextField(
         leadingIcon = { Icon(leadingIcon, contentDescription = null) },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         visualTransformation = visualTransformation,
+        isError = isError,
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp)
@@ -53,6 +55,7 @@ fun AuthTextField(
 fun EmailTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    isError: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     AuthTextField(
@@ -61,6 +64,7 @@ fun EmailTextField(
         label = "Email",
         leadingIcon = Icons.Default.Email,
         keyboardType = KeyboardType.Email,
+        isError = isError,
         modifier = modifier
     )
 }
@@ -69,6 +73,7 @@ fun EmailTextField(
 fun PasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    isError: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     AuthTextField(
@@ -78,6 +83,7 @@ fun PasswordTextField(
         leadingIcon = Icons.Default.Lock,
         keyboardType = KeyboardType.Password,
         visualTransformation = PasswordVisualTransformation(),
+        isError = isError,
         modifier = modifier
     )
 }
@@ -86,6 +92,7 @@ fun PasswordTextField(
 fun NameTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    isError: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     AuthTextField(
@@ -93,6 +100,7 @@ fun NameTextField(
         onValueChange = onValueChange,
         label = "Name",
         leadingIcon = Icons.Default.Person,
+        isError = isError,
         modifier = modifier
     )
 }

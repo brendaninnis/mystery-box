@@ -17,6 +17,7 @@ import ca.realitywargames.mysterybox.ui.components.EmailTextField
 import ca.realitywargames.mysterybox.ui.components.ErrorText
 import ca.realitywargames.mysterybox.ui.components.PasswordTextField
 import ca.realitywargames.mysterybox.ui.viewmodel.UserViewModel
+import androidx.compose.ui.text.input.TextFieldValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,8 +30,17 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val isAuthenticating by userViewModel.isAuthenticating.collectAsState()
+    val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
     val error by userViewModel.error.collectAsState()
 
+    // Navigate to main screen when login succeeds
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            onLoginSuccess()
+        }
+    }
+
+    // Clear error when screen loads
     LaunchedEffect(Unit) {
         userViewModel.clearError()
     }
@@ -42,12 +52,14 @@ fun LoginScreen(
         AuthForm(title = "Welcome to Mystery Box") {
             EmailTextField(
                 value = email,
-                onValueChange = { email = it }
+                onValueChange = { email = it },
+                isError = error != null && email.isNotBlank()
             )
 
             PasswordTextField(
                 value = password,
-                onValueChange = { password = it }
+                onValueChange = { password = it },
+                isError = error != null && password.isNotBlank()
             )
 
             ErrorText(error)
@@ -55,11 +67,9 @@ fun LoginScreen(
             AuthButton(
                 text = "Login",
                 onClick = {
-                    userViewModel.login(email, password)
-                    // For demo purposes, navigate immediately
-                    onLoginSuccess()
+                    userViewModel.login(email.trim(), password)
                 },
-                enabled = !isAuthenticating && email.isNotBlank() && password.isNotBlank(),
+                enabled = !isAuthenticating && isFormValid(email, password),
                 isLoading = isAuthenticating
             )
 
@@ -68,4 +78,17 @@ fun LoginScreen(
             }
         }
     }
+}
+
+// Form validation functions
+private fun isFormValid(email: String, password: String): Boolean {
+    return email.isNotBlank() &&
+           password.isNotBlank() &&
+           isValidEmail(email) &&
+           password.length >= 6
+}
+
+private fun isValidEmail(email: String): Boolean {
+    val emailRegex = Regex("^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})")
+    return emailRegex.matches(email)
 }

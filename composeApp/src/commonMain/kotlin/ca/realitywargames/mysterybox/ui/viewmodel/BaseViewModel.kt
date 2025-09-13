@@ -32,4 +32,8 @@ abstract class BaseViewModel : ViewModel() {
     fun clearError() {
         _error.value = null
     }
+
+    protected fun setError(error: String?) {
+        _error.value = error
+    }
 }
