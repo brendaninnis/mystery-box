@@ -6,7 +6,7 @@ CREATE TABLE users (
     name VARCHAR(255) NOT NULL,
     avatar_url TEXT,
     is_host BOOLEAN DEFAULT FALSE,
-    preferences JSONB DEFAULT '{}',
+    preferences TEXT DEFAULT '{}',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -23,7 +23,7 @@ CREATE TABLE mystery_packages (
     min_players INTEGER NOT NULL,
     max_players INTEGER NOT NULL,
     difficulty VARCHAR(20) NOT NULL,
-    themes TEXT[],
+    themes TEXT,
     plot_summary TEXT,
     is_available BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -40,8 +40,8 @@ CREATE TABLE character_templates (
     role VARCHAR(20) NOT NULL,
     background TEXT,
     personality TEXT,
-    objectives TEXT[],
-    secrets TEXT[]
+    objectives TEXT,
+    secrets TEXT
 );
 
 -- Game phases table
@@ -52,8 +52,8 @@ CREATE TABLE game_phases (
     description TEXT,
     order_index INTEGER NOT NULL,
     duration_minutes INTEGER,
-    instructions TEXT[],
-    host_instructions TEXT[],
+    instructions TEXT,
+    host_instructions TEXT,
     is_interactive BOOLEAN DEFAULT FALSE,
     requires_host_action BOOLEAN DEFAULT FALSE
 );

@@ -34,7 +34,7 @@ object MysteryPackages : UUIDTable("mystery_packages") {
 }
 
 object CharacterTemplates : UUIDTable("character_templates") {
-    val mysteryPackageId = uuid("mystery_package_id").references(MysteryPackages.id, onDelete = ReferenceOption.CASCADE)
+    val mysteryPackageId = reference("mystery_package_id", MysteryPackages, onDelete = ReferenceOption.CASCADE)
     val name = varchar("name", 255)
     val description = text("description").nullable()
     val avatarUrl = text("avatar_url").nullable()
@@ -46,7 +46,7 @@ object CharacterTemplates : UUIDTable("character_templates") {
 }
 
 object GamePhases : UUIDTable("game_phases") {
-    val mysteryPackageId = uuid("mystery_package_id").references(MysteryPackages.id, onDelete = ReferenceOption.CASCADE)
+    val mysteryPackageId = reference("mystery_package_id", MysteryPackages, onDelete = ReferenceOption.CASCADE)
     val name = varchar("name", 255)
     val description = text("description").nullable()
     val orderIndex = integer("order_index")
