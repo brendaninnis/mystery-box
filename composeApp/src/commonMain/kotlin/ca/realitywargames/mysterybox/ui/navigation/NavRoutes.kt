@@ -1,5 +1,7 @@
 package ca.realitywargames.mysterybox.ui.navigation
 
+import kotlinx.serialization.Serializable
+
 object NavRoutes {
     const val HOME = "home"
     const val MYSTERIES = "mysteries"
@@ -33,3 +35,6 @@ object NavRoutes {
     fun game(partyId: String) = "game/$partyId"
     fun character(partyId: String) = "character/$partyId"
 }
+
+@Serializable
+data class MysteryDetailRoute(val mysteryId: String)

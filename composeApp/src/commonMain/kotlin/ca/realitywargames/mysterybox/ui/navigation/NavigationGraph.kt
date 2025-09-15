@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import ca.realitywargames.mysterybox.ui.screens.MainScreen
 import ca.realitywargames.mysterybox.ui.screens.mysteries.MysteryDetailScreen
 import ca.realitywargames.mysterybox.ui.screens.parties.PartyCharactersScreen
@@ -79,15 +80,12 @@ fun NavigationGraph(
             )
         }
 
-        composable(
-            route = NavRoutes.MYSTERY_DETAIL,
-            arguments = listOf(navArgument("mysteryId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val mysteryId = backStackEntry.arguments?.getString("mysteryId") ?: return@composable
+        composable<MysteryDetailRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<MysteryDetailRoute>()
             MysteryDetailScreen(
-                mysteryId = mysteryId,
+                mysteryId = args.mysteryId,
                 navController = navController,
-                viewModel = viewModel { MysteryDetailViewModel(mysteryId) },
+                viewModel = viewModel { MysteryDetailViewModel(args.mysteryId) },
                 onBackClick = onBack
             )
         }

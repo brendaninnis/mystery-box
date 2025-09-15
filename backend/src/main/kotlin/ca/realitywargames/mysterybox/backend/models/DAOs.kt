@@ -11,7 +11,7 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import kotlinx.serialization.json.Json
-import java.util.*
+import java.util.UUID
 
 class UserDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<UserDAO>(Users) {
