@@ -1,5 +1,6 @@
 package ca.realitywargames.mysterybox.ui.screens.profile
 
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -10,6 +11,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import ca.realitywargames.mysterybox.ui.components.AuthButton
 import ca.realitywargames.mysterybox.ui.components.AuthForm
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
@@ -32,6 +37,11 @@ fun LoginScreen(
     val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
     val error by userViewModel.error.collectAsState()
 
+    // Focus management
+    val focusManager = LocalFocusManager.current
+    val emailFocusRequester = remember { FocusRequester() }
+    val passwordFocusRequester = remember { FocusRequester() }
+
     // Navigate to main screen when login succeeds
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
@@ -52,13 +62,30 @@ fun LoginScreen(
             EmailTextField(
                 value = email,
                 onValueChange = { email = it },
-                isError = error != null && email.isNotBlank()
+                isError = error != null && email.isNotBlank(),
+                imeAction = ImeAction.Next,
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        passwordFocusRequester.requestFocus()
+                    }
+                ),
+                modifier = androidx.compose.ui.Modifier.focusRequester(emailFocusRequester)
             )
 
             PasswordTextField(
                 value = password,
                 onValueChange = { password = it },
-                isError = error != null && password.isNotBlank()
+                isError = error != null && password.isNotBlank(),
+                imeAction = ImeAction.Done,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        if (isFormValid(email, password)) {
+                            userViewModel.login(email.trim(), password)
+                        }
+                        focusManager.clearFocus()
+                    }
+                ),
+                modifier = androidx.compose.ui.Modifier.focusRequester(passwordFocusRequester)
             )
 
             ErrorText(error)

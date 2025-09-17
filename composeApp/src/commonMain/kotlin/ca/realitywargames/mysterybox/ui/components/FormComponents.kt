@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -35,6 +37,8 @@ fun AuthTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     isError: Boolean = false,
+    imeAction: ImeAction = ImeAction.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
@@ -42,7 +46,11 @@ fun AuthTextField(
         onValueChange = onValueChange,
         label = { Text(label) },
         leadingIcon = { Icon(leadingIcon, contentDescription = null) },
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = imeAction
+        ),
+        keyboardActions = keyboardActions,
         visualTransformation = visualTransformation,
         isError = isError,
         modifier = modifier
@@ -56,6 +64,8 @@ fun EmailTextField(
     value: String,
     onValueChange: (String) -> Unit,
     isError: Boolean = false,
+    imeAction: ImeAction = ImeAction.Next,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier
 ) {
     AuthTextField(
@@ -64,6 +74,8 @@ fun EmailTextField(
         label = "Email",
         leadingIcon = Icons.Default.Email,
         keyboardType = KeyboardType.Email,
+        imeAction = imeAction,
+        keyboardActions = keyboardActions,
         isError = isError,
         modifier = modifier
     )
@@ -74,6 +86,8 @@ fun PasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
     isError: Boolean = false,
+    imeAction: ImeAction = ImeAction.Done,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier
 ) {
     AuthTextField(
@@ -82,6 +96,8 @@ fun PasswordTextField(
         label = "Password",
         leadingIcon = Icons.Default.Lock,
         keyboardType = KeyboardType.Password,
+        imeAction = imeAction,
+        keyboardActions = keyboardActions,
         visualTransformation = PasswordVisualTransformation(),
         isError = isError,
         modifier = modifier
@@ -93,6 +109,8 @@ fun NameTextField(
     value: String,
     onValueChange: (String) -> Unit,
     isError: Boolean = false,
+    imeAction: ImeAction = ImeAction.Next,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     modifier: Modifier = Modifier
 ) {
     AuthTextField(
@@ -100,6 +118,8 @@ fun NameTextField(
         onValueChange = onValueChange,
         label = "Name",
         leadingIcon = Icons.Default.Person,
+        imeAction = imeAction,
+        keyboardActions = keyboardActions,
         isError = isError,
         modifier = modifier
     )
