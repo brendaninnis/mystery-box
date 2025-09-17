@@ -22,5 +22,6 @@ fun Application.module() {
     configureCORS()
     configureContentNegotiation()
     configureAuthentication()
+    configureStaticFiles()
     configureRouting()
 }

@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -51,12 +50,15 @@ import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
 import ca.realitywargames.mysterybox.shared.models.Difficulty
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
+import ca.realitywargames.mysterybox.ui.components.CircularNetworkImage
+import ca.realitywargames.mysterybox.ui.components.NetworkImage
 import ca.realitywargames.mysterybox.ui.navigation.NavRoutes
 import ca.realitywargames.mysterybox.ui.state.UiState
 import ca.realitywargames.mysterybox.ui.viewmodel.MysteryDetailViewModel
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import ca.realitywargames.mysterybox.data.network.serverBaseUrl
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -66,7 +68,6 @@ fun MysteryDetailScreen(
     viewModel: MysteryDetailViewModel,
     onBackClick: () -> Unit
 ) {
-    LaunchedEffect(mysteryId) { viewModel.loadMystery() }
     val state by viewModel.mystery.collectAsState()
 
     BaseScreen(
@@ -162,30 +163,15 @@ private fun MysteryContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp),
-                contentAlignment = Alignment.Center
+                    .height(250.dp)
             ) {
-                // Placeholder for hero image - in real app this would be loaded from imageUrl
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = null,
-                            modifier = Modifier.size(80.dp),
-                            tint = Color(0xFFFF6B6B) // Coral red
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "🎭 MYSTERY 🎭",
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = Color(0xFFFF6B6B)
-                        )
-                    }
-                }
+                // Load actual mystery image
+                NetworkImage(
+                    url = "$serverBaseUrl${mystery.imagePath}",
+                    contentDescription = "Hero image for ${mystery.title}",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                )
 
                 // Price tag overlay
                 Box(
@@ -458,28 +444,12 @@ fun CharacterCard(character: CharacterTemplate) {
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Character avatar placeholder
-            Box(
-                modifier = Modifier
-                    .size(80.dp)
-                    .background(
-                        color = when (character.role) {
-                            CharacterRole.DETECTIVE -> Color(0xFF4ECDC4) // Teal for detective
-                            CharacterRole.SUSPECT -> Color(0xFFFF6B6B) // Red for suspect
-                            CharacterRole.WITNESS -> Color(0xFF45B7D1) // Blue for witness
-                            CharacterRole.VICTIM -> Color(0xFF9C27B0) // Purple for victim
-                            CharacterRole.HOST -> Color(0xFFFF9800) // Orange for host
-                        },
-                        shape = RoundedCornerShape(40.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = character.name.first().toString(),
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = Color.White
-                )
-            }
+            // Character avatar
+            CircularNetworkImage(
+                url = "$serverBaseUrl${character.avatarPath}",
+                contentDescription = "Avatar for ${character.name}",
+                size = 80.dp
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 

@@ -1,5 +1,7 @@
 package ca.realitywargames.mysterybox.data.network
 
-actual val apiBaseUrl: String = "http://localhost:9090/api/v1"
+// Replace with your computer's IP address
+// Find your IP with: ifconfig (macOS/Linux) or ipconfig (Windows)
+actual val baseUrl: String = "http://192.168.1.70:9090"
 
 

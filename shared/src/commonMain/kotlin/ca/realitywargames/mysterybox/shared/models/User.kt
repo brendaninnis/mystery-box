@@ -7,7 +7,7 @@ data class User(
     val id: String,
     val email: String,
     val name: String,
-    val avatarUrl: String? = null,
+    val avatarPath: String? = null,
     val isHost: Boolean = false,
     val preferences: UserPreferences = UserPreferences(),
     val createdAt: String, // ISO 8601 format

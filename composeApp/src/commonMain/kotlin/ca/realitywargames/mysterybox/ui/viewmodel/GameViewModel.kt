@@ -107,7 +107,7 @@ class GameViewModel : BaseViewModel() {
                             id = "detective",
                             name = "Detective Sarah Miller",
                             description = "A sharp-witted detective known for solving impossible cases",
-                            avatarUrl = "https://example.com/detective.jpg",
+                            avatarPath = "https://example.com/detective.jpg",
                             role = CharacterRole.DETECTIVE,
                             background = "Former police detective turned private investigator",
                             personality = "Analytical, persistent, and sometimes abrasive",

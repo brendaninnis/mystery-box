@@ -6,7 +6,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,8 +30,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import ca.realitywargames.mysterybox.data.network.serverBaseUrl
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
-import ca.realitywargames.mysterybox.ui.navigation.NavRoutes
+import ca.realitywargames.mysterybox.ui.components.NetworkImage
 import ca.realitywargames.mysterybox.ui.navigation.MysteryDetailRoute
 import ca.realitywargames.mysterybox.ui.state.UiState
 import ca.realitywargames.mysterybox.ui.viewmodel.MysteryListViewModel
@@ -119,19 +119,15 @@ fun MysteryPackageCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
-            // Image placeholder
-            Box(
+            // Mystery image
+            NetworkImage(
+                url = "$serverBaseUrl${mysteryPackage.imagePath}",
+                contentDescription = "Image for ${mysteryPackage.title}",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "🎭",
-                    style = MaterialTheme.typography.displayLarge
-                )
-            }
+                    .height(200.dp),
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop
+            )
 
             Column(
                 modifier = Modifier.padding(16.dp)

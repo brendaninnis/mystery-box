@@ -32,6 +32,7 @@ kotlinx-serialization-json = "1.9.0"
 logback = "1.5.18"
 testcontainers = "1.21.3"
 material-icons = "1.7.3"
+coil = "3.3.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -82,6 +83,8 @@ logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "lo
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 compose-material-icons = { group = "org.jetbrains.compose.material", name = "material-icons-core", version.ref = "material-icons" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network-ktor3 = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

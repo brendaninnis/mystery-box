@@ -53,7 +53,7 @@ fun PartyInviteScreen(
         id = "1",
         title = "The Haunted Mansion Mystery",
         description = "A spine-chilling murder mystery...",
-        imageUrl = "",
+        imagePath = "",
         price = 29.99,
         currency = "USD",
         durationMinutes = 180,

@@ -21,7 +21,7 @@ class UserDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     var email by Users.email
     var passwordHash by Users.passwordHash
     var name by Users.name
-    var avatarUrl by Users.avatarUrl
+    var avatarPath by Users.avatarPath
     var isHost by Users.isHost
     var preferences by Users.preferences
     var createdAt by Users.createdAt
@@ -31,7 +31,7 @@ class UserDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         id = id.value.toString(),
         email = email,
         name = name,
-        avatarUrl = avatarUrl,
+        avatarPath = avatarPath ?: "",
         isHost = isHost,
         preferences = Json.decodeFromString(UserPreferences.serializer(), preferences),
         createdAt = createdAt.toString(),
@@ -44,7 +44,7 @@ class MysteryPackageDAO(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var title by MysteryPackages.title
     var description by MysteryPackages.description
-    var imageUrl by MysteryPackages.imageUrl
+    var imagePath by MysteryPackages.imagePath
     var price by MysteryPackages.price
     var currency by MysteryPackages.currency
     var durationMinutes by MysteryPackages.durationMinutes
@@ -64,7 +64,7 @@ class MysteryPackageDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         id = id.value.toString(),
         title = title,
         description = description ?: "",
-        imageUrl = imageUrl ?: "",
+        imagePath = imagePath ?: "",
         price = price.toDouble(),
         currency = currency,
         durationMinutes = durationMinutes,
@@ -87,7 +87,7 @@ class CharacterTemplateDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     var mysteryPackageId by CharacterTemplates.mysteryPackageId
     var name by CharacterTemplates.name
     var description by CharacterTemplates.description
-    var avatarUrl by CharacterTemplates.avatarUrl
+    var avatarPath by CharacterTemplates.avatarPath
     var role by CharacterTemplates.role
     var background by CharacterTemplates.background
     var personality by CharacterTemplates.personality
@@ -98,7 +98,7 @@ class CharacterTemplateDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         id = id.value.toString(),
         name = name,
         description = description ?: "",
-        avatarUrl = avatarUrl ?: "",
+        avatarPath = avatarPath ?: "",
         role = CharacterRole.valueOf(role),
         background = background ?: "",
         personality = personality ?: "",

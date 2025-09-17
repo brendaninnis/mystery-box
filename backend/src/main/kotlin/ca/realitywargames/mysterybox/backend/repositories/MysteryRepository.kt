@@ -73,7 +73,7 @@ class MysteryRepository {
             MysteryPackageDAO.new {
                 title = packageData.title
                 description = packageData.description
-                imageUrl = packageData.imageUrl
+                imagePath = packageData.imagePath
                 price = packageData.price.toBigDecimal()
                 currency = packageData.currency
                 durationMinutes = packageData.durationMinutes
