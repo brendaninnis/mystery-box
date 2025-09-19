@@ -93,7 +93,7 @@ fun PartyInstructionsScreen(
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "When you arrive at the party, you'll be assigned a character. Take some time to read your character description and memorize your background, objectives, and any secrets you might have.",
+                            text = "When you arrive at the party, you'll be assigned a character. Take some time to read your character description and memorize your background.",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -123,7 +123,7 @@ fun PartyInstructionsScreen(
                         val gameRules = listOf(
                             "Stay in character at all times - don't break the immersion!",
                             "Listen carefully to what others say and watch for inconsistencies",
-                            "Use your character's personality and objectives to guide your actions",
+                            "Use your character's background to guide your actions",
                             "Take notes on conversations and observations",
                             "Work with or against other players based on your character's goals",
                             "The host will guide you through different phases of the mystery"
@@ -197,7 +197,7 @@ fun PartyInstructionsScreen(
 
                         val etiquetteRules = listOf(
                             "Respect other players and their interpretations",
-                            "Don't spoil the mystery by revealing secrets prematurely",
+                            "Don't spoil the mystery by sharing information prematurely",
                             "Participate actively but don't dominate conversations",
                             "Have fun and embrace the theatrical nature of the game",
                             "Remember it's just a game - keep it light-hearted"

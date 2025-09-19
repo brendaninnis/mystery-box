@@ -25,9 +25,7 @@ CREATE TABLE mystery_packages (
     difficulty VARCHAR(20) NOT NULL,
     themes TEXT,
     plot_summary TEXT,
-    is_available BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    is_available BOOLEAN DEFAULT TRUE
 );
 
 -- Characters table (templates)
@@ -37,11 +35,7 @@ CREATE TABLE character_templates (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     avatar_path TEXT,
-    role VARCHAR(20) NOT NULL,
-    background TEXT,
-    personality TEXT,
-    objectives TEXT,
-    secrets TEXT
+    background TEXT
 );
 
 -- Game phases table

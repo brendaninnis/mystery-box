@@ -65,8 +65,6 @@ fun PartyInviteScreen(
         characters = emptyList(),
         phases = emptyList(),
         isAvailable = true,
-        createdAt = "2024-01-15T10:30:00Z",
-        updatedAt = "2024-01-15T10:30:00Z"
     )
 
     val mockParty = Party(

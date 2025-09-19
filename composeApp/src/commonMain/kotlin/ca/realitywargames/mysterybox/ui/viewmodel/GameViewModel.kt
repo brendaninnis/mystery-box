@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import ca.realitywargames.mysterybox.data.di.AppContainer
 import ca.realitywargames.mysterybox.shared.models.Accusation
 import ca.realitywargames.mysterybox.shared.models.AssignedCharacter
-import ca.realitywargames.mysterybox.shared.models.CharacterRole
 import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
 import ca.realitywargames.mysterybox.shared.models.Clue
 import ca.realitywargames.mysterybox.shared.models.Evidence
@@ -108,11 +107,7 @@ class GameViewModel : BaseViewModel() {
                             name = "Detective Sarah Miller",
                             description = "A sharp-witted detective known for solving impossible cases",
                             avatarPath = "https://example.com/detective.jpg",
-                            role = CharacterRole.DETECTIVE,
-                            background = "Former police detective turned private investigator",
-                            personality = "Analytical, persistent, and sometimes abrasive",
-                            objectives = listOf("Solve the murder", "Protect the innocent"),
-                            secrets = listOf("Has a personal connection to the victim")
+                            background = "Former police detective turned private investigator"
                         ),
                         playerId = "user1",
                         playerName = "John Doe",

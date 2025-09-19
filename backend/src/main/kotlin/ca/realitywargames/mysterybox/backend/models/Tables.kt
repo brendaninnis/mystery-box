@@ -29,8 +29,6 @@ object MysteryPackages : UUIDTable("mystery_packages") {
     val themes = text("themes").nullable() // JSON array
     val plotSummary = text("plot_summary").nullable()
     val isAvailable = bool("is_available").default(true)
-    val createdAt = timestamp("created_at")
-    val updatedAt = timestamp("updated_at")
 }
 
 object CharacterTemplates : UUIDTable("character_templates") {
@@ -38,11 +36,7 @@ object CharacterTemplates : UUIDTable("character_templates") {
     val name = varchar("name", 255)
     val description = text("description").nullable()
     val avatarPath = text("avatar_path").nullable()
-    val role = varchar("role", 20)
     val background = text("background").nullable()
-    val personality = text("personality").nullable()
-    val objectives = text("objectives").nullable() // JSON array
-    val secrets = text("secrets").nullable() // JSON array
 }
 
 object GamePhases : UUIDTable("game_phases") {

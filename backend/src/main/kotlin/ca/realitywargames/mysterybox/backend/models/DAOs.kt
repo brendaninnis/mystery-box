@@ -1,6 +1,5 @@
 package ca.realitywargames.mysterybox.backend.models
 
-import ca.realitywargames.mysterybox.shared.models.CharacterRole
 import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
 import ca.realitywargames.mysterybox.shared.models.Difficulty
 import ca.realitywargames.mysterybox.shared.models.GamePhase
@@ -54,8 +53,6 @@ class MysteryPackageDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     var themes by MysteryPackages.themes
     var plotSummary by MysteryPackages.plotSummary
     var isAvailable by MysteryPackages.isAvailable
-    var createdAt by MysteryPackages.createdAt
-    var updatedAt by MysteryPackages.updatedAt
 
     val characters by CharacterTemplateDAO referrersOn CharacterTemplates.mysteryPackageId
     val phases by GamePhaseDAO referrersOn GamePhases.mysteryPackageId
@@ -75,9 +72,7 @@ class MysteryPackageDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         plotSummary = plotSummary ?: "",
         characters = characters.map { it.toCharacterTemplate() },
         phases = phases.map { it.toGamePhase() },
-        isAvailable = isAvailable,
-        createdAt = createdAt.toString(),
-        updatedAt = updatedAt.toString()
+        isAvailable = isAvailable
     )
 }
 
@@ -88,22 +83,14 @@ class CharacterTemplateDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by CharacterTemplates.name
     var description by CharacterTemplates.description
     var avatarPath by CharacterTemplates.avatarPath
-    var role by CharacterTemplates.role
     var background by CharacterTemplates.background
-    var personality by CharacterTemplates.personality
-    var objectives by CharacterTemplates.objectives
-    var secrets by CharacterTemplates.secrets
 
     fun toCharacterTemplate(): CharacterTemplate = CharacterTemplate(
         id = id.value.toString(),
         name = name,
         description = description ?: "",
         avatarPath = avatarPath ?: "",
-        role = CharacterRole.valueOf(role),
-        background = background ?: "",
-        personality = personality ?: "",
-        objectives = objectives?.let { Json.decodeFromString<List<String>>(it) } ?: emptyList(),
-        secrets = secrets?.let { Json.decodeFromString<List<String>>(it) } ?: emptyList()
+        background = background ?: ""
     )
 }
 

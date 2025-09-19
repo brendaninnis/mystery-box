@@ -83,8 +83,6 @@ class MysteryRepository {
                 themes = Json.encodeToString(packageData.themes)
                 plotSummary = packageData.plotSummary
                 isAvailable = packageData.isAvailable
-                createdAt = now
-                updatedAt = now
             }.toMysteryPackage()
         }
     }

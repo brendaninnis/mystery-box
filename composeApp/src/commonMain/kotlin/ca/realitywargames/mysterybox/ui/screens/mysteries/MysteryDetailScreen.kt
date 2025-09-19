@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,13 +23,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
@@ -38,26 +32,24 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ca.realitywargames.mysterybox.shared.models.CharacterRole
 import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
-import ca.realitywargames.mysterybox.shared.models.Difficulty
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
 import ca.realitywargames.mysterybox.ui.components.CircularNetworkImage
+import ca.realitywargames.mysterybox.ui.components.MysteryInfoRow
 import ca.realitywargames.mysterybox.ui.components.NetworkImage
 import ca.realitywargames.mysterybox.ui.navigation.NavRoutes
 import ca.realitywargames.mysterybox.ui.state.UiState
 import ca.realitywargames.mysterybox.ui.viewmodel.MysteryDetailViewModel
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import ca.realitywargames.mysterybox.data.network.serverBaseUrl
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -206,66 +198,7 @@ private fun MysteryContent(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Default.Face,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = Color(0xFF4ECDC4) // Teal
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "${mystery.minPlayers}-${mystery.maxPlayers} players",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = Color(0xFF4ECDC4)
-                        )
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Default.DateRange,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = Color(0xFF45B7D1) // Blue
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "${mystery.durationMinutes} min",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = Color(0xFF45B7D1)
-                        )
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Default.Star,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = when (mystery.difficulty) {
-                                Difficulty.EASY -> Color(0xFF4CAF50) // Green
-                                Difficulty.MEDIUM -> Color(0xFFFF9800) // Orange
-                                Difficulty.HARD -> Color(0xFFFF6B6B) // Red
-                                Difficulty.EXPERT -> Color(0xFF9C27B0) // Purple
-                            }
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = mystery.difficulty.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = when (mystery.difficulty) {
-                                Difficulty.EASY -> Color(0xFF4CAF50)
-                                Difficulty.MEDIUM -> Color(0xFFFF9800)
-                                Difficulty.HARD -> Color(0xFFFF6B6B)
-                                Difficulty.EXPERT -> Color(0xFF9C27B0)
-                            }
-                        )
-                    }
-                }
+                MysteryInfoRow(mysteryPackage = mystery)
             }
         }
 
@@ -463,31 +396,6 @@ fun CharacterCard(character: CharacterTemplate) {
                 minLines = 1
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Surface(
-                color = when (character.role) {
-                    CharacterRole.DETECTIVE -> Color(0xFF4ECDC4).copy(alpha = 0.2f)
-                    CharacterRole.SUSPECT -> Color(0xFFFF6B6B).copy(alpha = 0.2f)
-                    CharacterRole.WITNESS -> Color(0xFF45B7D1).copy(alpha = 0.2f)
-                    CharacterRole.VICTIM -> Color(0xFF9C27B0).copy(alpha = 0.2f)
-                    CharacterRole.HOST -> Color(0xFFFF9800).copy(alpha = 0.2f)
-                },
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = character.role.name,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = when (character.role) {
-                        CharacterRole.DETECTIVE -> Color(0xFF4ECDC4)
-                        CharacterRole.SUSPECT -> Color(0xFFFF6B6B)
-                        CharacterRole.WITNESS -> Color(0xFF45B7D1)
-                        CharacterRole.VICTIM -> Color(0xFF9C27B0)
-                        CharacterRole.HOST -> Color(0xFFFF9800)
-                    },
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                )
-            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
