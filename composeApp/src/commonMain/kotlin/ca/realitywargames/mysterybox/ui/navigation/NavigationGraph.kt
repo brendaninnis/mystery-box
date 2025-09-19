@@ -19,6 +19,8 @@ import ca.realitywargames.mysterybox.ui.screens.parties.PartyEvidenceScreen
 import ca.realitywargames.mysterybox.ui.screens.parties.PartyInstructionsScreen
 import ca.realitywargames.mysterybox.ui.screens.parties.PartyInventoryScreen
 import ca.realitywargames.mysterybox.ui.screens.parties.PartyInviteScreen
+import ca.realitywargames.mysterybox.ui.screens.parties.PartyObjectivesScreen
+import ca.realitywargames.mysterybox.ui.screens.parties.PartyPhaseInstructionsScreen
 import ca.realitywargames.mysterybox.ui.screens.parties.PartySolutionScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.LoginScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.RegisterScreen
@@ -183,6 +185,32 @@ fun NavigationGraph(
         ) { backStackEntry ->
             val partyId = "party1" // Default party ID
             PartySolutionScreen(
+                partyId = partyId,
+                navController = navController,
+                viewModel = viewModel { PartyViewModel() },
+                onBackClick = onBack
+            )
+        }
+
+        composable(
+            route = NavRoutes.PARTY_PHASE_INSTRUCTIONS,
+            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val partyId = "party1" // Default party ID
+            PartyPhaseInstructionsScreen(
+                partyId = partyId,
+                navController = navController,
+                viewModel = viewModel { PartyViewModel() },
+                onBackClick = onBack
+            )
+        }
+
+        composable(
+            route = NavRoutes.PARTY_OBJECTIVES,
+            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val partyId = "party1" // Default party ID
+            PartyObjectivesScreen(
                 partyId = partyId,
                 navController = navController,
                 viewModel = viewModel { PartyViewModel() },

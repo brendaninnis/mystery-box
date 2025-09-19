@@ -42,11 +42,11 @@ object CharacterTemplates : UUIDTable("character_templates") {
 object GamePhases : UUIDTable("game_phases") {
     val mysteryPackageId = reference("mystery_package_id", MysteryPackages, onDelete = ReferenceOption.CASCADE)
     val name = varchar("name", 255)
-    val description = text("description").nullable()
     val orderIndex = integer("order_index")
-    val durationMinutes = integer("duration_minutes").nullable()
     val instructions = text("instructions").nullable() // JSON array
     val hostInstructions = text("host_instructions").nullable() // JSON array
-    val isInteractive = bool("is_interactive").default(false)
-    val requiresHostAction = bool("requires_host_action").default(false)
+    val objectivesToAdd = text("objectives_to_add").nullable() // JSON array
+    val inventoryToAdd = text("inventory_to_add").nullable() // JSON array
+    val evidenceToAdd = text("evidence_to_add").nullable() // JSON array
+    val gameStateToUnlock = text("game_state_to_unlock").nullable() // JSON array
 }

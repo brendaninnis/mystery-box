@@ -3,7 +3,11 @@ package ca.realitywargames.mysterybox.backend.models
 import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
 import ca.realitywargames.mysterybox.shared.models.Difficulty
 import ca.realitywargames.mysterybox.shared.models.GamePhase
+import ca.realitywargames.mysterybox.shared.models.GameStateSection
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
+import ca.realitywargames.mysterybox.shared.models.ObjectiveTemplate
+import ca.realitywargames.mysterybox.shared.models.InventoryTemplate
+import ca.realitywargames.mysterybox.shared.models.EvidenceTemplate
 import ca.realitywargames.mysterybox.shared.models.User
 import ca.realitywargames.mysterybox.shared.models.UserPreferences
 import org.jetbrains.exposed.dao.UUIDEntity
@@ -99,24 +103,23 @@ class GamePhaseDAO(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var mysteryPackageId by GamePhases.mysteryPackageId
     var name by GamePhases.name
-    var description by GamePhases.description
     var orderIndex by GamePhases.orderIndex
-    var durationMinutes by GamePhases.durationMinutes
     var instructions by GamePhases.instructions
     var hostInstructions by GamePhases.hostInstructions
-    var isInteractive by GamePhases.isInteractive
-    var requiresHostAction by GamePhases.requiresHostAction
+    var objectivesToAdd by GamePhases.objectivesToAdd
+    var inventoryToAdd by GamePhases.inventoryToAdd
+    var evidenceToAdd by GamePhases.evidenceToAdd
+    var gameStateToUnlock by GamePhases.gameStateToUnlock
 
     fun toGamePhase(): GamePhase = GamePhase(
         id = id.value.toString(),
         name = name,
-        description = description ?: "",
         order = orderIndex,
-        durationMinutes = durationMinutes,
         instructions = instructions?.let { Json.decodeFromString<List<String>>(it) } ?: emptyList(),
         hostInstructions = hostInstructions?.let { Json.decodeFromString<List<String>>(it) } ?: emptyList(),
-        isInteractive = isInteractive,
-        requiresHostAction = requiresHostAction,
-        triggers = emptyList() // TODO: Implement phase triggers
+        objectivesToAdd = objectivesToAdd?.let { Json.decodeFromString<List<ObjectiveTemplate>>(it) } ?: emptyList(),
+        inventoryToAdd = inventoryToAdd?.let { Json.decodeFromString<List<InventoryTemplate>>(it) } ?: emptyList(),
+        evidenceToAdd = evidenceToAdd?.let { Json.decodeFromString<List<EvidenceTemplate>>(it) } ?: emptyList(),
+        gameStateToUnlock = gameStateToUnlock?.let { Json.decodeFromString<List<String>>(it).map { sectionName -> GameStateSection.valueOf(sectionName) } } ?: emptyList()
     )
 }

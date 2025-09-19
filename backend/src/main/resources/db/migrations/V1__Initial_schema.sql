@@ -43,13 +43,13 @@ CREATE TABLE game_phases (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     mystery_package_id UUID REFERENCES mystery_packages(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
-    description TEXT,
     order_index INTEGER NOT NULL,
-    duration_minutes INTEGER,
-    instructions TEXT,
-    host_instructions TEXT,
-    is_interactive BOOLEAN DEFAULT FALSE,
-    requires_host_action BOOLEAN DEFAULT FALSE
+    instructions TEXT, -- JSON array
+    host_instructions TEXT, -- JSON array
+    objectives_to_add TEXT, -- JSON array of ObjectiveTemplate
+    inventory_to_add TEXT, -- JSON array of InventoryTemplate
+    evidence_to_add TEXT, -- JSON array of EvidenceTemplate
+    game_state_to_unlock TEXT -- JSON array of GameStateSection strings
 );
 
 -- Create indexes for better performance

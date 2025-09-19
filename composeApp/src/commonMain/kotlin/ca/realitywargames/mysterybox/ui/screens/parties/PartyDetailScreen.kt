@@ -1,5 +1,6 @@
 package ca.realitywargames.mysterybox.ui.screens.parties
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,7 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
@@ -55,12 +56,9 @@ fun PartyDetailScreen(
         description = "Our first murder mystery party!",
         scheduledDate = "2024-01-20T19:00:00Z",
         status = PartyStatus.IN_PROGRESS,
-        inviteCode = "ABC123",
         maxGuests = 6,
         guests = emptyList(),
-        currentPhaseIndex = 2, // Murder phase
-        createdAt = "2024-01-15T10:30:00Z",
-        updatedAt = "2024-01-15T10:30:00Z"
+        currentPhaseIndex = 2 // Murder phase
     )
 
     val currentPhase = "Murder Investigation" // Mock phase name
@@ -73,11 +71,14 @@ fun PartyDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            // Phase indicator
+            // Phase indicator - tappable
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .clickable {
+                        navController.navigate(NavRoutes.partyPhaseInstructions(partyId))
+                    },
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -125,11 +126,11 @@ fun PartyDetailScreen(
 
                 item {
                     GameActionCard(
-                        title = "Instructions",
-                        icon = Icons.Default.Info,
-                        isEnabled = true,
+                        title = "Objectives",
+                        icon = Icons.Default.MailOutline,
+                        isEnabled = mockParty.status == PartyStatus.IN_PROGRESS || mockParty.status == PartyStatus.COMPLETED,
                         onClick = {
-                            navController.navigate(NavRoutes.partyInstructions(partyId))
+                            navController.navigate(NavRoutes.partyObjectives(partyId))
                         }
                     )
                 }

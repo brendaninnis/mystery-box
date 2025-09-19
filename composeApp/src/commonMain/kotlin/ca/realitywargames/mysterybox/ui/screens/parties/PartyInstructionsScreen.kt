@@ -168,7 +168,7 @@ fun PartyInstructionsScreen(
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "During the investigation, you'll have access to evidence and clues. Examine them carefully and discuss your findings with other players. Remember, not everyone can be trusted!",
+                            text = "During the investigation, you'll have access to evidence and your inventory items. Examine them carefully and discuss your findings with other players. Remember, not everyone can be trusted!",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }

@@ -11,13 +11,11 @@ data class Party(
     val description: String,
     val scheduledDate: String, // ISO 8601 format
     val status: PartyStatus,
-    val inviteCode: String,
     val maxGuests: Int,
     val guests: List<Guest>,
     val currentPhaseIndex: Int = 0,
     val gameState: GameState? = null,
-    val createdAt: String, // ISO 8601 format
-    val updatedAt: String  // ISO 8601 format
+    val address: String? = null
 )
 
 @Serializable
@@ -29,11 +27,13 @@ enum class PartyStatus {
 data class Guest(
     val id: String,
     val userId: String? = null, // null for pending invites
-    val email: String,
     val name: String,
+    val inviteCode: String,
     val characterId: String? = null,
     val status: GuestStatus,
-    val joinedAt: String? = null // ISO 8601 format
+    val joinedAt: String? = null, // ISO 8601 format
+    val objectives: List<Objective> = emptyList(),
+    val inventory: List<InventoryItem> = emptyList()
 )
 
 @Serializable
@@ -44,32 +44,22 @@ enum class GuestStatus {
 @Serializable
 data class GameState(
     val evidence: List<Evidence>,
-    val clues: List<Clue>,
     val accusations: List<Accusation>,
     val phaseStartTime: String, // ISO 8601 format
-    val phaseEndTime: String? = null // ISO 8601 format
+    val phaseEndTime: String? = null, // ISO 8601 format
+    val unlockedSections: List<GameStateSection> = listOf(GameStateSection.MYSTERY_INFO, GameStateSection.CHARACTER_INFO),
+    val solution: Solution? = null
 )
 
 @Serializable
 data class Evidence(
     val id: String,
-    val title: String,
+    val name: String,
     val description: String,
-    val imageUrl: String? = null,
-    val discoveredAt: String, // ISO 8601 format
-    val discoveredBy: String, // character ID
-    val isPublic: Boolean = false
+    val imagePath: String,
+    val discoveredAt: String // ISO 8601 format
 )
 
-@Serializable
-data class Clue(
-    val id: String,
-    val title: String,
-    val description: String,
-    val hint: String? = null,
-    val revealedAt: String, // ISO 8601 format
-    val revealedTo: List<String> // character IDs
-)
 
 @Serializable
 data class Accusation(
@@ -79,4 +69,30 @@ data class Accusation(
     val reason: String,
     val isCorrect: Boolean? = null,
     val madeAt: String // ISO 8601 format
+)
+
+@Serializable
+data class Objective(
+    val id: String,
+    val description: String,
+    val completedAt: String? = null // ISO 8601 format
+)
+
+@Serializable
+data class InventoryItem(
+    val id: String,
+    val name: String,
+    val description: String,
+    val imagePath: String,
+    val quantity: Int = 1
+)
+
+@Serializable
+data class Solution(
+    val killer: String, // character ID
+    val motive: String,
+    val method: String,
+    val location: String,
+    val timeline: String,
+    val additionalNotes: String? = null
 )

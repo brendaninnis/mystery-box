@@ -6,34 +6,47 @@ import kotlinx.serialization.Serializable
 data class GamePhase(
     val id: String,
     val name: String,
-    val description: String,
     val order: Int,
-    val durationMinutes: Int? = null,
-    val instructions: List<String>,
-    val hostInstructions: List<String>,
-    val isInteractive: Boolean = false,
-    val requiresHostAction: Boolean = false,
-    val triggers: List<PhaseTrigger> = emptyList()
+    val instructions: List<String> = emptyList(),
+    val hostInstructions: List<String> = emptyList(),
+    val objectivesToAdd: List<ObjectiveTemplate> = emptyList(),
+    val inventoryToAdd: List<InventoryTemplate> = emptyList(),
+    val evidenceToAdd: List<EvidenceTemplate> = emptyList(),
+    val gameStateToUnlock: List<GameStateSection> = emptyList()
 )
 
 @Serializable
-data class PhaseTrigger(
-    val type: TriggerType,
-    val condition: String,
-    val action: String
+data class ObjectiveTemplate(
+    val id: String,
+    val description: String,
+    val targetGuestIds: List<String> = emptyList() // Empty means all guests
 )
 
 @Serializable
-enum class TriggerType {
-    TIME_BASED, EVIDENCE_DISCOVERED, ACCUSATION_MADE, HOST_ACTION
+data class InventoryTemplate(
+    val id: String,
+    val name: String,
+    val description: String,
+    val imagePath: String,
+    val quantity: Int = 1,
+    val targetGuestIds: List<String> = emptyList() // Empty means all guests
+)
+
+@Serializable
+data class EvidenceTemplate(
+    val id: String,
+    val name: String,
+    val description: String,
+    val imagePath: String
+)
+
+@Serializable
+enum class GameStateSection {
+    MYSTERY_INFO,      // Initially visible
+    CHARACTER_INFO,    // Initially visible  
+    OBJECTIVES,        // Unlocked by phases
+    INVENTORY,         // Unlocked by phases
+    EVIDENCE,          // Unlocked by phases
+    SOLUTION           // Final unlock
 }
 
-@Serializable
-data class PhaseProgress(
-    val phaseId: String,
-    val startedAt: String, // ISO 8601 format
-    val completedAt: String? = null, // ISO 8601 format
-    val isActive: Boolean = false,
-    val hostActionsCompleted: List<String> = emptyList(),
-    val playerActionsCompleted: List<String> = emptyList()
-)

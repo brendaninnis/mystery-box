@@ -11,8 +11,32 @@ INSERT INTO character_templates (mystery_package_id, name, description, avatar_p
 ('550e8400-e29b-41d4-a716-446655440001', 'Detective Mira Voss', 'A human detective from the capital city, known for solving impossible cases.', '/images/wizard.jpg', 'Mira has solved over 50 murder cases in her career. She was personally requested by the king to investigate this sensitive matter.');
 
 -- Sample game phases for first mystery package
-INSERT INTO game_phases (mystery_package_id, name, description, order_index, duration_minutes, instructions, host_instructions, is_interactive, requires_host_action) VALUES
-('550e8400-e29b-41d4-a716-446655440001', 'The Discovery', 'The body is discovered and initial shock sets in.', 1, 15, '["Gather in the main hall","Listen to the host''s announcement","Begin asking initial questions"]', '["Describe the scene dramatically","Distribute initial clues","Answer questions about the academy"]', false, true),
-('550e8400-e29b-41d4-a716-446655440001', 'Individual Investigations', 'Players split up to investigate different areas of the academy.', 2, 30, '["Form small investigation groups","Visit assigned locations","Collect clues and interview suspects"]', '["Guide players to different areas","Provide location-specific clues","Facilitate role-playing interactions"]', true, false),
-('550e8400-e29b-41d4-a716-446655440001', 'The Accusation', 'Players gather evidence and make accusations.', 3, 45, '["Present findings to the group","Vote on suspects","Defend your theories"]', '["Moderate the discussion","Reveal additional evidence based on progress","Build tension and suspense"]', true, true),
-('550e8400-e29b-41d4-a716-446655440001', 'The Resolution', 'The truth is revealed and the mystery is solved.', 4, 30, '["Listen to the final revelation","Discuss what you learned","Reflect on the experience"]', '["Reveal the full story","Explain any remaining mysteries","Facilitate post-game discussion"]', false, true);
+INSERT INTO game_phases (mystery_package_id, name, order_index, instructions, host_instructions, objectives_to_add, inventory_to_add, evidence_to_add, game_state_to_unlock) VALUES
+('550e8400-e29b-41d4-a716-446655440001', 'The Discovery', 1, 
+    '["Gather in the main hall", "Listen to the host''s announcement", "Begin asking initial questions"]',
+    '["Describe the scene dramatically", "Distribute initial clues", "Answer questions about the academy"]',
+    '[{"id": "obj1", "description": "Investigate the scene thoroughly", "targetGuestIds": []}]',
+    '[]',
+    '[{"id": "ev1", "name": "Bloody Dagger", "description": "A ceremonial dagger with fresh blood", "imagePath": "/images/bloody-dagger.jpg"}]',
+    '["OBJECTIVES", "EVIDENCE"]'),
+('550e8400-e29b-41d4-a716-446655440001', 'Individual Investigations', 2,
+    '["Form small investigation groups", "Visit assigned locations", "Collect clues and interview suspects"]',
+    '["Guide players to different areas", "Provide location-specific clues", "Facilitate role-playing interactions"]',
+    '[{"id": "obj2", "description": "Search your assigned area thoroughly", "targetGuestIds": []}]',
+    '[{"id": "inv1", "name": "Magnifying Glass", "description": "A detective''s magnifying glass for examining evidence", "imagePath": "/images/magnifying-glass.jpg", "quantity": 1, "targetGuestIds": []}]',
+    '[{"id": "ev2", "name": "Torn Letter", "description": "A letter torn in half, mentions a secret meeting", "imagePath": "/images/torn-letter.jpg"}]',
+    '["INVENTORY"]'),
+('550e8400-e29b-41d4-a716-446655440001', 'The Accusation', 3,
+    '["Present findings to the group", "Vote on suspects", "Defend your theories"]',
+    '["Moderate the discussion", "Reveal additional evidence based on progress", "Build tension and suspense"]',
+    '[{"id": "obj3", "description": "Make your final accusation with evidence to support it", "targetGuestIds": []}]',
+    '[]',
+    '[]',
+    '[]'),
+('550e8400-e29b-41d4-a716-446655440001', 'The Resolution', 4,
+    '["Listen to the final revelation", "Discuss what you learned", "Reflect on the experience"]',
+    '["Reveal the full story", "Explain any remaining mysteries", "Facilitate post-game discussion"]',
+    '[]',
+    '[]',
+    '[]',
+    '["SOLUTION"]');

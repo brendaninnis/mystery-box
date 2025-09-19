@@ -26,21 +26,18 @@ class PartyRepository(private val api: MysteryBoxApi) {
                     description = "Our first murder mystery party!",
                     scheduledDate = "2024-01-20T19:00:00Z", // ISO 8601 format
                     status = PartyStatus.PLANNED,
-                    inviteCode = "ABC123",
                     maxGuests = 6,
                     guests = listOf(
                         Guest(
                             id = "guest1",
                             userId = "user1",
-                            email = "host@example.com",
                             name = "Host",
                             characterId = null,
                             status = GuestStatus.JOINED,
-                            joinedAt = "2024-01-15T10:30:00Z" // ISO 8601 format
+                            inviteCode = "NEW${(1000..9999).random()}",
+                            joinedAt = "2024-01-20T19:00:00Z", // ISO 8601 format
                         )
                     ),
-                    createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                    updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
                 )
             )
             emit(Result.success(mockParties))
@@ -60,21 +57,18 @@ class PartyRepository(private val api: MysteryBoxApi) {
                 description = "Our first murder mystery party!",
                 scheduledDate = "2024-01-20T19:00:00Z", // ISO 8601 format
                 status = PartyStatus.PLANNED,
-                inviteCode = "ABC123",
                 maxGuests = 6,
                 guests = listOf(
                     Guest(
                         id = "guest1",
                         userId = "user1",
-                        email = "host@example.com",
                         name = "Host",
                         characterId = null,
                         status = GuestStatus.JOINED,
-                        joinedAt = "2024-01-15T10:30:00Z" // ISO 8601 format
+                        inviteCode = "NEW${(1000..9999).random()}",
+                        joinedAt = null,
                     )
                 ),
-                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
             )
             emit(Result.success(mockParty))
         } catch (e: Exception) {
@@ -93,11 +87,8 @@ class PartyRepository(private val api: MysteryBoxApi) {
                 description = request.description,
                 scheduledDate = request.scheduledDate, // Already in ISO 8601 format
                 status = PartyStatus.PLANNED,
-                inviteCode = "NEW${(1000..9999).random()}",
                 maxGuests = request.maxGuests,
                 guests = emptyList(),
-                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
             )
             emit(Result.success(mockParty))
         } catch (e: Exception) {
@@ -116,21 +107,17 @@ class PartyRepository(private val api: MysteryBoxApi) {
                 description = "A mystery party I joined",
                 scheduledDate = "2024-01-20T19:00:00Z", // ISO 8601 format
                 status = PartyStatus.PLANNED,
-                inviteCode = request.inviteCode,
                 maxGuests = 6,
                 guests = listOf(
                     Guest(
                         id = "guest_joined",
                         userId = null,
-                        email = request.email,
                         name = request.name,
                         characterId = null,
                         status = GuestStatus.JOINED,
-                        joinedAt = "2024-01-15T10:30:00Z" // ISO 8601 format
-                    )
+                        inviteCode = "NEW${(1000..9999).random()}",
+                        )
                 ),
-                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
             )
             emit(Result.success(mockParty))
         } catch (e: Exception) {
@@ -149,12 +136,9 @@ class PartyRepository(private val api: MysteryBoxApi) {
                 description = "Phase advanced",
                 scheduledDate = "2024-01-20T19:00:00Z", // ISO 8601 format
                 status = PartyStatus.IN_PROGRESS,
-                inviteCode = "ABC123",
                 maxGuests = 6,
                 guests = emptyList(),
                 currentPhaseIndex = 1,
-                createdAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                updatedAt = "2024-01-15T10:30:00Z"  // ISO 8601 format
             )))
         } catch (e: Exception) {
             emit(Result.failure(e))

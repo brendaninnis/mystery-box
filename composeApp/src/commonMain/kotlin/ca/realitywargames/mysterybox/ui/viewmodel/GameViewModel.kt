@@ -5,10 +5,10 @@ import ca.realitywargames.mysterybox.data.di.AppContainer
 import ca.realitywargames.mysterybox.shared.models.Accusation
 import ca.realitywargames.mysterybox.shared.models.AssignedCharacter
 import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
-import ca.realitywargames.mysterybox.shared.models.Clue
 import ca.realitywargames.mysterybox.shared.models.Evidence
 import ca.realitywargames.mysterybox.shared.models.GamePhase
 import ca.realitywargames.mysterybox.shared.models.GameState
+import ca.realitywargames.mysterybox.shared.models.GameStateSection
 import ca.realitywargames.mysterybox.shared.models.Party
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,8 +36,6 @@ class GameViewModel : BaseViewModel() {
     private val _availableEvidence = MutableStateFlow<List<Evidence>>(emptyList())
     val availableEvidence: StateFlow<List<Evidence>> = _availableEvidence.asStateFlow()
 
-    private val _clues = MutableStateFlow<List<Clue>>(emptyList())
-    val clues: StateFlow<List<Clue>> = _clues.asStateFlow()
 
     private val _accusations = MutableStateFlow<List<Accusation>>(emptyList())
     val accusations: StateFlow<List<Accusation>> = _accusations.asStateFlow()
@@ -53,49 +51,36 @@ class GameViewModel : BaseViewModel() {
                         evidence = listOf(
                             Evidence(
                                 id = "evidence1",
-                                title = "Bloody Knife",
+                                name = "Bloody Knife",
                                 description = "A knife found in the study with blood stains",
-                                discoveredAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                                discoveredBy = "detective"
-                            )
-                        ),
-                        clues = listOf(
-                            Clue(
-                                id = "clue1",
-                                title = "Suspicious Footprint",
-                                description = "A muddy footprint leading to the garden",
-                                hint = "Check the garden for more clues",
-                                revealedAt = "2024-01-15T10:30:00Z", // ISO 8601 format
-                                revealedTo = listOf("detective", "witness1")
+                                imagePath = "/images/bloody-knife.jpg",
+                                discoveredAt = "2024-01-15T10:30:00Z" // ISO 8601 format
                             )
                         ),
                         accusations = emptyList(),
-                        phaseStartTime = "2024-01-15T10:30:00Z" // ISO 8601 format
+                        phaseStartTime = "2024-01-15T10:30:00Z", // ISO 8601 format
+                        unlockedSections = listOf(GameStateSection.MYSTERY_INFO, GameStateSection.CHARACTER_INFO, GameStateSection.EVIDENCE)
                     )
 
                     _gameState.value = mockGameState
                     _availableEvidence.value = mockGameState.evidence
-                    _clues.value = mockGameState.clues
                     _accusations.value = mockGameState.accusations
 
                     // Mock current phase
                     val mockPhase = GamePhase(
                         id = "phase1",
                         name = "The Murder",
-                        description = "The body has been discovered in the study",
                         order = 1,
-                        durationMinutes = 30,
                         instructions = listOf(
-                            "Gather all suspects in the study",
-                            "Examine the body and crime scene",
-                            "Begin questioning witnesses"
+                            "Gather in the main hall",
+                            "Listen to the host's announcement", 
+                            "Begin asking initial questions"
                         ),
                         hostInstructions = listOf(
-                            "Read the murder announcement",
-                            "Guide players through evidence discovery"
-                        ),
-                        isInteractive = true,
-                        requiresHostAction = true
+                            "Describe the scene dramatically",
+                            "Distribute initial clues",
+                            "Answer questions about the academy"
+                        )
                     )
 
                     _currentPhase.value = mockPhase
@@ -144,35 +129,23 @@ class GameViewModel : BaseViewModel() {
             GamePhase(
                 id = "phase1",
                 name = "The Murder",
-                description = "The body has been discovered",
                 order = 1,
-                durationMinutes = 30,
                 instructions = listOf("Examine the crime scene"),
-                hostInstructions = listOf("Read the murder announcement"),
-                isInteractive = true,
-                requiresHostAction = true
+                hostInstructions = listOf("Read the murder announcement")
             ),
             GamePhase(
                 id = "phase2",
                 name = "Investigation",
-                description = "Gather evidence and question suspects",
                 order = 2,
-                durationMinutes = 45,
                 instructions = listOf("Search for clues", "Interview witnesses"),
-                hostInstructions = listOf("Facilitate player interactions"),
-                isInteractive = true,
-                requiresHostAction = false
+                hostInstructions = listOf("Facilitate player interactions")
             ),
             GamePhase(
                 id = "phase3",
                 name = "The Resolution",
-                description = "Reveal the killer and solve the mystery",
                 order = 3,
-                durationMinutes = 30,
                 instructions = listOf("Make your final accusation"),
-                hostInstructions = listOf("Reveal the solution"),
-                isInteractive = true,
-                requiresHostAction = true
+                hostInstructions = listOf("Reveal the solution")
             )
         )
 
@@ -197,7 +170,6 @@ class GameViewModel : BaseViewModel() {
         _gameState.value = null
         _userCharacter.value = null
         _availableEvidence.value = emptyList()
-        _clues.value = emptyList()
         _accusations.value = emptyList()
     }
 }
