@@ -5,8 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import ca.realitywargames.mysterybox.ui.navigation.NavigationGraph
-import ca.realitywargames.mysterybox.ui.theme.MysteryBoxTheme
+import ca.realitywargames.mysterybox.core.navigation.NavigationGraph
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
