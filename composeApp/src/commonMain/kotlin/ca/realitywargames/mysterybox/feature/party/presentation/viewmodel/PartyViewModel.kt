@@ -1,134 +1,249 @@
 package ca.realitywargames.mysterybox.feature.party.presentation.viewmodel
 
-import androidx.lifecycle.viewModelScope
-import ca.realitywargames.mysterybox.core.presentation.viewmodel.BaseViewModel
 import ca.realitywargames.mysterybox.core.data.di.AppContainer
+import ca.realitywargames.mysterybox.core.presentation.state.AsyncState
+import ca.realitywargames.mysterybox.core.presentation.viewmodel.MviViewModel
+import ca.realitywargames.mysterybox.feature.party.presentation.action.PartyAction
+import ca.realitywargames.mysterybox.feature.party.presentation.action.PartySectionType
+import ca.realitywargames.mysterybox.feature.party.presentation.effect.PartySideEffect
+import ca.realitywargames.mysterybox.feature.party.presentation.state.PartyUiState
 import ca.realitywargames.mysterybox.shared.models.CreatePartyRequest
 import ca.realitywargames.mysterybox.shared.models.JoinPartyRequest
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.shared.models.Party
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
-class PartyViewModel : BaseViewModel() {
+class PartyViewModel : MviViewModel<PartyUiState, PartyAction, PartySideEffect>() {
 
     private val partyRepository = AppContainer.partyRepository
     private val mysteryRepository = AppContainer.mysteryRepository
 
-    private val _userParties = MutableStateFlow<List<Party>>(emptyList())
-    val userParties: StateFlow<List<Party>> = _userParties.asStateFlow()
-
-    private val _selectedParty = MutableStateFlow<Party?>(null)
-    val selectedParty: StateFlow<Party?> = _selectedParty.asStateFlow()
-
-    private val _isCreatingParty = MutableStateFlow(false)
-    val isCreatingParty: StateFlow<Boolean> = _isCreatingParty.asStateFlow()
-
-    private val _isJoiningParty = MutableStateFlow(false)
-    val isJoiningParty: StateFlow<Boolean> = _isJoiningParty.asStateFlow()
-
-    private val mysteryPackages: MutableMap<String, MysteryPackage> = mutableMapOf()
+    override fun initialState(): PartyUiState = PartyUiState()
 
     init {
-        loadUserParties()
+        onAction(PartyAction.LoadUserParties)
     }
 
-    fun loadUserParties() = launchWithLoading {
-        runCatching { partyRepository.getUserParties() }
-            .onSuccess { parties ->
-                _userParties.value = parties
+    override fun handleAction(action: PartyAction) {
+        when (action) {
+            is PartyAction.LoadUserParties -> loadUserParties()
+            is PartyAction.RefreshParties -> loadUserParties(isRefresh = true)
+            is PartyAction.SelectParty -> selectParty(action.party)
+            is PartyAction.ClearSelectedParty -> clearSelectedParty()
+            is PartyAction.CreateParty -> createParty(action)
+            is PartyAction.JoinParty -> joinParty(action)
+            is PartyAction.AdvancePartyPhase -> advancePartyPhase(action.partyId)
+            is PartyAction.NavigateToPartyDetail -> navigateToPartyDetail(action.party)
+            is PartyAction.NavigateToPartySection -> navigateToPartySection(action.party, action.section)
+            is PartyAction.ClearError -> clearErrors()
+        }
+    }
+
+    private fun loadUserParties(isRefresh: Boolean = false) {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(loadPartiesState = AsyncState(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(
+                        loadPartiesState = AsyncState(error = error)
+                    ).also {
+                        emitSideEffect(PartySideEffect.ShowErrorMessage("Failed to load parties: $error"))
+                    }
+                }
+            ) {
+                val parties = partyRepository.getUserParties()
+                
                 // Load mystery packages for each party
-                loadMysteryPackages(parties.map { it.mysteryPackageId }.distinct())
+                val mysteryPackageIds = parties.map { it.mysteryPackageId }.distinct()
+                val mysteryPackages = loadMysteryPackages(mysteryPackageIds)
+                
+                updateState {
+                    copy(
+                        userParties = parties,
+                        mysteryPackages = mysteryPackages,
+                        loadPartiesState = AsyncState()
+                    )
+                }
+                
+                if (isRefresh) {
+                    emitSideEffect(PartySideEffect.ShowToast("Parties refreshed"))
+                }
             }
-            .onFailure { _ ->
-                // Handle error
-            }
+        }
     }
 
-    private suspend fun loadMysteryPackages(mysteryPackageIds: List<String>) =
+    private suspend fun loadMysteryPackages(mysteryPackageIds: List<String>): Map<String, MysteryPackage> {
+        val packages = mutableMapOf<String, MysteryPackage>()
+        
         mysteryPackageIds.forEach { mysteryId ->
-            if (!mysteryPackages.containsKey(mysteryId)) {
-                runCatching { mysteryRepository.getMysteryPackage(mysteryId) }
-                    .onSuccess { pkg -> mysteryPackages[mysteryId] = pkg }
-                    .onFailure { _ -> /* ignore load failure for cache */ }
+            runCatching { 
+                mysteryRepository.getMysteryPackage(mysteryId) 
+            }.onSuccess { pkg -> 
+                packages[mysteryId] = pkg 
             }
         }
-
-    fun getMysteryPackageForParty(mysteryPackageId: String): MysteryPackage? =
-        mysteryPackages[mysteryPackageId]
-
-    fun selectParty(party: Party) {
-        _selectedParty.update { party }
+        
+        return packages
     }
 
-    fun createParty(
-        mysteryPackageId: String,
-        title: String,
-        description: String,
-        scheduledDate: Instant,
-        maxGuests: Int
-    ) = viewModelScope.launch {
-        try {
-            _isCreatingParty.value = true
-            val request = CreatePartyRequest(
-                mysteryPackageId = mysteryPackageId,
-                title = title,
-                description = description,
-                scheduledDate = scheduledDate.toString(),
-                maxGuests = maxGuests
+    private fun selectParty(party: Party) {
+        updateState { 
+            copy(selectedParty = party) 
+        }
+    }
+
+    private fun clearSelectedParty() {
+        updateState { 
+            copy(selectedParty = null) 
+        }
+    }
+
+    private fun createParty(action: PartyAction.CreateParty) {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(createPartyState = AsyncState(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(
+                        createPartyState = AsyncState(error = error)
+                    ).also {
+                        emitSideEffect(PartySideEffect.ShowErrorMessage("Failed to create party: $error"))
+                    }
+                }
+            ) {
+                val request = CreatePartyRequest(
+                    mysteryPackageId = action.mysteryPackageId,
+                    title = action.title,
+                    description = action.description,
+                    scheduledDate = action.scheduledDate.toString(),
+                    maxGuests = action.maxGuests
+                )
+
+                val party = partyRepository.createParty(request)
+                
+                updateState {
+                    copy(
+                        selectedParty = party,
+                        createPartyState = AsyncState()
+                    )
+                }
+                
+                // Reload parties to get the updated list
+                onAction(PartyAction.LoadUserParties)
+                
+                emitSideEffect(PartySideEffect.PartyCreatedSuccessfully)
+                emitSideEffect(PartySideEffect.NavigateToPartyDetail(party.id))
+            }
+        }
+    }
+
+    private fun joinParty(action: PartyAction.JoinParty) {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(joinPartyState = AsyncState(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(
+                        joinPartyState = AsyncState(error = error)
+                    ).also {
+                        emitSideEffect(PartySideEffect.ShowErrorMessage("Failed to join party: $error"))
+                    }
+                }
+            ) {
+                val request = JoinPartyRequest(inviteCode = action.inviteCode)
+                val party = partyRepository.joinParty(request)
+                
+                updateState {
+                    copy(
+                        selectedParty = party,
+                        joinPartyState = AsyncState()
+                    )
+                }
+                
+                // Reload parties to get the updated list
+                onAction(PartyAction.LoadUserParties)
+                
+                emitSideEffect(PartySideEffect.PartyJoinedSuccessfully)
+                emitSideEffect(PartySideEffect.NavigateToPartyDetail(party.id))
+            }
+        }
+    }
+
+    private fun advancePartyPhase(partyId: String) {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(advancePhaseState = AsyncState(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(
+                        advancePhaseState = AsyncState(error = error)
+                    ).also {
+                        emitSideEffect(PartySideEffect.ShowErrorMessage("Failed to advance party phase: $error"))
+                    }
+                }
+            ) {
+                val updatedParty = partyRepository.advancePartyPhase(partyId)
+                
+                updateState {
+                    copy(
+                        selectedParty = updatedParty,
+                        advancePhaseState = AsyncState()
+                    )
+                }
+                
+                // Reload parties to get the updated list
+                onAction(PartyAction.LoadUserParties)
+                
+                emitSideEffect(PartySideEffect.PartyPhaseAdvanced)
+                emitSideEffect(PartySideEffect.ShowSuccessMessage("Party phase advanced successfully"))
+            }
+        }
+    }
+
+    private fun navigateToPartyDetail(party: Party) {
+        selectParty(party)
+        emitSideEffect(PartySideEffect.NavigateToPartyDetail(party.id))
+    }
+    
+    private fun navigateToPartySection(party: Party, section: PartySectionType) {
+        selectParty(party)
+        when (section) {
+            PartySectionType.INVITE -> 
+                emitSideEffect(PartySideEffect.NavigateToPartyInvite(party.id))
+            PartySectionType.INSTRUCTIONS -> 
+                emitSideEffect(PartySideEffect.NavigateToPartyInstructions(party.id))
+            PartySectionType.PHASE_INSTRUCTIONS -> 
+                emitSideEffect(PartySideEffect.NavigateToPartyPhaseInstructions(party.id))
+            PartySectionType.OBJECTIVES -> 
+                emitSideEffect(PartySideEffect.NavigateToPartyObjectives(party.id))
+            PartySectionType.CHARACTERS -> 
+                emitSideEffect(PartySideEffect.NavigateToPartyCharacters(party.id))
+            PartySectionType.INVENTORY -> 
+                emitSideEffect(PartySideEffect.NavigateToPartyInventory(party.id))
+            PartySectionType.EVIDENCE -> 
+                emitSideEffect(PartySideEffect.NavigateToPartyEvidence(party.id))
+            PartySectionType.SOLUTION -> 
+                emitSideEffect(PartySideEffect.NavigateToPartySolution(party.id))
+            PartySectionType.PARTY_DETAIL -> 
+                emitSideEffect(PartySideEffect.NavigateToPartyDetail(party.id))
+        }
+    }
+
+    private fun clearErrors() {
+        updateState {
+            copy(
+                loadPartiesState = loadPartiesState.copy(error = null),
+                createPartyState = createPartyState.copy(error = null),
+                joinPartyState = joinPartyState.copy(error = null),
+                advancePhaseState = advancePhaseState.copy(error = null)
             )
-
-            runCatching { partyRepository.createParty(request) }
-                .onSuccess { party ->
-                    loadUserParties()
-                    _selectedParty.value = party
-                }
-                .onFailure { _ ->
-                    // Handle error
-                }
-        } finally {
-            _isCreatingParty.value = false
         }
     }
 
-    fun joinParty(inviteCode: String, name: String, email: String) = viewModelScope.launch {
-        try {
-            _isJoiningParty.value = true
-            val request = JoinPartyRequest(
-                inviteCode = inviteCode,
-            )
-
-            runCatching { partyRepository.joinParty(request) }
-                .onSuccess { party ->
-                    loadUserParties()
-                    _selectedParty.value = party
-                }
-                .onFailure { _ ->
-                    // Handle error
-                }
-        } finally {
-            _isJoiningParty.value = false
-        }
-    }
-
-    fun advancePartyPhase(partyId: String) = launchWithLoading {
-        runCatching { partyRepository.advancePartyPhase(partyId) }
-            .onSuccess { updatedParty ->
-                _selectedParty.value = updatedParty
-                loadUserParties()
-            }
-            .onFailure { _ ->
-                // Handle error
-            }
-    }
-
-    fun clearSelectedParty() {
-        _selectedParty.value = null
-    }
 }

@@ -33,7 +33,7 @@ import ca.realitywargames.mysterybox.core.data.network.serverBaseUrl
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.feature.mystery.ui.component.MysteryInfoRow
 import ca.realitywargames.mysterybox.core.ui.component.NetworkImage
-import ca.realitywargames.mysterybox.core.navigation.MysteryDetailRoute
+import ca.realitywargames.mysterybox.feature.mystery.navigation.MysteryDetailRoute
 import ca.realitywargames.mysterybox.core.data.state.UiState
 import ca.realitywargames.mysterybox.feature.mystery.presentation.viewmodel.MysteryListViewModel
 

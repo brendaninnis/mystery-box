@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,8 +37,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ca.realitywargames.mysterybox.feature.party.ui.component.PartyCard
-import ca.realitywargames.mysterybox.core.navigation.PartyDetailRoute
+import ca.realitywargames.mysterybox.feature.party.navigation.PartyDetailRoute
 import ca.realitywargames.mysterybox.feature.party.presentation.viewmodel.PartyViewModel
+import ca.realitywargames.mysterybox.feature.party.presentation.action.PartyAction
+import ca.realitywargames.mysterybox.feature.party.presentation.effect.PartySideEffect
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
@@ -46,9 +49,31 @@ fun PartiesScreen(
     navController: NavHostController,
     viewModel: PartyViewModel
 ) {
-    val userParties by viewModel.userParties.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     var inviteCode by remember { mutableStateOf("") }
+    
+    // Handle side effects
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is PartySideEffect.NavigateToPartyDetail -> {
+                    navController.navigate(PartyDetailRoute(effect.partyId))
+                }
+                is PartySideEffect.ShowErrorMessage -> {
+                    // Handle error display (could show snackbar, etc.)
+                }
+                is PartySideEffect.ShowSuccessMessage -> {
+                    // Handle success message
+                }
+                is PartySideEffect.ShowToast -> {
+                    // Handle toast message
+                }
+                else -> {
+                    // Handle other effects if needed
+                }
+            }
+        }
+    }
     var isJoining by remember { mutableStateOf(false) }
 
     Column(
@@ -60,7 +85,7 @@ fun PartiesScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             when {
-                isLoading -> {
+                uiState.loadPartiesState.isLoading -> {
                     item {
                         Box(
                             modifier = Modifier
@@ -72,7 +97,7 @@ fun PartiesScreen(
                         }
                     }
                 }
-                userParties.isEmpty() -> {
+                uiState.userParties.isEmpty() -> {
                     item {
                         Card {
                             Column(
@@ -97,13 +122,12 @@ fun PartiesScreen(
                     }
                 }
                 else -> {
-                    items(userParties) { party ->
+                    items(uiState.userParties) { party ->
                         PartyCard(
                             party = party,
-                            mysteryPackage = viewModel.getMysteryPackageForParty(party.mysteryPackageId),
+                            mysteryPackage = uiState.getMysteryPackageForParty(party.mysteryPackageId),
                             onClick = {
-                                viewModel.selectParty(party)
-                                navController.navigate(PartyDetailRoute(party.id))
+                                viewModel.onAction(PartyAction.NavigateToPartyDetail(party))
                             },
                         )
                     }

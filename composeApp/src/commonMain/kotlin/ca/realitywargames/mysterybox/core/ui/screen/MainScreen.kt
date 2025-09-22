@@ -31,6 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import ca.realitywargames.mysterybox.core.navigation.NavRoutes
+import ca.realitywargames.mysterybox.feature.profile.navigation.LoginRoute
+import ca.realitywargames.mysterybox.feature.profile.navigation.SettingsRoute
 import ca.realitywargames.mysterybox.feature.mystery.ui.screen.MysteriesScreen
 import ca.realitywargames.mysterybox.feature.party.ui.screen.PartiesScreen
 import ca.realitywargames.mysterybox.feature.profile.ui.screen.ProfileScreen
@@ -100,7 +102,7 @@ fun MainScreen(
                 ),
                 actions = {
                     IconButton(onClick = {
-                        navController.navigate(NavRoutes.SETTINGS)
+                        navController.navigate(SettingsRoute)
                     }) {
                         Icon(
                             Icons.Default.Settings,
@@ -121,7 +123,7 @@ fun MainScreen(
                         }
                     } else {
                         IconButton(onClick = {
-                            navController.navigate(NavRoutes.LOGIN)
+                            navController.navigate(LoginRoute)
                         }) {
                             Icon(
                                 Icons.Default.Person,

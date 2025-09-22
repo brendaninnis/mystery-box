@@ -30,6 +30,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ca.realitywargames.mysterybox.core.navigation.NavRoutes
+import ca.realitywargames.mysterybox.feature.profile.navigation.LoginRoute
+import ca.realitywargames.mysterybox.feature.profile.navigation.RegisterRoute
+import ca.realitywargames.mysterybox.feature.profile.navigation.SettingsRoute
 import ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel.UserViewModel
 
 @Composable
@@ -103,7 +106,7 @@ fun ProfileScreen(
                         Icon(Icons.Default.Settings, contentDescription = null)
                     },
                     modifier = Modifier.clickable {
-                        navController.navigate(NavRoutes.SETTINGS)
+                        navController.navigate(SettingsRoute)
                     }
                 )
             }
@@ -138,7 +141,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { navController.navigate(NavRoutes.REGISTER) },
+                onClick = { navController.navigate(RegisterRoute) },
                 modifier = Modifier.fillMaxWidth(0.8f)
             ) {
                 Text("Create Account")
@@ -147,7 +150,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
-                onClick = { navController.navigate(NavRoutes.LOGIN) },
+                onClick = { navController.navigate(LoginRoute) },
                 modifier = Modifier.fillMaxWidth(0.8f)
             ) {
                 Text("Sign In")
