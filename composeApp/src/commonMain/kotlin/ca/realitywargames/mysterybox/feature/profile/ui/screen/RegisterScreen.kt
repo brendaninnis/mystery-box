@@ -24,6 +24,7 @@ import ca.realitywargames.mysterybox.feature.profile.ui.component.ErrorText
 import ca.realitywargames.mysterybox.feature.profile.ui.component.NameTextField
 import ca.realitywargames.mysterybox.feature.profile.ui.component.PasswordTextField
 import ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel.UserViewModel
+import ca.realitywargames.mysterybox.shared.validation.FormFieldValidator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,7 +97,7 @@ fun RegisterScreen(
                 imeAction = ImeAction.Done,
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        if (isFormValid(name, email, password)) {
+                        if (FormFieldValidator.validateRegisterForm(email, password, name)) {
                             userViewModel.register(email.trim(), password, name.trim())
                         }
                         focusManager.clearFocus()
@@ -112,7 +113,7 @@ fun RegisterScreen(
                 onClick = {
                     userViewModel.register(email.trim(), password, name.trim())
                 },
-                enabled = !isAuthenticating && isFormValid(name, email, password),
+                enabled = !isAuthenticating && FormFieldValidator.validateRegisterForm(email, password, name),
                 isLoading = isAuthenticating
             )
 
@@ -121,19 +122,4 @@ fun RegisterScreen(
             }
         }
     }
-}
-
-// Form validation functions
-private fun isFormValid(name: String, email: String, password: String): Boolean {
-    return name.isNotBlank() &&
-           email.isNotBlank() &&
-           password.isNotBlank() &&
-           isValidEmail(email) &&
-           password.length >= 6 &&
-           name.length >= 2
-}
-
-private fun isValidEmail(email: String): Boolean {
-    val emailRegex = Regex("^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})")
-    return emailRegex.matches(email)
 }

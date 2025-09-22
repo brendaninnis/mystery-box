@@ -31,12 +31,34 @@ fun Route.authRoutes() {
                     call.respond(ApiResponse(success = true, data = user))
                 },
                 onFailure = { error ->
+                    val statusCode = when {
+                        error.message?.contains("email already exists", ignoreCase = true) == true -> 
+                            HttpStatusCode.Conflict
+                        error.message?.contains("required", ignoreCase = true) == true ||
+                        error.message?.contains("valid", ignoreCase = true) == true ||
+                        error.message?.contains("characters", ignoreCase = true) == true ||
+                        error.message?.contains("long", ignoreCase = true) == true -> 
+                            HttpStatusCode.BadRequest
+                        else -> HttpStatusCode.BadRequest
+                    }
+                    
+                    val errorCode = when {
+                        error.message?.contains("email already exists", ignoreCase = true) == true -> 
+                            "EMAIL_ALREADY_EXISTS"
+                        error.message?.contains("required", ignoreCase = true) == true ||
+                        error.message?.contains("valid", ignoreCase = true) == true ||
+                        error.message?.contains("characters", ignoreCase = true) == true ||
+                        error.message?.contains("long", ignoreCase = true) == true -> 
+                            "VALIDATION_ERROR"
+                        else -> "REGISTRATION_FAILED"
+                    }
+                    
                     call.respond(
-                        status = HttpStatusCode.BadRequest,
+                        status = statusCode,
                         ApiResponse<User>(
                             success = false,
                             error = ErrorResponse(
-                                code = "REGISTRATION_FAILED",
+                                code = errorCode,
                                 message = error.message ?: "Registration failed"
                             )
                         )
@@ -59,12 +81,34 @@ fun Route.authRoutes() {
                     )
                 },
                 onFailure = { error ->
+                    val statusCode = when {
+                        error.message?.contains("Invalid credentials", ignoreCase = true) == true -> 
+                            HttpStatusCode.Unauthorized
+                        error.message?.contains("required", ignoreCase = true) == true ||
+                        error.message?.contains("valid", ignoreCase = true) == true ||
+                        error.message?.contains("characters", ignoreCase = true) == true ||
+                        error.message?.contains("long", ignoreCase = true) == true -> 
+                            HttpStatusCode.BadRequest
+                        else -> HttpStatusCode.Unauthorized
+                    }
+                    
+                    val errorCode = when {
+                        error.message?.contains("Invalid credentials", ignoreCase = true) == true -> 
+                            "INVALID_CREDENTIALS"
+                        error.message?.contains("required", ignoreCase = true) == true ||
+                        error.message?.contains("valid", ignoreCase = true) == true ||
+                        error.message?.contains("characters", ignoreCase = true) == true ||
+                        error.message?.contains("long", ignoreCase = true) == true -> 
+                            "VALIDATION_ERROR"
+                        else -> "LOGIN_FAILED"
+                    }
+                    
                     call.respond(
-                        status = HttpStatusCode.Unauthorized,
+                        status = statusCode,
                         ApiResponse<LoginResponse>(
                             success = false,
                             error = ErrorResponse(
-                                code = "LOGIN_FAILED",
+                                code = errorCode,
                                 message = error.message ?: "Login failed"
                             )
                         )

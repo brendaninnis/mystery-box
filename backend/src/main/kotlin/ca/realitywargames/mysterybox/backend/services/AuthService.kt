@@ -4,6 +4,8 @@ import ca.realitywargames.mysterybox.backend.repositories.UserRepository
 import ca.realitywargames.mysterybox.shared.models.LoginRequest
 import ca.realitywargames.mysterybox.shared.models.RegisterRequest
 import ca.realitywargames.mysterybox.shared.models.User
+import ca.realitywargames.mysterybox.shared.validation.LoginValidator
+import ca.realitywargames.mysterybox.shared.validation.RegisterValidator
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -24,8 +26,15 @@ class AuthService(
     val algorithm = Algorithm.HMAC256(jwtSecret)
 
     suspend fun register(request: RegisterRequest): Result<User> {
+        // Validate request
+        val validationResults = RegisterValidator.validate(request)
+        if (!validationResults.isValid()) {
+            val firstError = validationResults.getFirstError() ?: "Validation failed"
+            return Result.failure(IllegalArgumentException(firstError))
+        }
+
         // Check if user already exists
-        val existingUser = userRepository.findByEmail(request.email)
+        val existingUser = userRepository.findByEmail(request.email.trim())
         if (existingUser != null) {
             return Result.failure(IllegalArgumentException("User with this email already exists"))
         }
@@ -35,16 +44,23 @@ class AuthService(
 
         // Create user
         val user = userRepository.createUser(
-            email = request.email,
+            email = request.email.trim(),
             passwordHash = passwordHash,
-            name = request.name
+            name = request.name.trim()
         )
 
         return Result.success(user)
     }
 
     suspend fun login(request: LoginRequest): Result<Pair<User, String>> {
-        val user = userRepository.verifyCredentials(request.email, request.password)
+        // Validate request
+        val validationResults = LoginValidator.validate(request)
+        if (!validationResults.isValid()) {
+            val firstError = validationResults.getFirstError() ?: "Validation failed"
+            return Result.failure(IllegalArgumentException(firstError))
+        }
+
+        val user = userRepository.verifyCredentials(request.email.trim(), request.password)
             ?: return Result.failure(IllegalArgumentException("Invalid credentials"))
 
         // Generate JWT token
