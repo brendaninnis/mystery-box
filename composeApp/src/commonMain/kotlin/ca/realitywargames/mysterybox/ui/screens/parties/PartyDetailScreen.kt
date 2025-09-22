@@ -28,11 +28,16 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ca.realitywargames.mysterybox.shared.models.Party
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
+import ca.realitywargames.mysterybox.shared.models.GameStateSection
 import ca.realitywargames.mysterybox.shared.models.PartyStatus
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
 import ca.realitywargames.mysterybox.ui.components.GameActionCard
@@ -47,24 +52,38 @@ fun PartyDetailScreen(
     viewModel: PartyViewModel,
     onBackClick: () -> Unit
 ) {
-    // Mock party data - in real app this would come from the viewModel
-    val mockParty = Party(
-        id = partyId,
-        hostId = "user1",
-        mysteryPackageId = "1",
-        title = "Saturday Night Mystery",
-        description = "Our first murder mystery party!",
-        scheduledDate = "2024-01-20T19:00:00Z",
-        status = PartyStatus.IN_PROGRESS,
-        maxGuests = 6,
-        guests = emptyList(),
-        currentPhaseIndex = 2 // Murder phase
-    )
-
-    val currentPhase = "Murder Investigation" // Mock phase name
+    // Get real party data from the backend
+    val selectedParty by viewModel.selectedParty.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    
+    // Load party data when screen opens
+    LaunchedEffect(partyId) {
+        viewModel.selectParty(partyId)
+    }
+    
+    // Show loading state
+    if (isLoading || selectedParty == null) {
+        BaseScreen(
+            title = "Party Details",
+            onBackClick = onBackClick
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        return
+    }
+    
+    val party = selectedParty!!
+    val currentPhase = "Phase ${party.currentPhaseIndex + 1}" // Real phase based on current index
+    val gameState = party.gameState
+    val unlockedSections = gameState?.unlockedSections ?: emptyList()
 
     BaseScreen(
-        title = mockParty.title,
+        title = party.title,
         onBackClick = onBackClick
     ) {
         Column(
@@ -117,7 +136,7 @@ fun PartyDetailScreen(
                     GameActionCard(
                         title = "Invite",
                         icon = Icons.Default.Person,
-                        isEnabled = mockParty.status == PartyStatus.PLANNED || mockParty.status == PartyStatus.IN_PROGRESS,
+                        isEnabled = party.status == PartyStatus.PLANNED || party.status == PartyStatus.IN_PROGRESS,
                         onClick = {
                             navController.navigate(NavRoutes.partyInvite(partyId))
                         }
@@ -125,58 +144,58 @@ fun PartyDetailScreen(
                 }
 
                 item {
-                    GameActionCard(
-                        title = "Objectives",
-                        icon = Icons.Default.MailOutline,
-                        isEnabled = mockParty.status == PartyStatus.IN_PROGRESS || mockParty.status == PartyStatus.COMPLETED,
-                        onClick = {
-                            navController.navigate(NavRoutes.partyObjectives(partyId))
-                        }
-                    )
+                GameActionCard(
+                    title = "Objectives",
+                    icon = Icons.Default.MailOutline,
+                    isEnabled = unlockedSections.contains(GameStateSection.OBJECTIVES),
+                    onClick = {
+                        navController.navigate(NavRoutes.partyObjectives(partyId))
+                    }
+                )
                 }
 
                 item {
-                    GameActionCard(
-                        title = "Characters",
-                        icon = Icons.Default.Face,
-                        isEnabled = mockParty.status == PartyStatus.IN_PROGRESS || mockParty.status == PartyStatus.COMPLETED,
-                        onClick = {
-                            navController.navigate(NavRoutes.partyCharacters(partyId))
-                        }
-                    )
+                GameActionCard(
+                    title = "Characters",
+                    icon = Icons.Default.Face,
+                    isEnabled = unlockedSections.contains(GameStateSection.CHARACTER_INFO),
+                    onClick = {
+                        navController.navigate(NavRoutes.partyCharacters(partyId))
+                    }
+                )
                 }
 
                 item {
-                    GameActionCard(
-                        title = "Inventory",
-                        icon = Icons.Default.ShoppingCart,
-                        isEnabled = mockParty.status == PartyStatus.IN_PROGRESS || mockParty.status == PartyStatus.COMPLETED,
-                        onClick = {
-                            navController.navigate(NavRoutes.partyInventory(partyId))
-                        }
-                    )
+                GameActionCard(
+                    title = "Inventory",
+                    icon = Icons.Default.ShoppingCart,
+                    isEnabled = unlockedSections.contains(GameStateSection.INVENTORY),
+                    onClick = {
+                        navController.navigate(NavRoutes.partyInventory(partyId))
+                    }
+                )
                 }
 
                 item {
-                    GameActionCard(
-                        title = "Evidence",
-                        icon = Icons.Default.Search,
-                        isEnabled = mockParty.currentPhaseIndex >= 1, // Available after murder phase
-                        onClick = {
-                            navController.navigate(NavRoutes.partyEvidence(partyId))
-                        }
-                    )
+                GameActionCard(
+                    title = "Evidence",
+                    icon = Icons.Default.Search,
+                    isEnabled = unlockedSections.contains(GameStateSection.EVIDENCE),
+                    onClick = {
+                        navController.navigate(NavRoutes.partyEvidence(partyId))
+                    }
+                )
                 }
 
                 item {
-                    GameActionCard(
-                        title = "Solution",
-                        icon = Icons.Default.CheckCircle,
-                        isEnabled = mockParty.currentPhaseIndex >= 3, // Available after investigation phase
-                        onClick = {
-                            navController.navigate(NavRoutes.partySolution(partyId))
-                        }
-                    )
+                GameActionCard(
+                    title = "Solution",
+                    icon = Icons.Default.CheckCircle,
+                    isEnabled = unlockedSections.contains(GameStateSection.SOLUTION),
+                    onClick = {
+                        navController.navigate(NavRoutes.partySolution(partyId))
+                    }
+                )
                 }
             }
         }

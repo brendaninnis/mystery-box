@@ -1,6 +1,7 @@
 package ca.realitywargames.mysterybox.ui.screens.parties
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,14 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -42,24 +37,34 @@ fun PartyObjectivesScreen(
     viewModel: PartyViewModel,
     onBackClick: () -> Unit
 ) {
-    // Mock current user's objectives - in real app this would come from the game state
-    val mockObjectives = listOf(
-        Objective(
-            id = "obj1",
-            description = "Investigate the scene thoroughly and look for any clues",
-            completedAt = "2024-01-15T11:30:00Z" // Completed
-        ),
-        Objective(
-            id = "obj2",
-            description = "Search your assigned area for evidence and interview witnesses",
-            completedAt = null // Not completed
-        ),
-        Objective(
-            id = "obj3",
-            description = "Make your final accusation with evidence to support it",
-            completedAt = null // Not completed
-        )
-    )
+    // Get real party data from the backend
+    val selectedParty by viewModel.selectedParty.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    
+    // Load party data when screen opens
+    LaunchedEffect(partyId) {
+        viewModel.selectParty(partyId)
+    }
+    
+    // Show loading state
+    if (isLoading || selectedParty == null) {
+        BaseScreen(
+            title = "Your Objectives",
+            onBackClick = onBackClick
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        return
+    }
+    
+    val party = selectedParty!!
+    // Get objectives from the current user's guest data (assuming first guest for demo)
+    val userObjectives = party.guests.firstOrNull()?.objectives ?: emptyList()
 
     BaseScreen(
         title = "Your Objectives",
@@ -68,98 +73,41 @@ fun PartyObjectivesScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Progress summary
             item {
-                val completedCount = mockObjectives.count { it.completedAt != null }
-                val totalCount = mockObjectives.size
-                val progressPercentage = if (totalCount > 0) completedCount.toFloat() / totalCount else 0f
-
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Progress",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "$completedCount of $totalCount completed",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Text(
-                                text = "${(progressPercentage * 100).toInt()}%",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        LinearProgressIndicator(
-                            progress = { progressPercentage },
-                            modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.primary,
-                            trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                        )
-                    }
-                }
-            }
-
-            // Objectives list
-            item {
-                Text(
-                    text = "Current Objectives",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 4.dp)
+                ProgressSummaryCard(
+                    completed = userObjectives.count { it.completedAt != null },
+                    total = userObjectives.size
                 )
             }
 
-            items(mockObjectives) { objective ->
-                ObjectiveCard(
-                    objective = objective,
-                    onToggleComplete = { 
-                        // TODO: Implement objective completion toggle
-                        // viewModel.toggleObjectiveComplete(objective.id)
-                    }
-                )
-            }
-
-            // Tips section
-            item {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+            if (userObjectives.isEmpty()) {
+                // Empty state if no objectives
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(
-                            text = "💡 Tips",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Complete objectives by participating actively in the mystery. Talk to other players, examine evidence, and follow the game phases. Some objectives may complete automatically as you progress through the story.",
+                            text = "No objectives yet. They will appear as the game progresses!",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+                }
+            } else {
+                // Objectives list
+                items(userObjectives) { objective ->
+                    ObjectiveCard(
+                        objective = objective,
+                        onClick = {
+                            // TODO: Handle objective details/interaction
+                        }
+                    )
                 }
             }
         }
@@ -167,9 +115,60 @@ fun PartyObjectivesScreen(
 }
 
 @Composable
+private fun ProgressSummaryCard(
+    completed: Int,
+    total: Int
+) {
+    val progressPercentage = if (total > 0) completed.toFloat() / total else 0f
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Progress",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "$completed of $total completed",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = "${(progressPercentage * 100).toInt()}%",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            LinearProgressIndicator(
+                progress = { progressPercentage },
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            )
+        }
+    }
+}
+
+@Composable
 private fun ObjectiveCard(
     objective: Objective,
-    onToggleComplete: (String) -> Unit
+    onClick: () -> Unit
 ) {
     val isCompleted = objective.completedAt != null
     
@@ -179,19 +178,18 @@ private fun ObjectiveCard(
                 MaterialTheme.colorScheme.secondaryContainer 
             else 
                 MaterialTheme.colorScheme.surface
-        )
+        ),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.Top
         ) {
             Icon(
                 imageVector = if (isCompleted) Icons.Filled.CheckCircle else Icons.Outlined.AddCircle,
                 contentDescription = if (isCompleted) "Completed" else "Not completed",
                 tint = if (isCompleted) 
-                    MaterialTheme.colorScheme.secondary 
+                    MaterialTheme.colorScheme.primary 
                 else 
                     MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp)
@@ -199,23 +197,25 @@ private fun ObjectiveCard(
             
             Spacer(modifier = Modifier.width(12.dp))
             
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = objective.description,
                     style = MaterialTheme.typography.bodyLarge,
                     textDecoration = if (isCompleted) TextDecoration.LineThrough else TextDecoration.None,
                     color = if (isCompleted) 
-                        MaterialTheme.colorScheme.onSurfaceVariant 
+                        MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     else 
                         MaterialTheme.colorScheme.onSurface
                 )
                 
-                if (isCompleted) {
+                if (isCompleted && objective.completedAt != null) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "✓ Completed",
+                        text = "Completed",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
                     )
                 }

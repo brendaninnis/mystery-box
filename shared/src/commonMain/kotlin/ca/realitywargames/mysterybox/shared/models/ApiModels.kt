@@ -48,9 +48,7 @@ data class LoginResponse(
 
 @Serializable
 data class JoinPartyRequest(
-    val inviteCode: String,
-    val name: String,
-    val email: String
+    val inviteCode: String
 )
 
 @Serializable
@@ -59,7 +57,8 @@ data class CreatePartyRequest(
     val title: String,
     val description: String,
     val scheduledDate: String, // ISO 8601 format
-    val maxGuests: Int
+    val maxGuests: Int,
+    val address: String? = null
 )
 
 @Serializable

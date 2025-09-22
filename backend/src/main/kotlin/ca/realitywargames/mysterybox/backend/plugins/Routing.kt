@@ -2,6 +2,7 @@ package ca.realitywargames.mysterybox.backend.plugins
 
 import ca.realitywargames.mysterybox.backend.routes.authRoutes
 import ca.realitywargames.mysterybox.backend.routes.mysteryRoutes
+import ca.realitywargames.mysterybox.backend.routes.partyRoutes
 import io.ktor.server.application.Application
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
@@ -11,6 +12,7 @@ fun Application.configureRouting() {
         route("/api/v1") {
             authRoutes()
             mysteryRoutes()
+            partyRoutes()
         }
     }
 }

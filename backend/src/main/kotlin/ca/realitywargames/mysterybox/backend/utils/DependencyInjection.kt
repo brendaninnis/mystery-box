@@ -1,9 +1,11 @@
 package ca.realitywargames.mysterybox.backend.utils
 
 import ca.realitywargames.mysterybox.backend.repositories.MysteryRepository
+import ca.realitywargames.mysterybox.backend.repositories.PartyRepository
 import ca.realitywargames.mysterybox.backend.repositories.UserRepository
 import ca.realitywargames.mysterybox.backend.services.AuthService
 import ca.realitywargames.mysterybox.backend.services.MysteryService
+import ca.realitywargames.mysterybox.backend.services.PartyService
 import com.auth0.jwt.algorithms.Algorithm
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.config.*
@@ -14,10 +16,12 @@ object DependencyInjection {
     // Repositories
     val userRepository = UserRepository()
     val mysteryRepository = MysteryRepository()
+    val partyRepository = PartyRepository()
 
     // Services
     val authService = AuthService(userRepository, config)
     val mysteryService = MysteryService(mysteryRepository)
+    val partyService = PartyService(partyRepository)
 
     // JWT Algorithm for auth plugin
     val algorithm = Algorithm.HMAC256(

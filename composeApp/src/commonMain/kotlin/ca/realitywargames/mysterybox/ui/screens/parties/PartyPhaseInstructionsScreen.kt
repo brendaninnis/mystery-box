@@ -25,12 +25,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ca.realitywargames.mysterybox.shared.models.GamePhase
+import androidx.compose.material3.CircularProgressIndicator
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
 import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
 
@@ -42,27 +45,52 @@ fun PartyPhaseInstructionsScreen(
     viewModel: PartyViewModel,
     onBackClick: () -> Unit
 ) {
-    // Mock data - in real app this would come from the party/game state
+    // Get real party data from the backend
+    val selectedParty by viewModel.selectedParty.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    
+    // Load party data when screen opens
+    LaunchedEffect(partyId) {
+        viewModel.selectParty(partyId)
+    }
+    
+    // Show loading state
+    if (isLoading || selectedParty == null) {
+        BaseScreen(
+            title = "Phase Instructions",
+            onBackClick = onBackClick
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        return
+    }
+    
+    val party = selectedParty!!
+    // Get mystery package for current phase
+    val mysteryPackage = viewModel.getMysteryPackageForParty(party.mysteryPackageId)
+    val currentPhase = mysteryPackage?.phases?.getOrNull(party.currentPhaseIndex)
+    
+    if (currentPhase == null) {
+        BaseScreen(
+            title = "Phase Instructions",
+            onBackClick = onBackClick
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Phase information not available")
+            }
+        }
+        return
+    }
+    
     val isHost = true // TODO: Get from user context
-    val currentPhase = GamePhase(
-        id = "phase1",
-        name = "The Discovery",
-        order = 1,
-        instructions = listOf(
-            "Gather in the main hall",
-            "Listen to the host's announcement carefully",
-            "Begin asking initial questions to other guests",
-            "Pay attention to body language and reactions",
-            "Take mental notes of alibis and suspicious behavior"
-        ),
-        hostInstructions = listOf(
-            "Describe the scene dramatically - set the mood",
-            "Distribute initial evidence cards to players",
-            "Answer questions about the academy setting",
-            "Guide players if they seem lost",
-            "Build suspense but don't reveal too much yet"
-        )
-    )
 
     BaseScreen(
         title = "Phase Instructions: ${currentPhase.name}",

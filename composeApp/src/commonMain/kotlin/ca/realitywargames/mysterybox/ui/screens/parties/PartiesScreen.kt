@@ -52,7 +52,6 @@ import ca.realitywargames.mysterybox.data.network.serverBaseUrl
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.shared.models.Party
 import ca.realitywargames.mysterybox.shared.models.PartyStatus
-import ca.realitywargames.mysterybox.shared.models.Difficulty
 import ca.realitywargames.mysterybox.ui.components.NetworkImage
 import ca.realitywargames.mysterybox.ui.navigation.NavRoutes
 import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
@@ -65,30 +64,11 @@ import kotlin.time.Instant
 @Composable
 fun PartyCard(
     party: Party,
+    mysteryPackage: MysteryPackage?,
     onClick: () -> Unit,
-    onStartGame: () -> Unit
 ) {
     val localDateTime = Instant.parse(party.scheduledDate).toLocalDateTime(TimeZone.currentSystemDefault())
     val formattedDate = "${localDateTime.month.name} ${localDateTime.day}, ${localDateTime.year}"
-    
-    // Mock mystery data - in real app this would come from the mystery package
-    val mockMystery = MysteryPackage(
-        id = party.mysteryPackageId,
-        title = "The Haunted Mansion Mystery",
-        description = "A spine-chilling murder mystery set in an old mansion",
-        imagePath = "/images/murder-and-dragons.png",
-        price = 29.99,
-        currency = "USD",
-        durationMinutes = 180,
-        minPlayers = 6,
-        maxPlayers = 12,
-        difficulty = Difficulty.MEDIUM,
-        themes = listOf("Horror", "Victorian"),
-        plotSummary = "The Harrington family gathers for the reading of the will...",
-        characters = emptyList(),
-        phases = emptyList(),
-        isAvailable = true
-    )
 
     Card(
         modifier = Modifier
@@ -99,8 +79,8 @@ fun PartyCard(
         Column {
             // Mystery image
             NetworkImage(
-                url = "$serverBaseUrl${mockMystery.imagePath}",
-                contentDescription = mockMystery.title,
+                url = "$serverBaseUrl${mysteryPackage?.imagePath ?: "/images/mystery-placeholder.jpg"}",
+                contentDescription = mysteryPackage?.title ?: "Mystery Package",
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
@@ -147,7 +127,7 @@ fun PartyCard(
                     Column(modifier = Modifier.weight(1f)) {
                         // Mystery name as title
                         Text(
-                            text = mockMystery.title,
+                            text = mysteryPackage?.title ?: "Mystery Package",
                             style = MaterialTheme.typography.headlineSmall
                         )
     
@@ -238,7 +218,7 @@ fun PartyCard(
                             }
                         }
                         PartyStatus.IN_PROGRESS -> {
-                            Button(onClick = onStartGame) {
+                            Button(onClick = onClick) {
                                 Icon(
                                     Icons.Default.PlayArrow,
                                     contentDescription = null,
@@ -325,12 +305,10 @@ fun PartiesScreen(
                     items(userParties) { party ->
                         PartyCard(
                             party = party,
+                            mysteryPackage = viewModel.getMysteryPackageForParty(party.mysteryPackageId),
                             onClick = {
                                 navController.navigate(NavRoutes.partyDetail(party.id))
                             },
-                            onStartGame = {
-                                navController.navigate(NavRoutes.game(party.id))
-                            }
                         )
                     }
                 }
@@ -339,7 +317,7 @@ fun PartiesScreen(
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Join Party Section - at bottom
+        // Join Party Section
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
