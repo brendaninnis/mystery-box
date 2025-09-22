@@ -9,6 +9,7 @@ import ca.realitywargames.mysterybox.shared.models.Party
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -38,41 +39,31 @@ class PartyViewModel : BaseViewModel() {
     }
 
     fun loadUserParties() = launchWithLoading {
-        partyRepository.getUserParties().collect { result ->
-            result.onSuccess { parties ->
+        runCatching { partyRepository.getUserParties() }
+            .onSuccess { parties ->
                 _userParties.value = parties
                 // Load mystery packages for each party
                 loadMysteryPackages(parties.map { it.mysteryPackageId }.distinct())
-            }.onFailure { exception ->
+            }
+            .onFailure { _ ->
                 // Handle error
             }
-        }
     }
 
     private suspend fun loadMysteryPackages(mysteryPackageIds: List<String>) =
         mysteryPackageIds.forEach { mysteryId ->
             if (!mysteryPackages.containsKey(mysteryId)) {
-                mysteryRepository.getMysteryPackage(mysteryId).collect { result ->
-                    result.onSuccess { mysteryPackage ->
-                        mysteryPackages[mysteryId] = mysteryPackage
-                    }.onFailure { exception ->
-                        // Handle error loading mystery package
-                    }
-                }
+                runCatching { mysteryRepository.getMysteryPackage(mysteryId) }
+                    .onSuccess { pkg -> mysteryPackages[mysteryId] = pkg }
+                    .onFailure { _ -> /* ignore load failure for cache */ }
             }
         }
 
     fun getMysteryPackageForParty(mysteryPackageId: String): MysteryPackage? =
         mysteryPackages[mysteryPackageId]
 
-    fun selectParty(partyId: String) = launchWithLoading {
-        partyRepository.getParty(partyId).collect { result ->
-            result.onSuccess { party ->
-                _selectedParty.value = party
-            }.onFailure { exception ->
-                // Handle error
-            }
-        }
+    fun selectParty(party: Party) {
+        _selectedParty.update { party }
     }
 
     fun createParty(
@@ -92,14 +83,14 @@ class PartyViewModel : BaseViewModel() {
                 maxGuests = maxGuests
             )
 
-            partyRepository.createParty(request).collect { result ->
-                result.onSuccess { party ->
-                    loadUserParties() // Refresh the list
+            runCatching { partyRepository.createParty(request) }
+                .onSuccess { party ->
+                    loadUserParties()
                     _selectedParty.value = party
-                }.onFailure { exception ->
+                }
+                .onFailure { _ ->
                     // Handle error
                 }
-            }
         } finally {
             _isCreatingParty.value = false
         }
@@ -112,28 +103,28 @@ class PartyViewModel : BaseViewModel() {
                 inviteCode = inviteCode,
             )
 
-            partyRepository.joinParty(request).collect { result ->
-                result.onSuccess { party ->
-                    loadUserParties() // Refresh the list
+            runCatching { partyRepository.joinParty(request) }
+                .onSuccess { party ->
+                    loadUserParties()
                     _selectedParty.value = party
-                }.onFailure { exception ->
+                }
+                .onFailure { _ ->
                     // Handle error
                 }
-            }
         } finally {
             _isJoiningParty.value = false
         }
     }
 
     fun advancePartyPhase(partyId: String) = launchWithLoading {
-        partyRepository.advancePartyPhase(partyId).collect { result ->
-            result.onSuccess { updatedParty ->
+        runCatching { partyRepository.advancePartyPhase(partyId) }
+            .onSuccess { updatedParty ->
                 _selectedParty.value = updatedParty
-                loadUserParties() // Refresh the list
-            }.onFailure { exception ->
+                loadUserParties()
+            }
+            .onFailure { _ ->
                 // Handle error
             }
-        }
     }
 
     fun clearSelectedParty() {

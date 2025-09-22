@@ -39,12 +39,17 @@ class MysteryListViewModel : BaseViewModel() {
     }
 
     private suspend fun fetchMysteries() {
-        repository.getMysteryPackages().collect { result ->
-            result.onSuccess { response ->
+        runCatching { repository.getMysteryPackages() }
+            .onSuccess { response ->
                 _mysteries.update { UiState.Success(response.items) }
-            }.onFailure { e ->
+            }
+            .onFailure { e ->
                 _mysteries.update { UiState.Error(e.message ?: "Failed to load mysteries") }
             }
-        }
     }
+
+    fun getMysteryById(id: String): MysteryPackage? =
+        (mysteries.value as? UiState.Success<List<MysteryPackage>>)
+            ?.data
+            ?.firstOrNull { it.id == id }
 }

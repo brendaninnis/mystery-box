@@ -5,11 +5,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import ca.realitywargames.mysterybox.ui.screens.MainScreen
 import ca.realitywargames.mysterybox.ui.screens.mysteries.MysteryDetailScreen
@@ -25,23 +23,34 @@ import ca.realitywargames.mysterybox.ui.screens.parties.PartySolutionScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.LoginScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.RegisterScreen
 import ca.realitywargames.mysterybox.ui.screens.profile.SettingsScreen
-import ca.realitywargames.mysterybox.ui.viewmodel.MysteryDetailViewModel
 import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
+import ca.realitywargames.mysterybox.ui.viewmodel.MysteryListViewModel
 import ca.realitywargames.mysterybox.ui.viewmodel.UserViewModel
 
 @Composable
 fun NavigationGraph(
     navController: NavHostController = rememberNavController(),
-    userViewModel: UserViewModel = viewModel { UserViewModel() }
+    userViewModel: UserViewModel = viewModel { UserViewModel() },
+    partyViewModel: PartyViewModel = viewModel { PartyViewModel() },
+    mysteryListViewModel: MysteryListViewModel = viewModel { MysteryListViewModel() },
 ) {
-    val currentUser by userViewModel.currentUser.collectAsState()
-    val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
+    val selectedParty by partyViewModel.selectedParty.collectAsState()
 
     NavHost(
         navController = navController,
         startDestination = NavRoutes.HOME
     ) {
         val onBack: () -> Unit = { navController.safePopBackStack() }
+
+        // Main app screens
+        composable(NavRoutes.HOME) {
+            MainScreen(
+                navController = navController,
+                userViewModel = userViewModel,
+                mysteryListViewModel = mysteryListViewModel,
+                partyViewModel = partyViewModel
+            )
+        }
 
         // Authentication screens - ensure only one instance on stack
         composable(NavRoutes.LOGIN) {
@@ -74,37 +83,6 @@ fun NavigationGraph(
             )
         }
 
-        // Main app screens
-        composable(NavRoutes.HOME) {
-            MainScreen(
-                navController = navController,
-                userViewModel = userViewModel
-            )
-        }
-
-        composable<MysteryDetailRoute> { backStackEntry ->
-            val args = backStackEntry.toRoute<MysteryDetailRoute>()
-            MysteryDetailScreen(
-                mysteryId = args.mysteryId,
-                navController = navController,
-                viewModel = viewModel { MysteryDetailViewModel(args.mysteryId) },
-                onBackClick = onBack
-            )
-        }
-
-        composable(
-            route = NavRoutes.PARTY_DETAIL,
-            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val partyId = "party1" // Default party ID
-            PartyDetailScreen(
-                partyId = partyId,
-                navController = navController,
-                viewModel = viewModel { PartyViewModel() },
-                onBackClick = onBack
-            )
-        }
-
         composable(NavRoutes.SETTINGS) {
             SettingsScreen(
                 userViewModel = userViewModel,
@@ -113,107 +91,94 @@ fun NavigationGraph(
             )
         }
 
+        composable<MysteryDetailRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<MysteryDetailRoute>()
+            val mystery = mysteryListViewModel.getMysteryById(args.mysteryId) ?:
+                throw IllegalArgumentException("Mystery not found: ${args.mysteryId}")
+            MysteryDetailScreen(
+                mystery = mystery,
+                navController = navController,
+                onBackClick = onBack,
+            )
+        }
+
+        composable<PartyDetailRoute> { backStackEntry ->
+            PartyDetailScreen(
+                navController = navController,
+                viewModel = partyViewModel,
+                onBackClick = onBack
+            )
+        }
+
         // Party flow screens
-        composable(
-            route = NavRoutes.PARTY_INVITE,
-            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val partyId = "party1" // Default party ID
+        composable<PartyInviteRoute> { backStackEntry ->
+            val party = selectedParty ?:
+                throw IllegalArgumentException("Party not selected")
             PartyInviteScreen(
-                partyId = partyId,
-                navController = navController,
-                viewModel = viewModel { PartyViewModel() },
+                party = party,
                 onBackClick = onBack
             )
         }
 
-        composable(
-            route = NavRoutes.PARTY_INSTRUCTIONS,
-            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val partyId = "party1" // Default party ID            
+        composable<PartyInstructionsRoute> { backStackEntry ->
+            val party = selectedParty ?:
+            throw IllegalArgumentException("Party not selected")
             PartyInstructionsScreen(
-                partyId = partyId,
-                navController = navController,
-                viewModel = viewModel { PartyViewModel() },
+                party = party,
                 onBackClick = onBack
             )
         }
 
-        composable(
-            route = NavRoutes.PARTY_CHARACTERS,
-            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val partyId = "party1" // Default party ID
+        composable<PartyCharactersRoute> { backStackEntry ->
+            val party = selectedParty ?:
+            throw IllegalArgumentException("Party not selected")
             PartyCharactersScreen(
-                partyId = partyId,
-                navController = navController,
-                viewModel = viewModel { PartyViewModel() },
+                party = party,
                 onBackClick = onBack
             )
         }
 
-        composable(
-            route = NavRoutes.PARTY_INVENTORY,
-            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val partyId = "party1" // Default party ID
+        composable<PartyInventoryRoute> { backStackEntry ->
+            val party = selectedParty ?:
+            throw IllegalArgumentException("Party not selected")
             PartyInventoryScreen(
-                partyId = partyId,
-                navController = navController,
-                viewModel = viewModel { PartyViewModel() },
+                party = party,
                 onBackClick = onBack
             )
         }
 
-        composable(
-            route = NavRoutes.PARTY_EVIDENCE,
-            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val partyId = "party1" // Default party ID
+        composable<PartyEvidenceRoute> { backStackEntry ->
+            val party = selectedParty ?:
+            throw IllegalArgumentException("Party not selected")
             PartyEvidenceScreen(
-                partyId = partyId,
-                navController = navController,
-                viewModel = viewModel { PartyViewModel() },
+                party = party,
                 onBackClick = onBack
             )
         }
 
-        composable(
-            route = NavRoutes.PARTY_SOLUTION,
-            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val partyId = "party1" // Default party ID
+        composable<PartySolutionRoute> { backStackEntry ->
+            val party = selectedParty ?:
+            throw IllegalArgumentException("Party not selected")
             PartySolutionScreen(
-                partyId = partyId,
-                navController = navController,
-                viewModel = viewModel { PartyViewModel() },
+                party = party,
                 onBackClick = onBack
             )
         }
 
-        composable(
-            route = NavRoutes.PARTY_PHASE_INSTRUCTIONS,
-            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val partyId = "party1" // Default party ID
+        composable<PartyPhaseInstructionsRoute> { backStackEntry ->
+            val party = selectedParty ?:
+            throw IllegalArgumentException("Party not selected")
             PartyPhaseInstructionsScreen(
-                partyId = partyId,
-                navController = navController,
-                viewModel = viewModel { PartyViewModel() },
+                party = party,
                 onBackClick = onBack
             )
         }
 
-        composable(
-            route = NavRoutes.PARTY_OBJECTIVES,
-            arguments = listOf(navArgument("partyId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val partyId = "party1" // Default party ID
+        composable<PartyObjectivesRoute> { backStackEntry ->
+            val party = selectedParty ?:
+            throw IllegalArgumentException("Party not selected")
             PartyObjectivesScreen(
-                partyId = partyId,
-                navController = navController,
-                viewModel = viewModel { PartyViewModel() },
+                party = party,
                 onBackClick = onBack
             )
         }

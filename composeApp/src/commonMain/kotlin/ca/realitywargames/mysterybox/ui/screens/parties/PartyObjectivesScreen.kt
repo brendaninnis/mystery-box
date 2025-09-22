@@ -17,37 +17,30 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import ca.realitywargames.mysterybox.shared.models.Objective
+import ca.realitywargames.mysterybox.shared.models.Party
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
-import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PartyObjectivesScreen(
-    partyId: String,
-    navController: NavHostController,
-    viewModel: PartyViewModel,
+    party: Party?,
     onBackClick: () -> Unit
 ) {
-    // Get real party data from the backend
-    val selectedParty by viewModel.selectedParty.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    
-    // Load party data when screen opens
-    LaunchedEffect(partyId) {
-        viewModel.selectParty(partyId)
-    }
-    
-    // Show loading state
-    if (isLoading || selectedParty == null) {
+    if (party == null) {
         BaseScreen(
             title = "Your Objectives",
             onBackClick = onBackClick
@@ -56,13 +49,15 @@ fun PartyObjectivesScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                Text(
+                    text = "No party selected",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
         return
     }
-    
-    val party = selectedParty!!
     // Get objectives from the current user's guest data (assuming first guest for demo)
     val userObjectives = party.guests.firstOrNull()?.objectives ?: emptyList()
 

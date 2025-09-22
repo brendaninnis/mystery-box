@@ -13,16 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import ca.realitywargames.mysterybox.shared.models.Party
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
-import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PartySolutionScreen(
-    partyId: String,
-    navController: NavHostController,
-    viewModel: PartyViewModel,
+    party: Party,
     onBackClick: () -> Unit
 ) {
     BaseScreen(

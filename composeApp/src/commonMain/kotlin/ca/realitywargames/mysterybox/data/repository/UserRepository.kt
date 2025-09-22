@@ -14,65 +14,45 @@ class UserRepository(private val api: MysteryBoxApi) {
 
     private var currentUser: User? = null
 
-    fun login(email: String, password: String): Flow<Result<User>> = flow {
-        try {
-            val response = api.login(LoginRequest(email, password))
-            if (response.success && response.data != null) {
-                currentUser = response.data!!.user
-                emit(Result.success(response.data!!.user))
-            } else {
-                emit(Result.failure(Exception(response.error?.message ?: "Login failed")))
-            }
-        } catch (e: Exception) {
-            emit(Result.failure(e))
+    suspend fun login(email: String, password: String): User {
+        val response = api.login(LoginRequest(email, password))
+        if (response.success && response.data != null) {
+            currentUser = response.data!!.user
+            return response.data!!.user
         }
+        throw Exception(response.error?.message ?: "Login failed")
     }
 
-    fun register(email: String, password: String, name: String): Flow<Result<User>> = flow {
-        try {
-            val response = api.register(RegisterRequest(email = email, password = password, name = name))
-            if (response.success && response.data != null) {
-                currentUser = response.data!!
-                emit(Result.success(response.data!!))
-            } else {
-                emit(Result.failure(Exception(response.error?.message ?: "Registration failed")))
-            }
-        } catch (e: Exception) {
-            emit(Result.failure(e))
+    suspend fun register(email: String, password: String, name: String): User {
+        val response = api.register(RegisterRequest(email = email, password = password, name = name))
+        if (response.success && response.data != null) {
+            currentUser = response.data!!
+            return response.data!!
         }
+        throw Exception(response.error?.message ?: "Registration failed")
     }
 
-    fun getCurrentUser(): Flow<Result<User?>> = flow {
-        try {
-            val response = api.getCurrentUser()
-            if (response.success) {
-                currentUser = response.data
-                emit(Result.success(response.data))
-            } else {
-                emit(Result.success(null))
-            }
-        } catch (e: Exception) {
-            emit(Result.failure(e))
+    suspend fun getCurrentUser(): User? {
+        val response = api.getCurrentUser()
+        if (response.success) {
+            currentUser = response.data
+            return response.data
         }
+        return null
     }
 
     fun logout() {
         currentUser = null
     }
 
-    fun updateUserPreferences(preferences: UserPreferences): Flow<Result<User>> = flow {
-        try {
-            currentUser?.let { user ->
-                val updatedUser = user.copy(
-                    preferences = preferences,
-                    updatedAt = "2024-01-15T10:30:00Z" // ISO 8601 format
-                )
-                currentUser = updatedUser
-                emit(Result.success(updatedUser))
-            } ?: emit(Result.failure(Exception("No user logged in")))
-        } catch (e: Exception) {
-            emit(Result.failure(e))
-        }
+    suspend fun updateUserPreferences(preferences: UserPreferences): User {
+        val user = currentUser ?: throw Exception("No user logged in")
+        val updatedUser = user.copy(
+            preferences = preferences,
+            updatedAt = "2024-01-15T10:30:00Z"
+        )
+        currentUser = updatedUser
+        return updatedUser
     }
 
     fun isLoggedIn(): Boolean = currentUser != null

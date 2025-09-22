@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,21 +27,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import ca.realitywargames.mysterybox.shared.models.Difficulty
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.shared.models.Party
 import ca.realitywargames.mysterybox.shared.models.PartyStatus
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
 import ca.realitywargames.mysterybox.ui.theme.MysteryGradient
-import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PartyInviteScreen(
-    partyId: String,
-    navController: NavHostController,
-    viewModel: PartyViewModel,
+    party: Party,
     onBackClick: () -> Unit
 ) {
     // Mock mystery and party data
@@ -65,7 +60,7 @@ fun PartyInviteScreen(
     )
 
     val mockParty = Party(
-        id = partyId,
+        id = party.id,
         hostId = "user1",
         mysteryPackageId = "1",
         title = "Saturday Night Mystery",
@@ -224,19 +219,6 @@ fun PartyInviteScreen(
                             }
                         }
                     }
-                }
-            }
-
-            // Action buttons
-            item {
-                Button(
-                    onClick = {
-                        // In real app, this would accept the invitation
-                        navController.popBackStack()
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Accept Invitation")
                 }
             }
         }

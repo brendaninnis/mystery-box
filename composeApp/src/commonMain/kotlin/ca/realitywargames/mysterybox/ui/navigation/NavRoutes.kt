@@ -4,41 +4,39 @@ import kotlinx.serialization.Serializable
 
 object NavRoutes {
     const val HOME = "home"
-    const val MYSTERIES = "mysteries"
-    const val MYSTERY_DETAIL = "mystery_detail/{mysteryId}"
-    const val PARTIES = "parties"
-    const val PARTY_DETAIL = "party_detail/{partyId}"
-    const val PARTY_INVITE = "party_invite/{partyId}"
-    const val PARTY_INSTRUCTIONS = "party_instructions/{partyId}"
-    const val PARTY_PHASE_INSTRUCTIONS = "party_phase_instructions/{partyId}"
-    const val PARTY_OBJECTIVES = "party_objectives/{partyId}"
-    const val PARTY_CHARACTERS = "party_characters/{partyId}"
-    const val PARTY_INVENTORY = "party_inventory/{partyId}"
-    const val PARTY_EVIDENCE = "party_evidence/{partyId}"
-    const val PARTY_SOLUTION = "party_solution/{partyId}"
-    const val CREATE_PARTY = "create_party/{mysteryId}"
-    const val JOIN_PARTY = "join_party"
-    const val GAME = "game/{partyId}"
-    const val CHARACTER = "character/{partyId}"
     const val LOGIN = "login"
     const val REGISTER = "register"
-    const val PROFILE = "profile"
     const val SETTINGS = "settings"
 
-    fun mysteryDetail(mysteryId: String) = "mystery_detail/$mysteryId"
-    fun partyDetail(partyId: String) = "party_detail/$partyId"
-    fun partyInvite(partyId: String) = "party_invite/$partyId"
-    fun partyInstructions(partyId: String) = "party_instructions/$partyId"
-    fun partyPhaseInstructions(partyId: String) = "party_phase_instructions/$partyId"
-    fun partyObjectives(partyId: String) = "party_objectives/$partyId"
-    fun partyCharacters(partyId: String) = "party_characters/$partyId"
-    fun partyInventory(partyId: String) = "party_inventory/$partyId"
-    fun partyEvidence(partyId: String) = "party_evidence/$partyId"
-    fun partySolution(partyId: String) = "party_solution/$partyId"
     fun createParty(mysteryId: String) = "create_party/$mysteryId"
-    fun game(partyId: String) = "game/$partyId"
-    fun character(partyId: String) = "character/$partyId"
 }
 
 @Serializable
 data class MysteryDetailRoute(val mysteryId: String)
+
+@Serializable
+data class PartyDetailRoute(val partyId: String)
+
+@Serializable
+data class PartyInviteRoute(val partyId: String)
+
+@Serializable
+data class PartyInstructionsRoute(val partyId: String)
+
+@Serializable
+data class PartyCharactersRoute(val partyId: String)
+
+@Serializable
+data class PartyInventoryRoute(val partyId: String)
+
+@Serializable
+data class PartyEvidenceRoute(val partyId: String)
+
+@Serializable
+data class PartySolutionRoute(val partyId: String)
+
+@Serializable
+data class PartyPhaseInstructionsRoute(val partyId: String)
+
+@Serializable
+data class PartyObjectivesRoute(val partyId: String)

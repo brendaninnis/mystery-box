@@ -59,7 +59,9 @@ val TabSaver = Saver<Tab, String>(
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    mysteryListViewModel: MysteryListViewModel,
+    partyViewModel: PartyViewModel
 ) {
     val currentUser by userViewModel.currentUser.collectAsState()
     val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
@@ -180,11 +182,11 @@ fun MainScreen(
             when (selectedTab) {
                 Tab.MYSTERIES -> MysteriesScreen(
                     navController = navController,
-                    viewModel = viewModel { MysteryListViewModel() }
+                    viewModel = mysteryListViewModel
                 )
                 Tab.PARTIES -> PartiesScreen(
                     navController = navController,
-                    viewModel = viewModel { PartyViewModel() }
+                    viewModel = partyViewModel
                 )
                 Tab.PROFILE -> ProfileScreen(
                     userViewModel = userViewModel,

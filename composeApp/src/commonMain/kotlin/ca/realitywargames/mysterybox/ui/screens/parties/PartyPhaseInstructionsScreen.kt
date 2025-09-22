@@ -25,54 +25,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.compose.material3.CircularProgressIndicator
+import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.ui.components.BaseScreen
-import ca.realitywargames.mysterybox.ui.viewmodel.PartyViewModel
+import ca.realitywargames.mysterybox.shared.models.Party
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PartyPhaseInstructionsScreen(
-    partyId: String,
-    navController: NavHostController,
-    viewModel: PartyViewModel,
+    party: Party,
     onBackClick: () -> Unit
 ) {
-    // Get real party data from the backend
-    val selectedParty by viewModel.selectedParty.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    
-    // Load party data when screen opens
-    LaunchedEffect(partyId) {
-        viewModel.selectParty(partyId)
-    }
-    
-    // Show loading state
-    if (isLoading || selectedParty == null) {
-        BaseScreen(
-            title = "Phase Instructions",
-            onBackClick = onBackClick
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-        return
-    }
-    
-    val party = selectedParty!!
     // Get mystery package for current phase
-    val mysteryPackage = viewModel.getMysteryPackageForParty(party.mysteryPackageId)
+    val mysteryPackage: MysteryPackage? = null // TODO pass in if needed
     val currentPhase = mysteryPackage?.phases?.getOrNull(party.currentPhaseIndex)
     
     if (currentPhase == null) {
@@ -184,7 +152,6 @@ fun PartyPhaseInstructionsScreen(
                             Button(
                                 onClick = {
                                     // TODO: Implement advance phase logic
-                                    // viewModel.advanceToNextPhase(partyId)
                                 },
                                 modifier = Modifier.fillMaxWidth()
                             ) {

@@ -31,15 +31,14 @@ class UserViewModel : BaseViewModel() {
             try {
                 _isAuthenticating.value = true
                 setError(null)
-                repository.login(email, password).collect { result ->
-                    result.onSuccess { user ->
+                runCatching { repository.login(email, password) }
+                    .onSuccess { user ->
                         _currentUser.value = user
                         _isLoggedIn.value = true
-                        setError(null)
-                    }.onFailure { exception ->
+                    }
+                    .onFailure { exception ->
                         setError(exception.message ?: "Login failed. Please check your credentials.")
                     }
-                }
             } finally {
                 _isAuthenticating.value = false
             }
@@ -51,15 +50,14 @@ class UserViewModel : BaseViewModel() {
             try {
                 _isAuthenticating.value = true
                 setError(null)
-                repository.register(email, password, name).collect { result ->
-                    result.onSuccess { user ->
+                runCatching { repository.register(email, password, name) }
+                    .onSuccess { user ->
                         _currentUser.value = user
                         _isLoggedIn.value = true
-                        setError(null)
-                    }.onFailure { exception ->
+                    }
+                    .onFailure { exception ->
                         setError(exception.message ?: "Registration failed. Please try again.")
                     }
-                }
             } finally {
                 _isAuthenticating.value = false
             }
@@ -74,26 +72,26 @@ class UserViewModel : BaseViewModel() {
 
     fun updateUserPreferences(preferences: UserPreferences) {
         launchWithLoading {
-            repository.updateUserPreferences(preferences).collect { result ->
-                result.onSuccess { updatedUser ->
+            runCatching { repository.updateUserPreferences(preferences) }
+                .onSuccess { updatedUser ->
                     _currentUser.value = updatedUser
-                }.onFailure { exception ->
+                }
+                .onFailure { _ ->
                     // Handle error
                 }
-            }
         }
     }
 
     private fun checkCurrentUser() {
         viewModelScope.launch {
-            repository.getCurrentUser().collect { result ->
-                result.onSuccess { user ->
+            runCatching { repository.getCurrentUser() }
+                .onSuccess { user ->
                     _currentUser.value = user
                     _isLoggedIn.value = user != null
-                }.onFailure { exception ->
+                }
+                .onFailure {
                     _isLoggedIn.value = false
                 }
-            }
         }
     }
 }

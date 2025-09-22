@@ -27,25 +27,25 @@ class MysteryViewModel : BaseViewModel() {
 
     fun loadMysteryPackages() {
         launchWithLoading {
-            repository.getMysteryPackages().collect { result ->
-                result.onSuccess { response ->
+            runCatching { repository.getMysteryPackages() }
+                .onSuccess { response ->
                     _mysteryPackages.value = response.items
-                }.onFailure { exception ->
+                }
+                .onFailure { _ ->
                     // Handle error - could emit to error state
                 }
-            }
         }
     }
 
     fun selectMysteryPackage(packageId: String) {
         launchWithLoading {
-            repository.getMysteryPackage(packageId).collect { result ->
-                result.onSuccess { mysteryPackage ->
+            runCatching { repository.getMysteryPackage(packageId) }
+                .onSuccess { mysteryPackage ->
                     _selectedPackage.value = mysteryPackage
-                }.onFailure { exception ->
+                }
+                .onFailure { _ ->
                     // Handle error
                 }
-            }
         }
     }
 
@@ -53,14 +53,14 @@ class MysteryViewModel : BaseViewModel() {
         viewModelScope.launch {
             try {
                 _isPurchasing.value = true
-                repository.purchaseMysteryPackage(packageId).collect { result ->
-                    result.onSuccess { message ->
+                runCatching { repository.purchaseMysteryPackage(packageId) }
+                    .onSuccess {
                         // Handle success - maybe refresh packages or show success message
                         loadMysteryPackages()
-                    }.onFailure { exception ->
+                    }
+                    .onFailure { _ ->
                         // Handle error
                     }
-                }
             } finally {
                 _isPurchasing.value = false
             }
