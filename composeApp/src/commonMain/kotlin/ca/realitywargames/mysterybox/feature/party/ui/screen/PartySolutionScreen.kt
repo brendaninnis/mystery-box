@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ca.realitywargames.mysterybox.shared.models.Party
 import ca.realitywargames.mysterybox.core.ui.screen.BaseScreen
+import ca.realitywargames.mysterybox.preview.MockData
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,5 +48,16 @@ fun PartySolutionScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PartySolutionScreenPreview() {
+    MysteryBoxTheme {
+        PartySolutionScreen(
+            party = MockData.sampleParty(),
+            onBackClick = { }
+        )
     }
 }

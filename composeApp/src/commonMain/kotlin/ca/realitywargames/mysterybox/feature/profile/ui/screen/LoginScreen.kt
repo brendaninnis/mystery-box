@@ -24,6 +24,9 @@ import ca.realitywargames.mysterybox.feature.profile.ui.component.ErrorText
 import ca.realitywargames.mysterybox.feature.profile.ui.component.PasswordTextField
 import ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel.UserViewModel
 import ca.realitywargames.mysterybox.shared.validation.FormFieldValidator
+import ca.realitywargames.mysterybox.preview.MockData
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,16 +36,9 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
     val isAuthenticating by userViewModel.isAuthenticating.collectAsState()
     val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
     val error by userViewModel.error.collectAsState()
-
-    // Focus management
-    val focusManager = LocalFocusManager.current
-    val emailFocusRequester = remember { FocusRequester() }
-    val passwordFocusRequester = remember { FocusRequester() }
 
     // Navigate to main screen when login succeeds
     LaunchedEffect(isLoggedIn) {
@@ -55,6 +51,34 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         userViewModel.clearError()
     }
+
+    LoginScreenContent(
+        isAuthenticating = isAuthenticating,
+        error = error,
+        onLogin = { email, password ->
+            userViewModel.login(email.trim(), password)
+        },
+        onNavigateToRegister = onNavigateToRegister,
+        onBackClick = onBackClick
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LoginScreenContent(
+    isAuthenticating: Boolean,
+    error: String?,
+    onLogin: (String, String) -> Unit,
+    onNavigateToRegister: () -> Unit,
+    onBackClick: () -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    // Focus management
+    val focusManager = LocalFocusManager.current
+    val emailFocusRequester = remember { FocusRequester() }
+    val passwordFocusRequester = remember { FocusRequester() }
 
     BaseScreen(
         title = "Login",
@@ -82,7 +106,7 @@ fun LoginScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         if (FormFieldValidator.validateLoginForm(email, password)) {
-                            userViewModel.login(email.trim(), password)
+                            onLogin(email, password)
                         }
                         focusManager.clearFocus()
                     }
@@ -95,7 +119,7 @@ fun LoginScreen(
             AuthButton(
                 text = "Login",
                 onClick = {
-                    userViewModel.login(email.trim(), password)
+                    onLogin(email, password)
                 },
                 enabled = !isAuthenticating && FormFieldValidator.validateLoginForm(email, password),
                 isLoading = isAuthenticating
@@ -105,5 +129,47 @@ fun LoginScreen(
                 Text("Don't have an account? Register")
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun LoginScreenPreview() {
+    MysteryBoxTheme {
+        LoginScreenContent(
+            isAuthenticating = false,
+            error = null,
+            onLogin = { _, _ -> },
+            onNavigateToRegister = { },
+            onBackClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LoginScreenErrorPreview() {
+    MysteryBoxTheme {
+        LoginScreenContent(
+            isAuthenticating = false,
+            error = "Invalid email or password",
+            onLogin = { _, _ -> },
+            onNavigateToRegister = { },
+            onBackClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LoginScreenLoadingPreview() {
+    MysteryBoxTheme {
+        LoginScreenContent(
+            isAuthenticating = true,
+            error = null,
+            onLogin = { _, _ -> },
+            onNavigateToRegister = { },
+            onBackClick = { }
+        )
     }
 }

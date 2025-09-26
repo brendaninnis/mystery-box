@@ -41,6 +41,16 @@ import ca.realitywargames.mysterybox.feature.party.navigation.PartyDetailRoute
 import ca.realitywargames.mysterybox.feature.party.presentation.viewmodel.PartyViewModel
 import ca.realitywargames.mysterybox.feature.party.presentation.action.PartyAction
 import ca.realitywargames.mysterybox.feature.party.presentation.effect.PartySideEffect
+import ca.realitywargames.mysterybox.feature.party.presentation.state.PartyUiState
+import ca.realitywargames.mysterybox.core.presentation.state.AsyncState
+import ca.realitywargames.mysterybox.preview.MockData
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import ca.realitywargames.mysterybox.shared.models.Party
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
@@ -50,7 +60,6 @@ fun PartiesScreen(
     viewModel: PartyViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var inviteCode by remember { mutableStateOf("") }
     
     // Handle side effects
     LaunchedEffect(Unit) {
@@ -74,6 +83,27 @@ fun PartiesScreen(
             }
         }
     }
+
+    PartiesScreenContent(
+        uiState = uiState,
+        onPartyClick = { party ->
+            viewModel.onAction(PartyAction.NavigateToPartyDetail(party))
+        },
+        onJoinParty = { inviteCode ->
+            // TODO: Implement join party logic
+            // viewModel.onAction(PartyAction.JoinParty(inviteCode))
+        }
+    )
+}
+
+@OptIn(ExperimentalTime::class)
+@Composable
+fun PartiesScreenContent(
+    uiState: PartyUiState,
+    onPartyClick: (Party) -> Unit,
+    onJoinParty: (String) -> Unit
+) {
+    var inviteCode by remember { mutableStateOf("") }
     var isJoining by remember { mutableStateOf(false) }
 
     Column(
@@ -126,9 +156,7 @@ fun PartiesScreen(
                         PartyCard(
                             party = party,
                             mysteryPackage = uiState.getMysteryPackageForParty(party.mysteryPackageId),
-                            onClick = {
-                                viewModel.onAction(PartyAction.NavigateToPartyDetail(party))
-                            },
+                            onClick = { onPartyClick(party) }
                         )
                     }
                 }
@@ -179,9 +207,7 @@ fun PartiesScreen(
                         onClick = {
                             if (inviteCode.isNotBlank()) {
                                 isJoining = true
-                                // TODO: Implement join party logic
-                                // For now, just show a success message
-                                // viewModel.joinParty(inviteCode)
+                                onJoinParty(inviteCode)
                             }
                         },
                         enabled = inviteCode.isNotBlank() && !isJoining
@@ -202,5 +228,55 @@ fun PartiesScreen(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PartiesScreenLoadingPreview() {
+    MysteryBoxTheme {
+        PartiesScreenContent(
+            uiState = PartyUiState(loadPartiesState = AsyncState(isLoading = true)),
+            onPartyClick = { },
+            onJoinParty = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PartiesScreenWithPartiesPreview() {
+    val mockParties = MockData.sampleParties()
+    val mockMysteryPackages = mapOf(
+        "mystery-1" to MockData.sampleMysteryPackages()[0],
+        "mystery-2" to MockData.sampleMysteryPackages()[1],
+        "mystery-3" to MockData.sampleMysteryPackages()[2]
+    )
+    
+    MysteryBoxTheme {
+        PartiesScreenContent(
+            uiState = PartyUiState(
+                userParties = mockParties,
+                mysteryPackages = mockMysteryPackages,
+                loadPartiesState = AsyncState()
+            ),
+            onPartyClick = { },
+            onJoinParty = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PartiesScreenEmptyPreview() {
+    MysteryBoxTheme {
+        PartiesScreenContent(
+            uiState = PartyUiState(
+                userParties = emptyList(),
+                loadPartiesState = AsyncState()
+            ),
+            onPartyClick = { },
+            onJoinParty = { }
+        )
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -32,6 +33,9 @@ import androidx.compose.ui.unit.dp
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.core.ui.screen.BaseScreen
 import ca.realitywargames.mysterybox.shared.models.Party
+import ca.realitywargames.mysterybox.preview.MockData
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -158,7 +162,7 @@ fun PartyPhaseInstructionsScreen(
                                 Text("Advance to Next Phase")
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Icon(
-                                    Icons.Default.ArrowForward,
+                                    Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -168,5 +172,16 @@ fun PartyPhaseInstructionsScreen(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PartyPhaseInstructionsScreenPreview() {
+    MysteryBoxTheme {
+        PartyPhaseInstructionsScreen(
+            party = MockData.sampleParty(),
+            onBackClick = { }
+        )
     }
 }

@@ -36,6 +36,12 @@ import ca.realitywargames.mysterybox.core.ui.component.NetworkImage
 import ca.realitywargames.mysterybox.feature.mystery.navigation.MysteryDetailRoute
 import ca.realitywargames.mysterybox.core.data.state.UiState
 import ca.realitywargames.mysterybox.feature.mystery.presentation.viewmodel.MysteryListViewModel
+import ca.realitywargames.mysterybox.preview.MockData
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,9 +52,29 @@ fun MysteriesScreen(
     val state by viewModel.mysteries.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
+    MysteriesScreenContent(
+        state = state,
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refreshMysteries() },
+        onRetry = { viewModel.loadMysteries() },
+        onMysteryClick = { mysteryPackage ->
+            navController.navigate(MysteryDetailRoute(mysteryPackage.id))
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MysteriesScreenContent(
+    state: UiState<List<MysteryPackage>>,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    onRetry: () -> Unit,
+    onMysteryClick: (MysteryPackage) -> Unit
+) {
     PullToRefreshBox(
         isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refreshMysteries() }
+        onRefresh = onRefresh
     ) {
         when (val s = state) {
             UiState.Loading -> {
@@ -88,9 +114,7 @@ fun MysteriesScreen(
                     items(s.data) { mysteryPackage ->
                         MysteryPackageCard(
                             mysteryPackage = mysteryPackage,
-                            onClick = {
-                                navController.navigate(MysteryDetailRoute(mysteryPackage.id))
-                            }
+                            onClick = { onMysteryClick(mysteryPackage) }
                         )
                     }
                 }
@@ -127,7 +151,7 @@ fun MysteriesScreen(
                     }
                     item {
                         Button(
-                            onClick = { viewModel.loadMysteries() },
+                            onClick = onRetry,
                             modifier = Modifier.padding(top = 24.dp)
                         ) {
                             Text("Try Again")
@@ -201,5 +225,86 @@ fun MysteryPackageCard(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun MysteriesScreenLoadingPreview() {
+    MysteryBoxTheme {
+        MysteriesScreenContent(
+            state = UiState.Loading,
+            isRefreshing = false,
+            onRefresh = { },
+            onRetry = { },
+            onMysteryClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MysteriesScreenSuccessPreview() {
+    MysteryBoxTheme {
+        MysteriesScreenContent(
+            state = UiState.Success(MockData.sampleMysteryPackages()),
+            isRefreshing = false,
+            onRefresh = { },
+            onRetry = { },
+            onMysteryClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MysteriesScreenEmptyPreview() {
+    MysteryBoxTheme {
+        MysteriesScreenContent(
+            state = UiState.Success(emptyList()),
+            isRefreshing = false,
+            onRefresh = { },
+            onRetry = { },
+            onMysteryClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable  
+private fun MysteriesScreenErrorPreview() {
+    MysteryBoxTheme {
+        MysteriesScreenContent(
+            state = UiState.Error("Failed to load mystery packages"),
+            isRefreshing = false,
+            onRefresh = { },
+            onRetry = { },
+            onMysteryClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MysteriesScreenRefreshingPreview() {
+    MysteryBoxTheme {
+        MysteriesScreenContent(
+            state = UiState.Success(MockData.sampleMysteryPackages()),
+            isRefreshing = true,
+            onRefresh = { },
+            onRetry = { },
+            onMysteryClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MysteryPackageCardPreview() {
+    MysteryBoxTheme {
+        MysteryPackageCard(
+            mysteryPackage = MockData.sampleMysteryPackage(),
+            onClick = { }
+        )
     }
 }

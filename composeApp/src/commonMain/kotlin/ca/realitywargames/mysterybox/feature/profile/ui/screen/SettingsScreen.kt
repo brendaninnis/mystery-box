@@ -14,12 +14,24 @@ import androidx.navigation.NavHostController
 import ca.realitywargames.mysterybox.core.ui.screen.BaseScreen
 import ca.realitywargames.mysterybox.core.ui.theme.MysteryGradient
 import ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel.UserViewModel
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     userViewModel: UserViewModel,
     navController: NavHostController,
+    onBackClick: () -> Unit
+) {
+    SettingsScreenContent(
+        onBackClick = onBackClick
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsScreenContent(
     onBackClick: () -> Unit
 ) {
     BaseScreen(
@@ -44,5 +56,15 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.bodyMedium
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun SettingsScreenPreview() {
+    MysteryBoxTheme {
+        SettingsScreenContent(
+            onBackClick = { }
+        )
     }
 }

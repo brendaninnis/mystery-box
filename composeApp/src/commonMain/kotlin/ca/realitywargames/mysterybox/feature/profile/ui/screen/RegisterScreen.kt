@@ -25,6 +25,8 @@ import ca.realitywargames.mysterybox.feature.profile.ui.component.NameTextField
 import ca.realitywargames.mysterybox.feature.profile.ui.component.PasswordTextField
 import ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel.UserViewModel
 import ca.realitywargames.mysterybox.shared.validation.FormFieldValidator
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,18 +36,9 @@ fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
     val isAuthenticating by userViewModel.isAuthenticating.collectAsState()
     val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
     val error by userViewModel.error.collectAsState()
-
-    // Focus management
-    val focusManager = LocalFocusManager.current
-    val nameFocusRequester = remember { FocusRequester() }
-    val emailFocusRequester = remember { FocusRequester() }
-    val passwordFocusRequester = remember { FocusRequester() }
 
     // Navigate to main screen when registration succeeds
     LaunchedEffect(isLoggedIn) {
@@ -58,6 +51,36 @@ fun RegisterScreen(
     LaunchedEffect(Unit) {
         userViewModel.clearError()
     }
+
+    RegisterScreenContent(
+        isAuthenticating = isAuthenticating,
+        error = error,
+        onRegister = { email, password, name ->
+            userViewModel.register(email.trim(), password, name.trim())
+        },
+        onNavigateToLogin = onNavigateToLogin,
+        onBackClick = onBackClick
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegisterScreenContent(
+    isAuthenticating: Boolean,
+    error: String?,
+    onRegister: (String, String, String) -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onBackClick: () -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+
+    // Focus management
+    val focusManager = LocalFocusManager.current
+    val nameFocusRequester = remember { FocusRequester() }
+    val emailFocusRequester = remember { FocusRequester() }
+    val passwordFocusRequester = remember { FocusRequester() }
 
     BaseScreen(
         title = "Register",
@@ -98,7 +121,7 @@ fun RegisterScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         if (FormFieldValidator.validateRegisterForm(email, password, name)) {
-                            userViewModel.register(email.trim(), password, name.trim())
+                            onRegister(email, password, name)
                         }
                         focusManager.clearFocus()
                     }
@@ -111,7 +134,7 @@ fun RegisterScreen(
             AuthButton(
                 text = "Register",
                 onClick = {
-                    userViewModel.register(email.trim(), password, name.trim())
+                    onRegister(email, password, name)
                 },
                 enabled = !isAuthenticating && FormFieldValidator.validateRegisterForm(email, password, name),
                 isLoading = isAuthenticating
@@ -121,5 +144,47 @@ fun RegisterScreen(
                 Text("Already have an account? Login")
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun RegisterScreenPreview() {
+    MysteryBoxTheme {
+        RegisterScreenContent(
+            isAuthenticating = false,
+            error = null,
+            onRegister = { _, _, _ -> },
+            onNavigateToLogin = { },
+            onBackClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun RegisterScreenErrorPreview() {
+    MysteryBoxTheme {
+        RegisterScreenContent(
+            isAuthenticating = false,
+            error = "Email already exists",
+            onRegister = { _, _, _ -> },
+            onNavigateToLogin = { },
+            onBackClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun RegisterScreenLoadingPreview() {
+    MysteryBoxTheme {
+        RegisterScreenContent(
+            isAuthenticating = true,
+            error = null,
+            onRegister = { _, _, _ -> },
+            onNavigateToLogin = { },
+            onBackClick = { }
+        )
     }
 }

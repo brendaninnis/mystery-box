@@ -33,6 +33,9 @@ import androidx.compose.ui.unit.dp
 import ca.realitywargames.mysterybox.shared.models.Objective
 import ca.realitywargames.mysterybox.shared.models.Party
 import ca.realitywargames.mysterybox.core.ui.screen.BaseScreen
+import ca.realitywargames.mysterybox.preview.MockData
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -216,5 +219,16 @@ private fun ObjectiveCard(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PartyObjectivesScreenPreview() {
+    MysteryBoxTheme {
+        PartyObjectivesScreen(
+            party = MockData.sampleParty(),
+            onBackClick = { }
+        )
     }
 }

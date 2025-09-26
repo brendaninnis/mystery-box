@@ -34,6 +34,10 @@ import ca.realitywargames.mysterybox.feature.profile.navigation.LoginRoute
 import ca.realitywargames.mysterybox.feature.profile.navigation.RegisterRoute
 import ca.realitywargames.mysterybox.feature.profile.navigation.SettingsRoute
 import ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel.UserViewModel
+import ca.realitywargames.mysterybox.preview.MockData
+import ca.realitywargames.mysterybox.shared.models.User
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun ProfileScreen(
@@ -43,6 +47,23 @@ fun ProfileScreen(
     val currentUser by userViewModel.currentUser.collectAsState()
     val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
 
+    ProfileScreenContent(
+        currentUser = currentUser,
+        isLoggedIn = isLoggedIn,
+        onNavigateToSettings = { navController.navigate(SettingsRoute) },
+        onNavigateToRegister = { navController.navigate(RegisterRoute) },
+        onNavigateToLogin = { navController.navigate(LoginRoute) }
+    )
+}
+
+@Composable
+fun ProfileScreenContent(
+    currentUser: User?,
+    isLoggedIn: Boolean,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToRegister: () -> Unit,
+    onNavigateToLogin: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,19 +90,19 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = user?.name ?: "",
+                        text = user.name,
                         style = MaterialTheme.typography.headlineMedium
                     )
 
                     Text(
-                        text = user?.email ?: "",
+                        text = user.email,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    if (user?.isHost == true) {
+                    if (user.isHost) {
                         Surface(
                             color = MaterialTheme.colorScheme.primaryContainer,
                             shape = MaterialTheme.shapes.small
@@ -106,7 +127,7 @@ fun ProfileScreen(
                         Icon(Icons.Default.Settings, contentDescription = null)
                     },
                     modifier = Modifier.clickable {
-                        navController.navigate(SettingsRoute)
+                        onNavigateToSettings()
                     }
                 )
             }
@@ -141,7 +162,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { navController.navigate(RegisterRoute) },
+                onClick = onNavigateToRegister,
                 modifier = Modifier.fillMaxWidth(0.8f)
             ) {
                 Text("Create Account")
@@ -150,7 +171,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
-                onClick = { navController.navigate(LoginRoute) },
+                onClick = onNavigateToLogin,
                 modifier = Modifier.fillMaxWidth(0.8f)
             ) {
                 Text("Sign In")
@@ -165,5 +186,33 @@ fun ProfileScreen(
                 textAlign = TextAlign.Center
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ProfileScreenLoggedInPreview() {
+    MysteryBoxTheme {
+        ProfileScreenContent(
+            currentUser = MockData.sampleUser(),
+            isLoggedIn = true,
+            onNavigateToSettings = { },
+            onNavigateToRegister = { },
+            onNavigateToLogin = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ProfileScreenLoggedOutPreview() {
+    MysteryBoxTheme {
+        ProfileScreenContent(
+            currentUser = null,
+            isLoggedIn = false,
+            onNavigateToSettings = { },
+            onNavigateToRegister = { },
+            onNavigateToLogin = { }
+        )
     }
 }

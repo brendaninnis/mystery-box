@@ -34,6 +34,9 @@ import ca.realitywargames.mysterybox.shared.models.Party
 import ca.realitywargames.mysterybox.shared.models.PartyStatus
 import ca.realitywargames.mysterybox.core.ui.screen.BaseScreen
 import ca.realitywargames.mysterybox.core.ui.theme.MysteryGradient
+import ca.realitywargames.mysterybox.preview.MockData
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -223,5 +226,16 @@ fun PartyInviteScreen(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PartyInviteScreenPreview() {
+    MysteryBoxTheme {
+        PartyInviteScreen(
+            party = MockData.sampleParty(),
+            onBackClick = { }
+        )
     }
 }

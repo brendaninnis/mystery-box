@@ -54,6 +54,16 @@ import ca.realitywargames.mysterybox.feature.party.presentation.viewmodel.PartyV
 import ca.realitywargames.mysterybox.feature.party.presentation.action.PartyAction
 import ca.realitywargames.mysterybox.feature.party.presentation.action.PartySectionType
 import ca.realitywargames.mysterybox.feature.party.presentation.effect.PartySideEffect
+import ca.realitywargames.mysterybox.feature.party.presentation.state.PartyUiState
+import ca.realitywargames.mysterybox.core.presentation.state.AsyncState
+import ca.realitywargames.mysterybox.preview.MockData
+import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import ca.realitywargames.mysterybox.shared.models.Party
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +121,23 @@ fun PartyDetailScreen(
             }
         }
     }
-    
+
+    PartyDetailScreenContent(
+        uiState = uiState,
+        onBackClick = onBackClick,
+        onNavigateToSection = { party, section ->
+            viewModel.onAction(PartyAction.NavigateToPartySection(party, section))
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PartyDetailScreenContent(
+    uiState: PartyUiState,
+    onBackClick: () -> Unit,
+    onNavigateToSection: (Party, PartySectionType) -> Unit
+) {
     // Show loading state
     if (uiState.loadPartiesState.isLoading || uiState.selectedParty == null) {
         BaseScreen(
@@ -147,7 +173,7 @@ fun PartyDetailScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
                     .clickable {
-                        viewModel.onAction(PartyAction.NavigateToPartySection(party, PartySectionType.PHASE_INSTRUCTIONS))
+                        onNavigateToSection(party, PartySectionType.PHASE_INSTRUCTIONS)
                     },
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -189,7 +215,7 @@ fun PartyDetailScreen(
                         icon = Icons.Default.Person,
                         isEnabled = party.status == PartyStatus.PLANNED || party.status == PartyStatus.IN_PROGRESS,
                         onClick = {
-                            viewModel.onAction(PartyAction.NavigateToPartySection(party, PartySectionType.INVITE))
+                            onNavigateToSection(party, PartySectionType.INVITE)
                         }
                     )
                 }
@@ -200,7 +226,7 @@ fun PartyDetailScreen(
                     icon = Icons.Default.MailOutline,
                     isEnabled = unlockedSections.contains(GameStateSection.OBJECTIVES),
                     onClick = {
-                        viewModel.onAction(PartyAction.NavigateToPartySection(party, PartySectionType.OBJECTIVES))
+                        onNavigateToSection(party, PartySectionType.OBJECTIVES)
                     }
                 )
                 }
@@ -211,7 +237,7 @@ fun PartyDetailScreen(
                     icon = Icons.Default.Face,
                     isEnabled = unlockedSections.contains(GameStateSection.CHARACTER_INFO),
                     onClick = {
-                        viewModel.onAction(PartyAction.NavigateToPartySection(party, PartySectionType.CHARACTERS))
+                        onNavigateToSection(party, PartySectionType.CHARACTERS)
                     }
                 )
                 }
@@ -222,7 +248,7 @@ fun PartyDetailScreen(
                     icon = Icons.Default.ShoppingCart,
                     isEnabled = unlockedSections.contains(GameStateSection.INVENTORY),
                     onClick = {
-                        viewModel.onAction(PartyAction.NavigateToPartySection(party, PartySectionType.INVENTORY))
+                        onNavigateToSection(party, PartySectionType.INVENTORY)
                     }
                 )
                 }
@@ -233,7 +259,7 @@ fun PartyDetailScreen(
                     icon = Icons.Default.Search,
                     isEnabled = unlockedSections.contains(GameStateSection.EVIDENCE),
                     onClick = {
-                        viewModel.onAction(PartyAction.NavigateToPartySection(party, PartySectionType.EVIDENCE))
+                        onNavigateToSection(party, PartySectionType.EVIDENCE)
                     }
                 )
                 }
@@ -244,11 +270,43 @@ fun PartyDetailScreen(
                     icon = Icons.Default.CheckCircle,
                     isEnabled = unlockedSections.contains(GameStateSection.SOLUTION),
                     onClick = {
-                        viewModel.onAction(PartyAction.NavigateToPartySection(party, PartySectionType.SOLUTION))
+                        onNavigateToSection(party, PartySectionType.SOLUTION)
                     }
                 )
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PartyDetailScreenPreview() {
+    val mockParty = MockData.sampleParties().first() // Get the in-progress party
+    
+    MysteryBoxTheme {
+        PartyDetailScreenContent(
+            uiState = PartyUiState(
+                selectedParty = mockParty,
+                loadPartiesState = AsyncState()
+            ),
+            onBackClick = { },
+            onNavigateToSection = { _, _ -> }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PartyDetailScreenLoadingPreview() {
+    MysteryBoxTheme {
+        PartyDetailScreenContent(
+            uiState = PartyUiState(
+                selectedParty = null,
+                loadPartiesState = AsyncState(isLoading = true)
+            ),
+            onBackClick = { },
+            onNavigateToSection = { _, _ -> }
+        )
     }
 }
