@@ -1,98 +1,100 @@
 package ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel
 
-import androidx.lifecycle.viewModelScope
-import ca.realitywargames.mysterybox.core.presentation.viewmodel.BaseViewModel
 import ca.realitywargames.mysterybox.core.data.di.AppContainer
-import ca.realitywargames.mysterybox.shared.models.User
-import ca.realitywargames.mysterybox.shared.models.UserPreferences
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import ca.realitywargames.mysterybox.core.presentation.viewmodel.MviViewModel
+import ca.realitywargames.mysterybox.feature.profile.presentation.action.UserAction
+import ca.realitywargames.mysterybox.feature.profile.presentation.effect.UserSideEffect
+import ca.realitywargames.mysterybox.feature.profile.presentation.state.UserUiState
 
-class UserViewModel : BaseViewModel() {
+class UserViewModel : MviViewModel<UserUiState, UserAction, UserSideEffect>() {
 
     private val repository = AppContainer.userRepository
 
-    private val _currentUser = MutableStateFlow<User?>(null)
-    val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
-
-    private val _isLoggedIn = MutableStateFlow(false)
-    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
-
-    private val _isAuthenticating = MutableStateFlow(false)
-    val isAuthenticating: StateFlow<Boolean> = _isAuthenticating.asStateFlow()
+    override fun initialState(): UserUiState = UserUiState()
 
     init {
-        checkCurrentUser()
+        onAction(UserAction.CheckCurrentUser)
     }
 
-    fun login(email: String, password: String) {
-        viewModelScope.launch {
-            try {
-                _isAuthenticating.value = true
-                setError(null)
-                runCatching { repository.login(email, password) }
-                    .onSuccess { user ->
-                        _currentUser.value = user
-                        _isLoggedIn.value = true
-                    }
-                    .onFailure { exception ->
-                        setError(exception.message ?: "Login failed. Please check your credentials.")
-                    }
-            } finally {
-                _isAuthenticating.value = false
+    override fun handleAction(action: UserAction) {
+        when (action) {
+            is UserAction.Login -> login(action.email, action.password)
+            is UserAction.Register -> register(action.email, action.password, action.name)
+            is UserAction.Logout -> logout()
+            is UserAction.CheckCurrentUser -> checkCurrentUser()
+            is UserAction.UpdatePreferences -> updateUserPreferences(action.preferences)
+            is UserAction.ClearError -> clearError()
+        }
+    }
+
+    private fun login(email: String, password: String) {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(authState = uiState.value.authState.copy(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(authState = uiState.value.authState.copy(error = error))
+                }
+            ) {
+                val user = repository.login(email, password)
+                updateState { copy(currentUser = user, isLoggedIn = true, authState = authState.copy(isLoading = false, error = null)) }
+                emitSideEffect(UserSideEffect.LoginSucceeded)
             }
         }
     }
 
-    fun register(email: String, password: String, name: String) {
-        viewModelScope.launch {
-            try {
-                _isAuthenticating.value = true
-                setError(null)
-                runCatching { repository.register(email, password, name) }
-                    .onSuccess { user ->
-                        _currentUser.value = user
-                        _isLoggedIn.value = true
-                    }
-                    .onFailure { exception ->
-                        setError(exception.message ?: "Registration failed. Please try again.")
-                    }
-            } finally {
-                _isAuthenticating.value = false
+    private fun register(email: String, password: String, name: String) {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(authState = uiState.value.authState.copy(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(authState = uiState.value.authState.copy(error = error))
+                }
+            ) {
+                val user = repository.register(email, password, name)
+                updateState { copy(currentUser = user, isLoggedIn = true, authState = authState.copy(isLoading = false, error = null)) }
+                emitSideEffect(UserSideEffect.RegistrationSucceeded)
             }
         }
     }
 
-    fun logout() {
+    private fun logout() {
         repository.logout()
-        _currentUser.value = null
-        _isLoggedIn.value = false
+        updateState { copy(currentUser = null, isLoggedIn = false) }
     }
 
-    fun updateUserPreferences(preferences: UserPreferences) {
-        launchWithLoading {
-            runCatching { repository.updateUserPreferences(preferences) }
-                .onSuccess { updatedUser ->
-                    _currentUser.value = updatedUser
+    private fun updateUserPreferences(preferences: ca.realitywargames.mysterybox.shared.models.UserPreferences) {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(updatePrefsState = uiState.value.updatePrefsState.copy(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(updatePrefsState = uiState.value.updatePrefsState.copy(error = error))
                 }
-                .onFailure { _ ->
-                    // Handle error
-                }
+            ) {
+                val updatedUser = repository.updateUserPreferences(preferences)
+                updateState { copy(currentUser = updatedUser, updatePrefsState = updatePrefsState.copy(isLoading = false, error = null)) }
+            }
         }
     }
 
     private fun checkCurrentUser() {
-        viewModelScope.launch {
+        launchAsync {
             runCatching { repository.getCurrentUser() }
                 .onSuccess { user ->
-                    _currentUser.value = user
-                    _isLoggedIn.value = user != null
+                    updateState { copy(currentUser = user, isLoggedIn = user != null) }
                 }
                 .onFailure {
-                    _isLoggedIn.value = false
+                    updateState { copy(isLoggedIn = false) }
                 }
         }
+    }
+
+    private fun clearError() {
+        updateState { copy(authState = authState.copy(error = null)) }
     }
 }

@@ -1,74 +1,59 @@
 package ca.realitywargames.mysterybox.feature.mystery.presentation.viewmodel
 
-import androidx.lifecycle.viewModelScope
-import ca.realitywargames.mysterybox.core.presentation.viewmodel.BaseViewModel
 import ca.realitywargames.mysterybox.core.data.di.AppContainer
-import ca.realitywargames.mysterybox.shared.models.MysteryPackage
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import ca.realitywargames.mysterybox.core.presentation.viewmodel.MviViewModel
+import ca.realitywargames.mysterybox.feature.mystery.presentation.action.MysteryDetailAction
+import ca.realitywargames.mysterybox.feature.mystery.presentation.effect.MysteryDetailSideEffect
+import ca.realitywargames.mysterybox.feature.mystery.presentation.state.MysteryDetailUiState
 
-class MysteryViewModel : BaseViewModel() {
+class MysteryViewModel : MviViewModel<MysteryDetailUiState, MysteryDetailAction, MysteryDetailSideEffect>() {
 
     private val repository = AppContainer.mysteryRepository
 
-    private val _mysteryPackages = MutableStateFlow<List<MysteryPackage>>(emptyList())
-    val mysteryPackages: StateFlow<List<MysteryPackage>> = _mysteryPackages.asStateFlow()
+    override fun initialState(): MysteryDetailUiState = MysteryDetailUiState()
 
-    private val _selectedPackage = MutableStateFlow<MysteryPackage?>(null)
-    val selectedPackage: StateFlow<MysteryPackage?> = _selectedPackage.asStateFlow()
-
-    private val _isPurchasing = MutableStateFlow(false)
-    val isPurchasing: StateFlow<Boolean> = _isPurchasing.asStateFlow()
-
-    init {
-        loadMysteryPackages()
-    }
-
-    fun loadMysteryPackages() {
-        launchWithLoading {
-            runCatching { repository.getMysteryPackages() }
-                .onSuccess { response ->
-                    _mysteryPackages.value = response.items
-                }
-                .onFailure { _ ->
-                    // Handle error - could emit to error state
-                }
+    override fun handleAction(action: MysteryDetailAction) {
+        when (action) {
+            is MysteryDetailAction.LoadPackage -> loadPackage(action.packageId)
+            is MysteryDetailAction.PurchasePackage -> purchasePackage(action.packageId)
+            is MysteryDetailAction.ClearSelected -> clearSelected()
         }
     }
 
-    fun selectMysteryPackage(packageId: String) {
-        launchWithLoading {
-            runCatching { repository.getMysteryPackage(packageId) }
-                .onSuccess { mysteryPackage ->
-                    _selectedPackage.value = mysteryPackage
+    private fun loadPackage(packageId: String) {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(loadPackageState = uiState.value.loadPackageState.copy(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(loadPackageState = uiState.value.loadPackageState.copy(error = error))
                 }
-                .onFailure { _ ->
-                    // Handle error
-                }
-        }
-    }
-
-    fun purchaseMysteryPackage(packageId: String) {
-        viewModelScope.launch {
-            try {
-                _isPurchasing.value = true
-                runCatching { repository.purchaseMysteryPackage(packageId) }
-                    .onSuccess {
-                        // Handle success - maybe refresh packages or show success message
-                        loadMysteryPackages()
-                    }
-                    .onFailure { _ ->
-                        // Handle error
-                    }
-            } finally {
-                _isPurchasing.value = false
+            ) {
+                val pkg = repository.getMysteryPackage(packageId)
+                updateState { copy(selectedPackage = pkg, loadPackageState = loadPackageState.copy(isLoading = false, error = null)) }
             }
         }
     }
 
-    fun clearSelectedPackage() {
-        _selectedPackage.value = null
+    private fun purchasePackage(packageId: String) {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(purchaseState = uiState.value.purchaseState.copy(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(purchaseState = uiState.value.purchaseState.copy(error = error))
+                }
+            ) {
+                repository.purchaseMysteryPackage(packageId)
+                emitSideEffect(MysteryDetailSideEffect.PurchaseSucceeded)
+                // Optionally reload package or list
+            }
+        }
+    }
+
+    private fun clearSelected() {
+        updateState { copy(selectedPackage = null) }
     }
 }

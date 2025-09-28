@@ -24,6 +24,8 @@ import ca.realitywargames.mysterybox.feature.profile.ui.component.ErrorText
 import ca.realitywargames.mysterybox.feature.profile.ui.component.NameTextField
 import ca.realitywargames.mysterybox.feature.profile.ui.component.PasswordTextField
 import ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel.UserViewModel
+import ca.realitywargames.mysterybox.feature.profile.presentation.action.UserAction
+import ca.realitywargames.mysterybox.feature.profile.presentation.effect.UserSideEffect
 import ca.realitywargames.mysterybox.shared.validation.FormFieldValidator
 import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -36,27 +38,30 @@ fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    val isAuthenticating by userViewModel.isAuthenticating.collectAsState()
-    val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
-    val error by userViewModel.error.collectAsState()
+    val uiState by userViewModel.uiState.collectAsState()
 
-    // Navigate to main screen when registration succeeds
-    LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) {
-            onRegisterSuccess()
+    // Handle side effects
+    LaunchedEffect(Unit) {
+        userViewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is UserSideEffect.RegistrationSucceeded -> onRegisterSuccess()
+                is UserSideEffect.ShowError -> { /* handled via state */ }
+                is UserSideEffect.ShowToast -> { /* TODO */ }
+                is UserSideEffect.LoginSucceeded -> { /* ignore on register */ }
+            }
         }
     }
 
     // Clear error when screen loads
     LaunchedEffect(Unit) {
-        userViewModel.clearError()
+        userViewModel.onAction(UserAction.ClearError)
     }
 
     RegisterScreenContent(
-        isAuthenticating = isAuthenticating,
-        error = error,
+        isAuthenticating = uiState.authState.isLoading,
+        error = uiState.authState.error,
         onRegister = { email, password, name ->
-            userViewModel.register(email.trim(), password, name.trim())
+            userViewModel.onAction(UserAction.Register(email.trim(), password, name.trim()))
         },
         onNavigateToLogin = onNavigateToLogin,
         onBackClick = onBackClick

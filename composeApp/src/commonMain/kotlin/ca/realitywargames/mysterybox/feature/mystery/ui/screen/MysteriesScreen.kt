@@ -36,12 +36,10 @@ import ca.realitywargames.mysterybox.core.ui.component.NetworkImage
 import ca.realitywargames.mysterybox.feature.mystery.navigation.MysteryDetailRoute
 import ca.realitywargames.mysterybox.core.data.state.UiState
 import ca.realitywargames.mysterybox.feature.mystery.presentation.viewmodel.MysteryListViewModel
+import ca.realitywargames.mysterybox.feature.mystery.presentation.action.MysteryListAction
 import ca.realitywargames.mysterybox.preview.MockData
 import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,14 +47,13 @@ fun MysteriesScreen(
     navController: NavHostController,
     viewModel: MysteryListViewModel
 ) {
-    val state by viewModel.mysteries.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     MysteriesScreenContent(
-        state = state,
-        isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refreshMysteries() },
-        onRetry = { viewModel.loadMysteries() },
+        state = uiState.mysteries,
+        isRefreshing = uiState.isRefreshing,
+        onRefresh = { viewModel.onAction(MysteryListAction.RefreshMysteries) },
+        onRetry = { viewModel.onAction(MysteryListAction.LoadMysteries) },
         onMysteryClick = { mysteryPackage ->
             navController.navigate(MysteryDetailRoute(mysteryPackage.id))
         }

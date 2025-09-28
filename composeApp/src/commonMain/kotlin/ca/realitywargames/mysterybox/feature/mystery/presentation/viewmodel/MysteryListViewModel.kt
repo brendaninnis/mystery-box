@@ -1,56 +1,66 @@
 package ca.realitywargames.mysterybox.feature.mystery.presentation.viewmodel
 
 import ca.realitywargames.mysterybox.core.data.di.AppContainer
-import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.core.data.state.UiState
-import ca.realitywargames.mysterybox.core.presentation.viewmodel.BaseViewModel
+import ca.realitywargames.mysterybox.core.presentation.viewmodel.MviViewModel
+import ca.realitywargames.mysterybox.feature.mystery.presentation.action.MysteryListAction
+import ca.realitywargames.mysterybox.feature.mystery.presentation.effect.MysteryListSideEffect
+import ca.realitywargames.mysterybox.feature.mystery.presentation.state.MysteryListUiState
+import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
-class MysteryListViewModel : BaseViewModel() {
+class MysteryListViewModel : MviViewModel<MysteryListUiState, MysteryListAction, MysteryListSideEffect>() {
 
     private val repository = AppContainer.mysteryRepository
 
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
-
-    private val _mysteries = MutableStateFlow<UiState<List<MysteryPackage>>>(UiState.Loading)
-    val mysteries: StateFlow<UiState<List<MysteryPackage>>> = _mysteries.asStateFlow()
+    override fun initialState(): MysteryListUiState = MysteryListUiState()
 
     init {
-        loadMysteries()
+        onAction(MysteryListAction.LoadMysteries)
     }
 
-    fun loadMysteries() {
-        launchWithLoading {
-            fetchMysteries()
+    override fun handleAction(action: MysteryListAction) {
+        when (action) {
+            is MysteryListAction.LoadMysteries -> loadMysteries()
+            is MysteryListAction.RefreshMysteries -> refreshMysteries()
         }
     }
 
-    fun refreshMysteries() {
-        _isRefreshing.update { true }
-        launchWithLoading {
-            delay(300)
-            fetchMysteries()
-            _isRefreshing.update { false }
+    private fun loadMysteries() {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(
+                        mysteries = if (loading) UiState.Loading else uiState.value.mysteries
+                    )
+                },
+                onError = { error ->
+                    uiState.value.copy(mysteries = UiState.Error(error))
+                }
+            ) {
+                val response = repository.getMysteryPackages()
+                updateState { copy(mysteries = UiState.Success(response.items)) }
+            }
         }
     }
 
-    private suspend fun fetchMysteries() {
-        runCatching { repository.getMysteryPackages() }
-            .onSuccess { response ->
-                _mysteries.update { UiState.Success(response.items) }
+    private fun refreshMysteries() {
+        updateState { copy(isRefreshing = true) }
+        launchAsync {
+            executeWithErrorHandling(
+                onError = { error ->
+                    uiState.value.copy(mysteries = UiState.Error(error), isRefreshing = false)
+                }
+            ) {
+                delay(300)
+                val response = repository.getMysteryPackages()
+                updateState { copy(mysteries = UiState.Success(response.items), isRefreshing = false) }
             }
-            .onFailure { e ->
-                _mysteries.update { UiState.Error(e.message ?: "Failed to load mysteries") }
-            }
+        }
     }
 
     fun getMysteryById(id: String): MysteryPackage? =
-        (mysteries.value as? UiState.Success<List<MysteryPackage>>)
+        (uiState.value.mysteries as? UiState.Success<List<MysteryPackage>>)
             ?.data
             ?.firstOrNull { it.id == id }
 }

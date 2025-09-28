@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import ca.realitywargames.mysterybox.core.navigation.NavRoutes
 import ca.realitywargames.mysterybox.feature.mystery.presentation.viewmodel.MysteryListViewModel
 import ca.realitywargames.mysterybox.feature.mystery.ui.screen.MysteryDetailScreen
 import kotlinx.serialization.Serializable
@@ -29,8 +30,11 @@ fun NavGraphBuilder.mysteryGraph(
             
             MysteryDetailScreen(
                 mystery = mystery,
-                navController = navController,
                 onBackClick = { navController.navigateUp() },
+                onCreatePartyClick = {
+                    navController.navigate(NavRoutes.createParty(it))
+                },
+                onPurchaseMysteryClick = { TODO("Implement IAP") },
             )
         }
     }

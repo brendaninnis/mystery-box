@@ -29,13 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ca.realitywargames.mysterybox.core.navigation.NavRoutes
 import ca.realitywargames.mysterybox.feature.profile.navigation.LoginRoute
 import ca.realitywargames.mysterybox.feature.profile.navigation.RegisterRoute
 import ca.realitywargames.mysterybox.feature.profile.navigation.SettingsRoute
 import ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel.UserViewModel
+import ca.realitywargames.mysterybox.feature.profile.presentation.state.UserUiState
 import ca.realitywargames.mysterybox.preview.MockData
-import ca.realitywargames.mysterybox.shared.models.User
 import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -44,12 +43,10 @@ fun ProfileScreen(
     userViewModel: UserViewModel,
     navController: NavHostController
 ) {
-    val currentUser by userViewModel.currentUser.collectAsState()
-    val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
+    val uiState by userViewModel.uiState.collectAsState()
 
     ProfileScreenContent(
-        currentUser = currentUser,
-        isLoggedIn = isLoggedIn,
+        state = uiState,
         onNavigateToSettings = { navController.navigate(SettingsRoute) },
         onNavigateToRegister = { navController.navigate(RegisterRoute) },
         onNavigateToLogin = { navController.navigate(LoginRoute) }
@@ -58,8 +55,7 @@ fun ProfileScreen(
 
 @Composable
 fun ProfileScreenContent(
-    currentUser: User?,
-    isLoggedIn: Boolean,
+    state: UserUiState,
     onNavigateToSettings: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToLogin: () -> Unit
@@ -70,9 +66,9 @@ fun ProfileScreenContent(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (isLoggedIn && currentUser != null) {
+        if (state.isLoggedIn && state.currentUser != null) {
             // Logged in user profile
-            val user = currentUser // Extract to local variable for smart cast
+            val user = state.currentUser // Extract to local variable for smart cast
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -194,8 +190,10 @@ fun ProfileScreenContent(
 private fun ProfileScreenLoggedInPreview() {
     MysteryBoxTheme {
         ProfileScreenContent(
-            currentUser = MockData.sampleUser(),
-            isLoggedIn = true,
+            state = UserUiState(
+                currentUser = MockData.sampleUser(),
+                isLoggedIn = true
+            ),
             onNavigateToSettings = { },
             onNavigateToRegister = { },
             onNavigateToLogin = { }
@@ -208,8 +206,10 @@ private fun ProfileScreenLoggedInPreview() {
 private fun ProfileScreenLoggedOutPreview() {
     MysteryBoxTheme {
         ProfileScreenContent(
-            currentUser = null,
-            isLoggedIn = false,
+            state = UserUiState(
+                currentUser = null,
+                isLoggedIn = false
+            ),
             onNavigateToSettings = { },
             onNavigateToRegister = { },
             onNavigateToLogin = { }

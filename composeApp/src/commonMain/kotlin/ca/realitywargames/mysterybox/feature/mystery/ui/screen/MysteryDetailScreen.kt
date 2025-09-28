@@ -50,8 +50,9 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun MysteryDetailScreen(
     mystery: MysteryPackage,
-    navController: NavHostController,
     onBackClick: () -> Unit,
+    onPurchaseMysteryClick: () -> Unit,
+    onCreatePartyClick: (mysteryId: String) -> Unit,
 ) {
     BaseScreen(
         title = "Mystery Details",
@@ -238,9 +239,7 @@ fun MysteryDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Button(
-                        onClick = {
-                            navController.navigate(NavRoutes.createParty(mystery.id))
-                        },
+                        onClick = { onCreatePartyClick(mystery.id) },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFFF6B6B)
@@ -278,8 +277,9 @@ private fun MysteryDetailScreenPreview() {
     MysteryBoxTheme {
         MysteryDetailScreen(
             mystery = MockData.sampleMysteryPackage(),
-            navController = rememberNavController(),
-            onBackClick = { }
+            onBackClick = { },
+            onPurchaseMysteryClick = { },
+            onCreatePartyClick = { }
         )
     }
 }

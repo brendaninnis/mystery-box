@@ -40,6 +40,7 @@ import ca.realitywargames.mysterybox.core.ui.theme.MysteryGradient
 import ca.realitywargames.mysterybox.feature.mystery.presentation.viewmodel.MysteryListViewModel
 import ca.realitywargames.mysterybox.feature.party.presentation.viewmodel.PartyViewModel
 import ca.realitywargames.mysterybox.feature.profile.presentation.viewmodel.UserViewModel
+import ca.realitywargames.mysterybox.feature.profile.presentation.action.UserAction
 
 data class BottomNavItem(
     val route: String,
@@ -64,8 +65,7 @@ fun MainScreen(
     mysteryListViewModel: MysteryListViewModel,
     partyViewModel: PartyViewModel
 ) {
-    val currentUser by userViewModel.currentUser.collectAsState()
-    val isLoggedIn by userViewModel.isLoggedIn.collectAsState()
+    val userUiState by userViewModel.uiState.collectAsState()
     var selectedTab by rememberSaveable(stateSaver = TabSaver) { mutableStateOf(Tab.MYSTERIES) }
 
     val bottomNavItems = listOf(
@@ -111,9 +111,9 @@ fun MainScreen(
                         )
                     }
 
-                    if (isLoggedIn) {
+                    if (userUiState.isLoggedIn) {
                         IconButton(onClick = {
-                            userViewModel.logout()
+                            userViewModel.onAction(UserAction.Logout)
                         }) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ExitToApp,
