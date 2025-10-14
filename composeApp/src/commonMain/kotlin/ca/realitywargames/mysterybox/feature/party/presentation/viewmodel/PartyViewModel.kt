@@ -28,7 +28,7 @@ class PartyViewModel : MviViewModel<PartyUiState, PartyAction, PartySideEffect>(
     override fun handleAction(action: PartyAction) {
         when (action) {
             is PartyAction.LoadUserParties -> loadUserParties()
-            is PartyAction.RefreshParties -> loadUserParties(isRefresh = true)
+            is PartyAction.RefreshParties -> loadUserParties()
             is PartyAction.SelectParty -> selectParty(action.party)
             is PartyAction.ClearSelectedParty -> clearSelectedParty()
             is PartyAction.CreateParty -> createParty(action)
@@ -40,7 +40,7 @@ class PartyViewModel : MviViewModel<PartyUiState, PartyAction, PartySideEffect>(
         }
     }
 
-    private fun loadUserParties(isRefresh: Boolean = false) {
+    private fun loadUserParties() {
         launchAsync {
             executeWithErrorHandling(
                 updateLoadingState = { loading ->
@@ -66,10 +66,6 @@ class PartyViewModel : MviViewModel<PartyUiState, PartyAction, PartySideEffect>(
                         mysteryPackages = mysteryPackages,
                         loadPartiesState = AsyncState()
                     )
-                }
-                
-                if (isRefresh) {
-                    emitSideEffect(PartySideEffect.ShowToast("Parties refreshed"))
                 }
             }
         }

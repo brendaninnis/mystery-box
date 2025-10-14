@@ -20,8 +20,7 @@ sealed interface PartySideEffect {
     // UI feedback effects
     data class ShowSuccessMessage(val message: String) : PartySideEffect
     data class ShowErrorMessage(val message: String) : PartySideEffect
-    data class ShowToast(val message: String) : PartySideEffect
-    
+
     // Party creation effects
     data object PartyCreatedSuccessfully : PartySideEffect
     data object PartyJoinedSuccessfully : PartySideEffect

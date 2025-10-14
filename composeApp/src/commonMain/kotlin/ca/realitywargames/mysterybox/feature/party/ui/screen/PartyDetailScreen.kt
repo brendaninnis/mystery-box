@@ -59,11 +59,7 @@ import ca.realitywargames.mysterybox.core.presentation.state.AsyncState
 import ca.realitywargames.mysterybox.preview.MockData
 import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
 import ca.realitywargames.mysterybox.shared.models.Party
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flowOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,9 +107,6 @@ fun PartyDetailScreen(
                 }
                 is PartySideEffect.ShowSuccessMessage -> {
                     // Handle success message
-                }
-                is PartySideEffect.ShowToast -> {
-                    // Handle toast message
                 }
                 else -> {
                     // Handle other effects if needed
