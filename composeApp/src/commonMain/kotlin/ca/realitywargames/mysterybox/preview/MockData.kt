@@ -10,6 +10,7 @@ object MockData {
     fun sampleMysteryPackages(): List<MysteryPackage> = listOf(
         MysteryPackage(
             id = "mystery-1",
+            productId = "moonlightmanor",
             title = "Murder at Moonlight Manor",
             description = "A classic whodunit set in a Victorian mansion during a stormy night. Someone has been murdered, and everyone is a suspect.",
             imagePath = "/images/moonlight-manor.jpg",
@@ -50,6 +51,7 @@ object MockData {
         ),
         MysteryPackage(
             id = "mystery-2",
+            productId = "orientexpress",
             title = "Death on the Orient Express",
             description = "A murder mystery aboard a luxurious train journey. When a passenger is found dead, everyone becomes a suspect.",
             imagePath = "/images/orient-express.jpg", 
@@ -74,7 +76,8 @@ object MockData {
             isAvailable = true
         ),
         MysteryPackage(
-            id = "mystery-3", 
+            id = "mystery-3",
+            productId = "hollywoodhomicide",
             title = "Hollywood Homicide",
             description = "A glamorous murder mystery set in 1940s Hollywood. A famous actress has been found dead on set.",
             imagePath = "/images/hollywood-homicide.jpg",

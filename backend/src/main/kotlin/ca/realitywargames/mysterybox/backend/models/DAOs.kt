@@ -45,6 +45,7 @@ class UserDAO(id: EntityID<UUID>) : UUIDEntity(id) {
 class MysteryPackageDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<MysteryPackageDAO>(MysteryPackages)
 
+    var productId by MysteryPackages.productId
     var title by MysteryPackages.title
     var description by MysteryPackages.description
     var imagePath by MysteryPackages.imagePath
@@ -63,6 +64,7 @@ class MysteryPackageDAO(id: EntityID<UUID>) : UUIDEntity(id) {
 
     fun toMysteryPackage(): MysteryPackage = MysteryPackage(
         id = id.value.toString(),
+        productId = productId,
         title = title,
         description = description ?: "",
         imagePath = imagePath ?: "",

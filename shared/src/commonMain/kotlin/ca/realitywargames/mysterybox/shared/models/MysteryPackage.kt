@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MysteryPackage(
     val id: String,
+    val productId: String,
     val title: String,
     val description: String,
     val imagePath: String,

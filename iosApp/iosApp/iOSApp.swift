@@ -5,6 +5,8 @@ import ComposeApp
 @main
 struct iOSApp: App {
     init() {
+        // initializeDependencies()
+        // initializeSentry()
         IAPRepositoryKt.initializeIAP()
     }
 

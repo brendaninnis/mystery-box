@@ -17,6 +17,7 @@ object Users : UUIDTable("users") {
 }
 
 object MysteryPackages : UUIDTable("mystery_packages") {
+    val productId = varchar("product_id", 100)
     val title = varchar("title", 255)
     val description = text("description").nullable()
     val imagePath = text("image_path").nullable()

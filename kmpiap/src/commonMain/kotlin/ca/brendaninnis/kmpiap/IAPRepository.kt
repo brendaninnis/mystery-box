@@ -26,7 +26,6 @@ object IAPRepository {
         scope.launch {
             val fetchedProducts = platformIAP.getIAPProducts(identifiers)
             _products.update { fetchedProducts }
-            println("Fetched products: $fetchedProducts")
         }
     }
 }

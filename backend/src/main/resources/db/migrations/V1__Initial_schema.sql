@@ -14,6 +14,7 @@ CREATE TABLE users (
 -- Mystery packages table
 CREATE TABLE mystery_packages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id VARCHAR(100) NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     image_path TEXT,

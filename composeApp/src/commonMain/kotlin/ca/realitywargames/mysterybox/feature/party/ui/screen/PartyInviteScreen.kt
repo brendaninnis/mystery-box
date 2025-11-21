@@ -47,6 +47,7 @@ fun PartyInviteScreen(
     // Mock mystery and party data
     val mockMystery = MysteryPackage(
         id = "1",
+        productId = "mockproductid",
         title = "The Haunted Mansion Mystery",
         description = "A spine-chilling murder mystery...",
         imagePath = "",
