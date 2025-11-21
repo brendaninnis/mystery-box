@@ -91,7 +91,7 @@ fun RegisterScreenContent(
         title = "Register",
         onBackClick = onBackClick
     ) {
-        AuthForm(title = "Join Mystery Box") {
+        AuthForm(title = "Join Mystery Nights") {
             NameTextField(
                 value = name,
                 onValueChange = { name = it },

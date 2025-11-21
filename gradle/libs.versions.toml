@@ -19,6 +19,7 @@ kotlin = "2.2.10"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1"
 android-play-review = "2.0.2"
+android-billing = "8.0.0"
 kotlinx-serialization = "1.9.0"
 fastlane-screengrab = "2.1.1"
 ktor = "3.3.0"
@@ -53,6 +54,8 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 android-play-review = { module = "com.google.android.play:review", version.ref = "android-play-review" }
 android-play-review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "android-play-review" }
+android-billing = { module = "com.android.billingclient:billing", version.ref = "android-billing" }
+android-billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "android-billing" }
 fastlane-screengrab = { module = "tools.fastlane:screengrab", version.ref = "fastlane-screengrab" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }

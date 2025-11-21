@@ -1,7 +1,7 @@
 TEAM_ID=
 
-PRODUCT_NAME=Mystery Box
-PRODUCT_BUNDLE_IDENTIFIER=ca.realitywargames.mysterybox.MysteryBox$(TEAM_ID)
+PRODUCT_NAME=Mystery Nights
+PRODUCT_BUNDLE_IDENTIFIER=ca.realitywargames.mysterynights.MysteryNights$(TEAM_ID)
 
 CURRENT_PROJECT_VERSION=1
 MARKETING_VERSION=1.0

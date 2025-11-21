@@ -89,7 +89,7 @@ fun LoginScreenContent(
         title = "Login",
         onBackClick = onBackClick
     ) {
-        AuthForm(title = "Welcome to Mystery Box") {
+        AuthForm(title = "Welcome to Mystery Nights") {
             EmailTextField(
                 value = email,
                 onValueChange = { email = it },

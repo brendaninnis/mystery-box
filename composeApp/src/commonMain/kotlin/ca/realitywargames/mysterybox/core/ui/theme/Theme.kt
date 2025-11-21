@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-// Mystery Box Gradient - the beautiful dark gradient used throughout the app
 val MysteryGradient = Brush.verticalGradient(
     colors = listOf(
         Color(0xFF0F0F23), // Very dark blue

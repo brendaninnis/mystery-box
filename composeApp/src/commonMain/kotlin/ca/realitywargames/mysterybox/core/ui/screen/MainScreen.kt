@@ -91,7 +91,7 @@ fun MainScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Mystery Box",
+                        "Mystery Nights",
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.primary
                     )

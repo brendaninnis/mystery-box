@@ -31,6 +31,7 @@ kotlin {
     
     sourceSets {
         androidMain.dependencies {
+            implementation(project(":kmpiap"))
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.android.play.review)
@@ -70,6 +71,7 @@ kotlin {
         val iosMain by creating {
             dependsOn(commonMain)
             dependencies {
+                implementation(project(":kmpiap"))
                 implementation(libs.ktor.client.darwin)
             }
         }
@@ -90,7 +92,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "ca.realitywargames.mysterybox"
+        applicationId = "ca.realitywargames.mysterynights.android"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
