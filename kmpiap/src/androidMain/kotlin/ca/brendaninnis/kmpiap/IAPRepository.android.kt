@@ -32,7 +32,7 @@ internal class IAPAndroid(
         .build()
 ) : PlatformIAP {
 
-    override suspend fun getIAPProducts(productIdentifiers: List<String>): List<IAPProduct> {
+    override suspend fun getIAPProducts(productIdentifiers: List<String>): Map<String, IAPProduct> {
         val productList = productIdentifiers.map { productId ->
             QueryProductDetailsParams.Product.newBuilder()
                 .setProductId(productId)
@@ -47,13 +47,14 @@ internal class IAPAndroid(
             billingClient.queryProductDetails(params.build())
         }
 
-        return productDetailsResult.productDetailsList?.map {
+        return productDetailsResult.productDetailsList?.associate {
+            it.productId to
             IAPProduct(
                 id = it.productId,
                 title = it.title,
                 description = it.description,
                 formattedPrice = "$4.20"
             )
-        } ?: listOf()
+        } ?: emptyMap()
     }
 }

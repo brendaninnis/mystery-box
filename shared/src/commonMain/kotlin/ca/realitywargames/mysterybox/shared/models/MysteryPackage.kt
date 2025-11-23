@@ -9,8 +9,6 @@ data class MysteryPackage(
     val title: String,
     val description: String,
     val imagePath: String,
-    val price: Double,
-    val currency: String = "USD",
     val durationMinutes: Int,
     val minPlayers: Int,
     val maxPlayers: Int,
@@ -35,4 +33,3 @@ data class CharacterTemplate(
     val avatarPath: String,
     val background: String
 )
-

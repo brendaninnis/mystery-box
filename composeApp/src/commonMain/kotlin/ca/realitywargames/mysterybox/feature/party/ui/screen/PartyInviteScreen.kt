@@ -51,8 +51,6 @@ fun PartyInviteScreen(
         title = "The Haunted Mansion Mystery",
         description = "A spine-chilling murder mystery...",
         imagePath = "",
-        price = 29.99,
-        currency = "USD",
         durationMinutes = 180,
         minPlayers = 6,
         maxPlayers = 10,

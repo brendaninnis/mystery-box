@@ -45,11 +45,13 @@ import ca.realitywargames.mysterybox.preview.MockData
 import ca.realitywargames.mysterybox.core.ui.theme.MysteryBoxTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import ca.brendaninnis.kmpiap.IAPProduct
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun MysteryDetailScreen(
     mystery: MysteryPackage,
+    product: IAPProduct?,
     onBackClick: () -> Unit,
     onPurchaseMysteryClick: () -> Unit,
     onCreatePartyClick: (mysteryId: String) -> Unit,
@@ -90,7 +92,7 @@ fun MysteryDetailScreen(
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Text(
-                            text = "$${mystery.price}",
+                            text = product?.formattedPrice ?: "Unavailable",
                             style = MaterialTheme.typography.titleMedium,
                             color = Color.White,
                             fontWeight = FontWeight.Bold
@@ -277,6 +279,7 @@ private fun MysteryDetailScreenPreview() {
     MysteryBoxTheme {
         MysteryDetailScreen(
             mystery = MockData.sampleMysteryPackage(),
+            product = null,
             onBackClick = { },
             onPurchaseMysteryClick = { },
             onCreatePartyClick = { }

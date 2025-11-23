@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -11,8 +12,8 @@ object IAPRepository {
     private val scope = CoroutineScope(Dispatchers.IO)
     private lateinit var platformIAP: PlatformIAP
 
-    private val _products: MutableStateFlow<List<IAPProduct>> = MutableStateFlow(emptyList())
-    val products: MutableStateFlow<List<IAPProduct>> = _products
+    private val _products: MutableStateFlow<Map<String, IAPProduct>> = MutableStateFlow(emptyMap())
+    val products: StateFlow<Map<String, IAPProduct>> = _products
 
     internal fun initialize(platformIAP: PlatformIAP) {
         this.platformIAP = platformIAP
@@ -31,7 +32,7 @@ object IAPRepository {
 }
 
 internal interface PlatformIAP {
-    suspend fun getIAPProducts(productIdentifiers: List<String>): List<IAPProduct>
+    suspend fun getIAPProducts(productIdentifiers: List<String>): Map<String, IAPProduct>
 }
 
 data class IAPProduct(

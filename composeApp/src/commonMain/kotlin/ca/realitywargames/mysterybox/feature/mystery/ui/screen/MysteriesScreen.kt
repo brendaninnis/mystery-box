@@ -29,6 +29,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import ca.brendaninnis.kmpiap.IAPProduct
+import ca.brendaninnis.kmpiap.IAPRepository
 import ca.realitywargames.mysterybox.core.data.network.serverBaseUrl
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.feature.mystery.ui.component.MysteryInfoRow
@@ -69,6 +71,8 @@ fun MysteriesScreenContent(
     onRetry: () -> Unit,
     onMysteryClick: (MysteryPackage) -> Unit
 ) {
+    val products by IAPRepository.products.collectAsState()
+
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh
@@ -109,8 +113,10 @@ fun MysteriesScreenContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(s.data) { mysteryPackage ->
+                        val product = products[mysteryPackage.productId]
                         MysteryPackageCard(
                             mysteryPackage = mysteryPackage,
+                            product = product,
                             onClick = { onMysteryClick(mysteryPackage) }
                         )
                     }
@@ -164,6 +170,7 @@ fun MysteriesScreenContent(
 @Composable
 fun MysteryPackageCard(
     mysteryPackage: MysteryPackage,
+    product: IAPProduct?,
     onClick: () -> Unit
 ) {
     Card(
@@ -211,7 +218,7 @@ fun MysteryPackageCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$${mysteryPackage.price}",
+                        text = product?.formattedPrice ?: "Unavailable",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -301,6 +308,7 @@ private fun MysteryPackageCardPreview() {
     MysteryBoxTheme {
         MysteryPackageCard(
             mysteryPackage = MockData.sampleMysteryPackage(),
+            product = null,
             onClick = { }
         )
     }

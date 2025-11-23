@@ -49,8 +49,6 @@ class MysteryPackageDAO(id: EntityID<UUID>) : UUIDEntity(id) {
     var title by MysteryPackages.title
     var description by MysteryPackages.description
     var imagePath by MysteryPackages.imagePath
-    var price by MysteryPackages.price
-    var currency by MysteryPackages.currency
     var durationMinutes by MysteryPackages.durationMinutes
     var minPlayers by MysteryPackages.minPlayers
     var maxPlayers by MysteryPackages.maxPlayers
@@ -68,8 +66,6 @@ class MysteryPackageDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         title = title,
         description = description ?: "",
         imagePath = imagePath ?: "",
-        price = price.toDouble(),
-        currency = currency,
         durationMinutes = durationMinutes,
         minPlayers = minPlayers,
         maxPlayers = maxPlayers,

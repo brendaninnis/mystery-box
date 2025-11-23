@@ -18,8 +18,6 @@ CREATE TABLE mystery_packages (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     image_path TEXT,
-    price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    currency VARCHAR(3) DEFAULT 'USD',
     duration_minutes INTEGER NOT NULL,
     min_players INTEGER NOT NULL,
     max_players INTEGER NOT NULL,

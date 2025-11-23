@@ -74,8 +74,6 @@ class MysteryRepository {
                 title = packageData.title
                 description = packageData.description
                 imagePath = packageData.imagePath
-                price = packageData.price.toBigDecimal()
-                currency = packageData.currency
                 durationMinutes = packageData.durationMinutes
                 minPlayers = packageData.minPlayers
                 maxPlayers = packageData.maxPlayers

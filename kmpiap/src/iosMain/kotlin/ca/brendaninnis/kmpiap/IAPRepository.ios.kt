@@ -47,7 +47,7 @@ internal class IAPiOS : PlatformIAP {
         })
     }
 
-    override suspend fun getIAPProducts(productIdentifiers: List<String>): List<IAPProduct> =
+    override suspend fun getIAPProducts(productIdentifiers: List<String>): Map<String, IAPProduct> =
         suspendCancellableCoroutine { continuation ->
             val request = SKProductsRequest(productIdentifiers.toSet()).apply {
                 delegate = object : NSObject(), SKProductsRequestDelegateProtocol {
@@ -56,12 +56,12 @@ internal class IAPiOS : PlatformIAP {
                         didReceiveResponse: SKProductsResponse
                     ) {
                         val products = didReceiveResponse.products as List<SKProduct>
-                        val iapProducts = products.map { skProduct ->
+                        val iapProducts = products.associate { skProduct ->
                             val formatter = NSNumberFormatter().apply {
                                 numberStyle = NSNumberFormatterCurrencyStyle
                                 locale = skProduct.priceLocale
                             }
-                            IAPProduct(
+                            skProduct.productIdentifier to IAPProduct(
                                 id = skProduct.productIdentifier,
                                 title = skProduct.localizedTitle,
                                 description = skProduct.localizedDescription,

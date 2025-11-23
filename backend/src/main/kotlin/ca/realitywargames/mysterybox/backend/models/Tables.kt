@@ -3,7 +3,6 @@ package ca.realitywargames.mysterybox.backend.models
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 import org.jetbrains.exposed.sql.ReferenceOption
-import java.math.BigDecimal
 
 object Users : UUIDTable("users") {
     val email = varchar("email", 255)
@@ -21,8 +20,6 @@ object MysteryPackages : UUIDTable("mystery_packages") {
     val title = varchar("title", 255)
     val description = text("description").nullable()
     val imagePath = text("image_path").nullable()
-    val price = decimal("price", 10, 2).default(BigDecimal("0.00"))
-    val currency = varchar("currency", 3).default("USD")
     val durationMinutes = integer("duration_minutes")
     val minPlayers = integer("min_players")
     val maxPlayers = integer("max_players")
