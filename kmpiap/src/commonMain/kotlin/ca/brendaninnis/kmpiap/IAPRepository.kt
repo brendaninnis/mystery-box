@@ -2,14 +2,13 @@ package ca.brendaninnis.kmpiap
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 object IAPRepository {
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.Default)
     private lateinit var platformIAP: PlatformIAP
 
     private val _products: MutableStateFlow<Map<String, IAPProduct>> = MutableStateFlow(emptyMap())

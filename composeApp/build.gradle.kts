@@ -1,5 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -28,6 +29,17 @@ kotlin {
             isStatic = true
         }
     }
+
+    js {
+        browser()
+        binaries.executable()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
     
     sourceSets {
         androidMain.dependencies {
@@ -50,8 +62,6 @@ kotlin {
                 implementation(compose.components.uiToolingPreview)
                 implementation(libs.androidx.lifecycle.viewmodelCompose)
                 implementation(libs.androidx.lifecycle.runtimeCompose)
-                implementation(libs.androidx.datastore)
-                implementation(libs.androidx.datastore.preferences)
                 implementation(libs.androidx.navigation.compose)
                 implementation(libs.kotlinx.serialization)
                 implementation(libs.kotlinx.datetime)
@@ -84,6 +94,19 @@ kotlin {
         }
         val iosSimulatorArm64Main by getting {
             dependsOn(iosMain)
+        }
+
+        val webMain by creating {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.ktor.client.js)
+            }
+        }
+        val jsMain by getting {
+            dependsOn(webMain)
+        }
+        val wasmJsMain by getting {
+            dependsOn(webMain)
         }
     }
 }

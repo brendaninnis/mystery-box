@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
@@ -16,6 +18,17 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
         }
+    }
+
+    js {
+        browser()
+        binaries.executable()
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
     }
 
     sourceSets {
@@ -48,6 +61,10 @@ kotlin {
 
         val iosSimulatorArm64Main by getting {
             dependsOn(iosMain)
+        }
+        
+        val wasmJsMain by getting {
+            dependsOn(commonMain)
         }
     }
 }
