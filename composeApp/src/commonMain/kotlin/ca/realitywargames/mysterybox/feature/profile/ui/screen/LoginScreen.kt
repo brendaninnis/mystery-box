@@ -45,9 +45,7 @@ fun LoginScreen(
         userViewModel.sideEffect.collect { effect ->
             when (effect) {
                 is UserSideEffect.LoginSucceeded -> onLoginSuccess()
-                is UserSideEffect.ShowError -> { /* no-op, using state-bound error */ }
-                is UserSideEffect.ShowToast -> { /* TODO: show toast */ }
-                is UserSideEffect.RegistrationSucceeded -> { /* ignore on login */ }
+                else -> {}
             }
         }
     }

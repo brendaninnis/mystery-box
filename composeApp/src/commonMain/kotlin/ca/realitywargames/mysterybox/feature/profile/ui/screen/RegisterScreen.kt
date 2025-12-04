@@ -45,9 +45,9 @@ fun RegisterScreen(
         userViewModel.sideEffect.collect { effect ->
             when (effect) {
                 is UserSideEffect.RegistrationSucceeded -> onRegisterSuccess()
-                is UserSideEffect.ShowError -> { /* handled via state */ }
-                is UserSideEffect.ShowToast -> { /* TODO */ }
-                is UserSideEffect.LoginSucceeded -> { /* ignore on register */ }
+                else -> {
+                    // Handle other side effects if needed
+                }
             }
         }
     }
