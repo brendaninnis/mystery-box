@@ -7,5 +7,7 @@ import io.ktor.server.routing.routing
 fun Application.configureStaticFiles() {
     routing {
         staticResources("/images", "images")
+        // Serve static HTML pages (privacy policy, terms, etc.) from root
+        staticResources("/", "static")
     }
 }
