@@ -142,3 +142,39 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+val webDeployDir = layout.buildDirectory.dir("deploy")
+
+abstract class LoggingCopy : Copy() {
+    @get:Input
+    abstract val logMessage: Property<String>
+
+    @TaskAction
+    fun logAfterCopy() {
+        logger.lifecycle(logMessage.get())
+    }
+}
+
+tasks.register<LoggingCopy>("prepareJsWebDeploy") {
+    group = "deployment"
+    description = "Prepares the JS web distribution for deployment"
+    dependsOn("jsBrowserDistribution")
+    from(layout.buildDirectory.dir("dist/js/productionExecutable"))
+    into(webDeployDir.map { it.dir("js") })
+    logMessage.set("JS web app ready at: ${webDeployDir.get().asFile.absolutePath}/js/")
+}
+
+tasks.register<LoggingCopy>("prepareWasmWebDeploy") {
+    group = "deployment"
+    description = "Prepares the WASM web distribution for deployment"
+    dependsOn("wasmJsBrowserDistribution")
+    from(layout.buildDirectory.dir("dist/wasmJs/productionExecutable"))
+    into(webDeployDir.map { it.dir("wasm") })
+    logMessage.set("WASM web app ready at: ${webDeployDir.get().asFile.absolutePath}/wasm/")
+}
+
+tasks.register("prepareWebDeploy") {
+    group = "deployment"
+    description = "Prepares both JS and WASM web distributions for deployment"
+    dependsOn("prepareJsWebDeploy", "prepareWasmWebDeploy")
+}
+

@@ -61,3 +61,31 @@ tasks.jar {
         attributes["Main-Class"] = "ca.realitywargames.mysterybox.backend.ApplicationKt"
     }
 }
+
+tasks.shadowJar {
+    archiveBaseName.set("mysterybox-backend")
+    archiveClassifier.set("")
+    archiveVersion.set(version.toString())
+}
+
+val deployDir = layout.buildDirectory.dir("deploy")
+
+abstract class LoggingCopy : Copy() {
+    @get:Input
+    abstract val logMessage: Property<String>
+
+    @TaskAction
+    fun logAfterCopy() {
+        logger.lifecycle(logMessage.get())
+    }
+}
+
+tasks.register<LoggingCopy>("prepareBackendDeploy") {
+    group = "deployment"
+    description = "Prepares the backend fat JAR for deployment"
+    dependsOn(tasks.shadowJar)
+    from(tasks.shadowJar.map { it.archiveFile })
+    into(deployDir)
+    rename { "mysterybox-backend.jar" }
+    logMessage.set("Backend JAR ready at: ${deployDir.get().asFile.absolutePath}/mysterybox-backend.jar")
+}
