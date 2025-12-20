@@ -72,6 +72,10 @@ class AuthService(
         return userRepository.findById(userId)
     }
 
+    suspend fun deleteAccount(userId: String): Boolean {
+        return userRepository.deleteUser(userId)
+    }
+
     private fun generateToken(user: User): String {
         return JWT.create()
             .withAudience(jwtAudience)

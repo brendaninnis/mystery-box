@@ -15,6 +15,7 @@ class UserRepository(private val api: MysteryBoxApi) {
     suspend fun login(email: String, password: String): User {
         val response = api.login(LoginRequest(email, password))
         if (response.success && response.data != null) {
+            api.setAuthToken(response.data!!.token)
             currentUser = response.data!!.user
             return response.data!!.user
         }
@@ -37,16 +38,32 @@ class UserRepository(private val api: MysteryBoxApi) {
     }
 
     suspend fun getCurrentUser(): User? {
-        val response = api.getCurrentUser()
-        if (response.success) {
-            currentUser = response.data
-            return response.data
+        return try {
+            val response = api.getCurrentUser()
+            if (response.success) {
+                currentUser = response.data
+                response.data
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
         }
-        return null
     }
 
     fun logout() {
         currentUser = null
+        api.setAuthToken(null)
+    }
+
+    suspend fun deleteAccount() {
+        val response = api.deleteAccount()
+        if (response.success) {
+            currentUser = null
+            api.setAuthToken(null)
+        } else {
+            throw Exception(response.error?.message ?: "Failed to delete account")
+        }
     }
 
     suspend fun updateUserPreferences(preferences: UserPreferences): User {

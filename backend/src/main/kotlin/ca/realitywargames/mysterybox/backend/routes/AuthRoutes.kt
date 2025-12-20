@@ -13,6 +13,7 @@ import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
@@ -142,6 +143,40 @@ fun Route.authRoutes() {
                     call.respond(
                         status = HttpStatusCode.Unauthorized,
                         ApiResponse<User>(
+                            success = false,
+                            error = ErrorResponse(
+                                code = "INVALID_TOKEN",
+                                message = "Invalid authentication token"
+                            )
+                        )
+                    )
+                }
+            }
+
+            delete("/me") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+
+                if (userId != null) {
+                    val deleted = authService.deleteAccount(userId)
+                    if (deleted) {
+                        call.respond(ApiResponse<String?>(success = true, data = null))
+                    } else {
+                        call.respond(
+                            status = HttpStatusCode.NotFound,
+                            ApiResponse<String?>(
+                                success = false,
+                                error = ErrorResponse(
+                                    code = "DELETE_FAILED",
+                                    message = "User not found or could not be deleted"
+                                )
+                            )
+                        )
+                    }
+                } else {
+                    call.respond(
+                        status = HttpStatusCode.Unauthorized,
+                        ApiResponse<String?>(
                             success = false,
                             error = ErrorResponse(
                                 code = "INVALID_TOKEN",

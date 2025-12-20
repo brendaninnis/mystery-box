@@ -4,6 +4,7 @@ import ca.realitywargames.mysterybox.shared.models.*
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.patch
@@ -20,11 +21,12 @@ import kotlinx.serialization.json.Json
 @OptIn(ExperimentalTime::class)
 class MysteryBoxApi(private val httpClient: HttpClient) {
 
-    private var authToken: String? = null
-
     fun setAuthToken(token: String?) {
-        authToken = token
+        TokenStorage.setToken(token)
     }
+
+    private val authToken: String?
+        get() = TokenStorage.getToken()
 
     companion object {
         private val BASE_URL get() = apiBaseUrl
@@ -59,6 +61,14 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
 
     suspend fun getCurrentUser(): ApiResponse<User> {
         return httpClient.get("$BASE_URL/auth/me") {
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
+        }.body()
+    }
+
+    suspend fun deleteAccount(): ApiResponse<String?> {
+        return httpClient.delete("$BASE_URL/auth/me") {
             headers {
                 authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
             }

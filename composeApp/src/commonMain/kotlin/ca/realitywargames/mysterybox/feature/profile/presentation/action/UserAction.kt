@@ -9,6 +9,7 @@ sealed interface UserAction {
     data object CheckCurrentUser : UserAction
     data class UpdatePreferences(val preferences: UserPreferences) : UserAction
     data object ClearError : UserAction
+    data object DeleteAccount : UserAction
 }
 
 

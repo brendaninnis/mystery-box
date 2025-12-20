@@ -46,6 +46,7 @@ fun AuthTextField(
         onValueChange = onValueChange,
         label = { Text(label) },
         leadingIcon = { Icon(leadingIcon, contentDescription = null) },
+        singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
             imeAction = imeAction

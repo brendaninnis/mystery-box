@@ -21,8 +21,10 @@ fun Application.configureAuthentication() {
                     .build()
             )
             validate { credential ->
-                val userId = authService.validateToken(credential.payload.getClaim("userId").asString())
-                if (userId != null) {
+                // The JWT is already verified by the verifier above
+                // Just check that the userId claim exists
+                val userId = credential.payload.getClaim("userId")?.asString()
+                if (!userId.isNullOrBlank()) {
                     JWTPrincipal(credential.payload)
                 } else {
                     null
