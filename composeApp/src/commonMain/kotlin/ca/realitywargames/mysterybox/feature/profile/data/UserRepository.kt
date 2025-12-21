@@ -31,8 +31,9 @@ class UserRepository(private val api: MysteryBoxApi) {
             )
         )
         if (response.success && response.data != null) {
-            currentUser = response.data!!
-            return response.data!!
+            api.setAuthToken(response.data!!.token)
+            currentUser = response.data!!.user
+            return response.data!!.user
         }
         throw Exception(response.error?.message ?: "Registration failed")
     }

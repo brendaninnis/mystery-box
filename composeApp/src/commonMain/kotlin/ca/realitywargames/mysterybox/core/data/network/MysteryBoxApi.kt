@@ -52,7 +52,7 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
         }.body()
     }
 
-    suspend fun register(request: RegisterRequest): ApiResponse<User> {
+    suspend fun register(request: RegisterRequest): ApiResponse<LoginResponse> {
         return httpClient.post("$BASE_URL/auth/register") {
             contentType(ContentType.Application.Json)
             setBody(request)

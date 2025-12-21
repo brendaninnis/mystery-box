@@ -28,35 +28,40 @@ fun Route.authRoutes() {
             val result = authService.register(request)
 
             result.fold(
-                onSuccess = { user ->
-                    call.respond(ApiResponse(success = true, data = user))
+                onSuccess = { (user, token) ->
+                    call.respond(
+                        ApiResponse(
+                            success = true,
+                            data = LoginResponse(user = user, token = token)
+                        )
+                    )
                 },
                 onFailure = { error ->
                     val statusCode = when {
-                        error.message?.contains("email already exists", ignoreCase = true) == true -> 
+                        error.message?.contains("email already exists", ignoreCase = true) == true ->
                             HttpStatusCode.Conflict
                         error.message?.contains("required", ignoreCase = true) == true ||
                         error.message?.contains("valid", ignoreCase = true) == true ||
                         error.message?.contains("characters", ignoreCase = true) == true ||
-                        error.message?.contains("long", ignoreCase = true) == true -> 
+                        error.message?.contains("long", ignoreCase = true) == true ->
                             HttpStatusCode.BadRequest
                         else -> HttpStatusCode.BadRequest
                     }
-                    
+
                     val errorCode = when {
-                        error.message?.contains("email already exists", ignoreCase = true) == true -> 
+                        error.message?.contains("email already exists", ignoreCase = true) == true ->
                             "EMAIL_ALREADY_EXISTS"
                         error.message?.contains("required", ignoreCase = true) == true ||
                         error.message?.contains("valid", ignoreCase = true) == true ||
                         error.message?.contains("characters", ignoreCase = true) == true ||
-                        error.message?.contains("long", ignoreCase = true) == true -> 
+                        error.message?.contains("long", ignoreCase = true) == true ->
                             "VALIDATION_ERROR"
                         else -> "REGISTRATION_FAILED"
                     }
-                    
+
                     call.respond(
                         status = statusCode,
-                        ApiResponse<User>(
+                        ApiResponse<LoginResponse>(
                             success = false,
                             error = ErrorResponse(
                                 code = errorCode,

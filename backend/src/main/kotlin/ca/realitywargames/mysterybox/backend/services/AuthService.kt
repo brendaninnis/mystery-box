@@ -25,7 +25,7 @@ class AuthService(
         ?: config.property("jwt.default.audience").getString()
     val algorithm = Algorithm.HMAC256(jwtSecret)
 
-    suspend fun register(request: RegisterRequest): Result<User> {
+    suspend fun register(request: RegisterRequest): Result<Pair<User, String>> {
         // Validate request
         val validationResults = RegisterValidator.validate(request)
         if (!validationResults.isValid()) {
@@ -49,7 +49,9 @@ class AuthService(
             name = request.name.trim()
         )
 
-        return Result.success(user)
+        // Generate JWT token so user is logged in after registration
+        val token = generateToken(user)
+        return Result.success(Pair(user, token))
     }
 
     suspend fun login(request: LoginRequest): Result<Pair<User, String>> {
