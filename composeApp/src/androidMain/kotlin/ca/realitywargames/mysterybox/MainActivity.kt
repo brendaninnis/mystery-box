@@ -8,6 +8,7 @@ import androidx.activity.SystemBarStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
+import ca.realitywargames.mysterybox.core.data.network.TokenStorage
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,6 +20,9 @@ class MainActivity : ComponentActivity() {
             )
         )
         super.onCreate(savedInstanceState)
+
+        // Initialize secure token storage
+        TokenStorage.initialize(applicationContext)
 
         setContent {
             App()

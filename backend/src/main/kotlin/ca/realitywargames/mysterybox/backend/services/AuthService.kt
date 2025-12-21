@@ -82,7 +82,7 @@ class AuthService(
             .withIssuer(jwtIssuer)
             .withClaim("userId", user.id)
             .withClaim("email", user.email)
-            .withExpiresAt(Date(System.currentTimeMillis() + 86400000)) // 24 hours
+            .withExpiresAt(Date(System.currentTimeMillis() + 2592000000L)) // 30 days
             .sign(algorithm)
     }
 

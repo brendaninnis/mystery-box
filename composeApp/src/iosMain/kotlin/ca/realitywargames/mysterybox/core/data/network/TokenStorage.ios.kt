@@ -1,15 +1,36 @@
 package ca.realitywargames.mysterybox.core.data.network
 
-actual object TokenStorage {
-    private var token: String? = null
+import com.liftric.kvault.KVault
 
-    actual fun getToken(): String? = token
+actual object TokenStorage {
+    private const val TOKEN_KEY = "auth_token"
+    private val kvault = KVault("mystery_box_auth")
+
+    actual fun getToken(): String? {
+        return try {
+            kvault.string(TOKEN_KEY)
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     actual fun setToken(token: String?) {
-        this.token = token
+        try {
+            if (token != null) {
+                kvault.set(TOKEN_KEY, token)
+            } else {
+                kvault.deleteObject(TOKEN_KEY)
+            }
+        } catch (e: Exception) {
+            // Ignore storage errors
+        }
     }
 
     actual fun clearToken() {
-        token = null
+        try {
+            kvault.deleteObject(TOKEN_KEY)
+        } catch (e: Exception) {
+            // Ignore storage errors
+        }
     }
 }

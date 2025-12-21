@@ -33,6 +33,7 @@ logback = "1.5.18"
 testcontainers = "1.21.3"
 material-icons = "1.7.3"
 coil = "3.3.0"
+kvault = "1.12.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -87,6 +88,7 @@ compose-material-icons = { group = "org.jetbrains.compose.material", name = "mat
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-ktor3 = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+kvault = { group = "com.liftric", name = "kvault", version.ref = "kvault" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

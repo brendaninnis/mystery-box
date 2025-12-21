@@ -49,6 +49,7 @@ kotlin {
             implementation(libs.android.play.review)
             implementation(libs.android.play.review.ktx)
             implementation(libs.ktor.client.android)
+            implementation(libs.kvault)
         }
         val commonMain by getting {
             dependencies {
@@ -84,6 +85,7 @@ kotlin {
             dependencies {
                 implementation(project(":kmpiap"))
                 implementation(libs.ktor.client.darwin)
+                implementation(libs.kvault)
             }
         }
         val iosX64Main by getting {
