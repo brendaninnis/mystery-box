@@ -105,16 +105,27 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
 
     // Party endpoints
     suspend fun getUserParties(): ApiResponse<List<Party>> {
-        return httpClient.get("$BASE_URL/parties").body()
+        return httpClient.get("$BASE_URL/parties") {
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
+        }.body()
     }
 
     suspend fun getParty(id: String): ApiResponse<Party> {
-        return httpClient.get("$BASE_URL/parties/$id").body()
+        return httpClient.get("$BASE_URL/parties/$id") {
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
+        }.body()
     }
 
     suspend fun createParty(request: CreatePartyRequest): ApiResponse<Party> {
         return httpClient.post("$BASE_URL/parties") {
             contentType(ContentType.Application.Json)
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
             setBody(request)
         }.body()
     }
@@ -122,6 +133,9 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
     suspend fun joinParty(request: JoinPartyRequest): ApiResponse<Party> {
         return httpClient.post("$BASE_URL/parties/join") {
             contentType(ContentType.Application.Json)
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
             setBody(request)
         }.body()
     }
@@ -129,22 +143,36 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
     suspend fun updatePartyStatus(partyId: String, status: PartyStatus): ApiResponse<Party> {
         return httpClient.patch("$BASE_URL/parties/$partyId/status") {
             contentType(ContentType.Application.Json)
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
             setBody(mapOf("status" to status.name))
         }.body()
     }
 
     suspend fun advancePartyPhase(partyId: String): ApiResponse<Party> {
-        return httpClient.post("$BASE_URL/parties/$partyId/advance-phase").body()
+        return httpClient.post("$BASE_URL/parties/$partyId/advance-phase") {
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
+        }.body()
     }
 
     // Game state endpoints
     suspend fun getGameState(partyId: String): ApiResponse<GameState> {
-        return httpClient.get("$BASE_URL/parties/$partyId/game-state").body()
+        return httpClient.get("$BASE_URL/parties/$partyId/game-state") {
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
+        }.body()
     }
 
     suspend fun addEvidence(partyId: String, evidence: Evidence): ApiResponse<GameState> {
         return httpClient.post("$BASE_URL/parties/$partyId/evidence") {
             contentType(ContentType.Application.Json)
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
             setBody(evidence)
         }.body()
     }
@@ -152,6 +180,9 @@ class MysteryBoxApi(private val httpClient: HttpClient) {
     suspend fun makeAccusation(partyId: String, accusation: Accusation): ApiResponse<GameState> {
         return httpClient.post("$BASE_URL/parties/$partyId/accusation") {
             contentType(ContentType.Application.Json)
+            headers {
+                authToken?.let { append(HttpHeaders.Authorization, "Bearer $it") }
+            }
             setBody(accusation)
         }.body()
     }

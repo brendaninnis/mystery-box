@@ -21,8 +21,13 @@ fun Application.configureCORS() {
         // Allow credentials for authentication
         allowCredentials = true
 
-        // For development - allow all origins
-        // In production, specify your frontend domains
-        anyHost()
+        // Use environment-based allowed hosts
+        // In production, set CORS_ALLOWED_HOSTS=mysterynights.app,www.mysterynights.app
+        val allowedHosts = System.getenv("CORS_ALLOWED_HOSTS")?.split(",")
+            ?: listOf("localhost", "10.0.2.2", "127.0.0.1")
+
+        allowedHosts.forEach { host ->
+            allowHost(host, schemes = listOf("http", "https"))
+        }
     }
 }
