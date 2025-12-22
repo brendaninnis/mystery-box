@@ -307,21 +307,28 @@ fun Route.partyRoutes() {
                 try {
                     val request = call.receive<JoinPartyRequest>()
 
-                    val party = partyService.joinParty(userId, request.inviteCode)
-                    if (party != null) {
-                        call.respond(ApiResponse(success = true, data = party))
-                    } else {
-                        call.respond(
-                            status = HttpStatusCode.NotFound,
-                            ApiResponse<Party>(
-                                success = false,
-                                error = ErrorResponse(
-                                    code = "INVALID_INVITE_CODE",
-                                    message = "Invalid invite code"
+                    partyService.joinParty(userId, request.inviteCode)
+                        .onSuccess { party ->
+                            call.respond(ApiResponse(success = true, data = party))
+                        }
+                        .onFailure { error ->
+                            val errorCode = when (error.message) {
+                                "Party has reached maximum guest capacity" -> "PARTY_FULL"
+                                "You have already joined this party" -> "ALREADY_JOINED"
+                                "This party is not accepting new guests" -> "PARTY_NOT_JOINABLE"
+                                else -> "INVALID_INVITE_CODE"
+                            }
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                ApiResponse<Party>(
+                                    success = false,
+                                    error = ErrorResponse(
+                                        code = errorCode,
+                                        message = error.message ?: "Failed to join party"
+                                    )
                                 )
                             )
-                        )
-                    }
+                        }
                 } catch (e: Exception) {
                     call.respond(
                         status = HttpStatusCode.BadRequest,

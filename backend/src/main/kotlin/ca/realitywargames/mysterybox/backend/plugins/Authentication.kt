@@ -7,7 +7,6 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
-import kotlinx.coroutines.runBlocking
 
 fun Application.configureAuthentication() {
     val authService = DependencyInjection.authService
@@ -28,7 +27,7 @@ fun Application.configureAuthentication() {
                 val userId = credential.payload.getClaim("userId")?.asString()
                 if (!userId.isNullOrBlank()) {
                     // Verify user still exists in database (handles deleted users)
-                    val userExists = runBlocking { userRepository.findById(userId) != null }
+                    val userExists = userRepository.findById(userId) != null
                     if (userExists) {
                         JWTPrincipal(credential.payload)
                     } else {

@@ -190,4 +190,39 @@ class PartyRepository {
             false // Invalid UUID format
         }
     }
+
+    // Join validation helper methods
+
+    suspend fun getGuestByInviteCode(inviteCode: String): GuestDAO? {
+        return transaction {
+            GuestDAO.find { Guests.inviteCode eq inviteCode }.singleOrNull()
+        }
+    }
+
+    suspend fun getPartyById(partyId: UUID): PartyDAO? {
+        return transaction {
+            PartyDAO.findById(partyId)
+        }
+    }
+
+    suspend fun getJoinedGuestCount(partyId: UUID): Long {
+        return transaction {
+            Guests.selectAll()
+                .where { (Guests.partyId eq partyId) and (Guests.status eq GuestStatus.JOINED.name) }
+                .count()
+        }
+    }
+
+    suspend fun isUserAlreadyGuest(partyId: UUID, userId: String): Boolean {
+        return try {
+            val userUuid = UUID.fromString(userId)
+            transaction {
+                Guests.selectAll()
+                    .where { (Guests.partyId eq partyId) and (Guests.userId eq userUuid) }
+                    .count() > 0
+            }
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+    }
 }
