@@ -40,6 +40,23 @@ fun Route.partyRoutes() {
 
             // Get specific party
             get("/{id}") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+
+                if (userId == null) {
+                    call.respond(
+                        status = HttpStatusCode.Unauthorized,
+                        ApiResponse<Party>(
+                            success = false,
+                            error = ErrorResponse(
+                                code = "INVALID_TOKEN",
+                                message = "Invalid authentication token"
+                            )
+                        )
+                    )
+                    return@get
+                }
+
                 val id = call.parameters["id"]
                 if (id.isNullOrBlank()) {
                     call.respond(
@@ -56,9 +73,7 @@ fun Route.partyRoutes() {
                 }
 
                 val party = partyService.getParty(id)
-                if (party != null) {
-                    call.respond(ApiResponse(success = true, data = party))
-                } else {
+                if (party == null) {
                     call.respond(
                         status = HttpStatusCode.NotFound,
                         ApiResponse<Party>(
@@ -69,7 +84,25 @@ fun Route.partyRoutes() {
                             )
                         )
                     )
+                    return@get
                 }
+
+                // Check if user is authorized to view this party
+                if (!partyService.isUserAuthorized(id, userId)) {
+                    call.respond(
+                        status = HttpStatusCode.Forbidden,
+                        ApiResponse<Party>(
+                            success = false,
+                            error = ErrorResponse(
+                                code = "FORBIDDEN",
+                                message = "You do not have access to this party"
+                            )
+                        )
+                    )
+                    return@get
+                }
+
+                call.respond(ApiResponse(success = true, data = party))
             }
 
             // Create new party
@@ -121,6 +154,23 @@ fun Route.partyRoutes() {
 
             // Update party
             put("/{id}") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+
+                if (userId == null) {
+                    call.respond(
+                        status = HttpStatusCode.Unauthorized,
+                        ApiResponse<Party>(
+                            success = false,
+                            error = ErrorResponse(
+                                code = "INVALID_TOKEN",
+                                message = "Invalid authentication token"
+                            )
+                        )
+                    )
+                    return@put
+                }
+
                 val id = call.parameters["id"]
                 if (id.isNullOrBlank()) {
                     call.respond(
@@ -130,6 +180,21 @@ fun Route.partyRoutes() {
                             error = ErrorResponse(
                                 code = "MISSING_ID",
                                 message = "Party ID is required"
+                            )
+                        )
+                    )
+                    return@put
+                }
+
+                // Only host can update party
+                if (!partyService.isHost(id, userId)) {
+                    call.respond(
+                        status = HttpStatusCode.Forbidden,
+                        ApiResponse<Party>(
+                            success = false,
+                            error = ErrorResponse(
+                                code = "FORBIDDEN",
+                                message = "Only the host can update this party"
                             )
                         )
                     )
@@ -156,6 +221,23 @@ fun Route.partyRoutes() {
 
             // Advance party phase
             post("/{id}/advance") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+
+                if (userId == null) {
+                    call.respond(
+                        status = HttpStatusCode.Unauthorized,
+                        ApiResponse<Party>(
+                            success = false,
+                            error = ErrorResponse(
+                                code = "INVALID_TOKEN",
+                                message = "Invalid authentication token"
+                            )
+                        )
+                    )
+                    return@post
+                }
+
                 val id = call.parameters["id"]
                 if (id.isNullOrBlank()) {
                     call.respond(
@@ -165,6 +247,21 @@ fun Route.partyRoutes() {
                             error = ErrorResponse(
                                 code = "MISSING_ID",
                                 message = "Party ID is required"
+                            )
+                        )
+                    )
+                    return@post
+                }
+
+                // Only host can advance party phase
+                if (!partyService.isHost(id, userId)) {
+                    call.respond(
+                        status = HttpStatusCode.Forbidden,
+                        ApiResponse<Party>(
+                            success = false,
+                            error = ErrorResponse(
+                                code = "FORBIDDEN",
+                                message = "Only the host can advance the party phase"
                             )
                         )
                     )

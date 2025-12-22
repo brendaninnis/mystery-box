@@ -4,10 +4,14 @@ import ca.realitywargames.mysterybox.shared.models.CharacterTemplate
 import ca.realitywargames.mysterybox.shared.models.Difficulty
 import ca.realitywargames.mysterybox.shared.models.GamePhase
 import ca.realitywargames.mysterybox.shared.models.GameStateSection
+import ca.realitywargames.mysterybox.shared.models.Guest
+import ca.realitywargames.mysterybox.shared.models.GuestStatus
 import ca.realitywargames.mysterybox.shared.models.MysteryPackage
 import ca.realitywargames.mysterybox.shared.models.ObjectiveTemplate
 import ca.realitywargames.mysterybox.shared.models.InventoryTemplate
 import ca.realitywargames.mysterybox.shared.models.EvidenceTemplate
+import ca.realitywargames.mysterybox.shared.models.Party
+import ca.realitywargames.mysterybox.shared.models.PartyStatus
 import ca.realitywargames.mysterybox.shared.models.User
 import ca.realitywargames.mysterybox.shared.models.UserPreferences
 import org.jetbrains.exposed.dao.UUIDEntity
@@ -119,5 +123,62 @@ class GamePhaseDAO(id: EntityID<UUID>) : UUIDEntity(id) {
         inventoryToAdd = inventoryToAdd?.let { Json.decodeFromString<List<InventoryTemplate>>(it) } ?: emptyList(),
         evidenceToAdd = evidenceToAdd?.let { Json.decodeFromString<List<EvidenceTemplate>>(it) } ?: emptyList(),
         gameStateToUnlock = gameStateToUnlock?.let { Json.decodeFromString<List<String>>(it).map { sectionName -> GameStateSection.valueOf(sectionName) } } ?: emptyList()
+    )
+}
+
+class PartyDAO(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<PartyDAO>(Parties)
+
+    var hostId by Parties.hostId
+    var mysteryPackageId by Parties.mysteryPackageId
+    var title by Parties.title
+    var description by Parties.description
+    var scheduledDate by Parties.scheduledDate
+    var status by Parties.status
+    var maxGuests by Parties.maxGuests
+    var currentPhaseIndex by Parties.currentPhaseIndex
+    var address by Parties.address
+    var createdAt by Parties.createdAt
+    var updatedAt by Parties.updatedAt
+
+    val guests by GuestDAO referrersOn Guests.partyId
+
+    fun toParty(): Party = Party(
+        id = id.value.toString(),
+        hostId = hostId.value.toString(),
+        mysteryPackageId = mysteryPackageId.value.toString(),
+        title = title,
+        description = description ?: "",
+        scheduledDate = scheduledDate.toString(),
+        status = PartyStatus.valueOf(status),
+        maxGuests = maxGuests,
+        guests = guests.map { it.toGuest() },
+        currentPhaseIndex = currentPhaseIndex,
+        gameState = null,
+        address = address
+    )
+}
+
+class GuestDAO(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<GuestDAO>(Guests)
+
+    var partyId by Guests.partyId
+    var userId by Guests.userId
+    var name by Guests.name
+    var inviteCode by Guests.inviteCode
+    var characterId by Guests.characterId
+    var status by Guests.status
+    var joinedAt by Guests.joinedAt
+
+    fun toGuest(): Guest = Guest(
+        id = id.value.toString(),
+        userId = userId?.value?.toString(),
+        name = name,
+        inviteCode = inviteCode,
+        characterId = characterId?.toString(),
+        status = GuestStatus.valueOf(status),
+        joinedAt = joinedAt?.toString(),
+        objectives = emptyList(),
+        inventory = emptyList()
     )
 }

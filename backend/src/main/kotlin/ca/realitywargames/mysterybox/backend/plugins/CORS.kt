@@ -21,13 +21,23 @@ fun Application.configureCORS() {
         // Allow credentials for authentication
         allowCredentials = true
 
+        // Check if running in development mode
+        val isDevelopment = System.getenv("KTOR_DEVELOPMENT")?.toBoolean() ?: true
+
         // Use environment-based allowed hosts
         // In production, set CORS_ALLOWED_HOSTS=mysterynights.app,www.mysterynights.app
         val allowedHosts = System.getenv("CORS_ALLOWED_HOSTS")?.split(",")
             ?: listOf("localhost", "10.0.2.2", "127.0.0.1")
 
+        // Only allow HTTPS in production
+        val schemes = if (isDevelopment) {
+            listOf("http", "https")
+        } else {
+            listOf("https")
+        }
+
         allowedHosts.forEach { host ->
-            allowHost(host, schemes = listOf("http", "https"))
+            allowHost(host, schemes = schemes)
         }
     }
 }

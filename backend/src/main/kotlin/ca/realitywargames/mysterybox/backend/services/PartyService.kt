@@ -42,8 +42,14 @@ class PartyService(private val partyRepository: PartyRepository) {
     }
 
     suspend fun joinParty(userId: String, inviteCode: String): Party? {
-        // TODO: Implement join party logic
-        // For now, just return null - would need to find party by invite code and add guest
-        return null
+        return partyRepository.joinPartyByInviteCode(userId, inviteCode)
+    }
+
+    suspend fun isHost(partyId: String, userId: String): Boolean {
+        return partyRepository.isHost(partyId, userId)
+    }
+
+    suspend fun isUserAuthorized(partyId: String, userId: String): Boolean {
+        return partyRepository.isUserAuthorized(partyId, userId)
     }
 }

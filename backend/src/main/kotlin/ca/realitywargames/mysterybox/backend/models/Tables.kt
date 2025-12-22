@@ -48,3 +48,27 @@ object GamePhases : UUIDTable("game_phases") {
     val evidenceToAdd = text("evidence_to_add").nullable() // JSON array
     val gameStateToUnlock = text("game_state_to_unlock").nullable() // JSON array
 }
+
+object Parties : UUIDTable("parties") {
+    val hostId = reference("host_id", Users, onDelete = ReferenceOption.CASCADE)
+    val mysteryPackageId = reference("mystery_package_id", MysteryPackages)
+    val title = varchar("title", 255)
+    val description = text("description").nullable()
+    val scheduledDate = timestamp("scheduled_date")
+    val status = varchar("status", 50).default("DRAFT")
+    val maxGuests = integer("max_guests")
+    val currentPhaseIndex = integer("current_phase_index").default(0)
+    val address = text("address").nullable()
+    val createdAt = timestamp("created_at")
+    val updatedAt = timestamp("updated_at")
+}
+
+object Guests : UUIDTable("guests") {
+    val partyId = reference("party_id", Parties, onDelete = ReferenceOption.CASCADE)
+    val userId = reference("user_id", Users, onDelete = ReferenceOption.SET_NULL).nullable()
+    val name = varchar("name", 255)
+    val inviteCode = varchar("invite_code", 50)
+    val characterId = uuid("character_id").nullable()
+    val status = varchar("status", 50).default("INVITED")
+    val joinedAt = timestamp("joined_at").nullable()
+}

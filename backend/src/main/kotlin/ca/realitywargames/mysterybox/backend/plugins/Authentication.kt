@@ -7,9 +7,11 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
+import kotlinx.coroutines.runBlocking
 
 fun Application.configureAuthentication() {
     val authService = DependencyInjection.authService
+    val userRepository = DependencyInjection.userRepository
 
     install(Authentication) {
         jwt("auth-jwt") {
@@ -22,10 +24,16 @@ fun Application.configureAuthentication() {
             )
             validate { credential ->
                 // The JWT is already verified by the verifier above
-                // Just check that the userId claim exists
+                // Check that the userId claim exists and user still exists in database
                 val userId = credential.payload.getClaim("userId")?.asString()
                 if (!userId.isNullOrBlank()) {
-                    JWTPrincipal(credential.payload)
+                    // Verify user still exists in database (handles deleted users)
+                    val userExists = runBlocking { userRepository.findById(userId) != null }
+                    if (userExists) {
+                        JWTPrincipal(credential.payload)
+                    } else {
+                        null // User was deleted, reject token
+                    }
                 } else {
                     null
                 }
