@@ -82,4 +82,20 @@ class UserRepository {
         }
         return null
     }
+
+    suspend fun deleteUser(userId: String): Boolean {
+        return try {
+            transaction {
+                val dao = UserDAO.findById(UUID.fromString(userId))
+                if (dao != null) {
+                    dao.delete()
+                    true
+                } else {
+                    false
+                }
+            }
+        } catch (e: IllegalArgumentException) {
+            false // Invalid UUID format
+        }
+    }
 }

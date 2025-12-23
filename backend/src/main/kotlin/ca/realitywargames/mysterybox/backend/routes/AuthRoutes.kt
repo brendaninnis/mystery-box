@@ -13,6 +13,7 @@ import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
@@ -27,35 +28,40 @@ fun Route.authRoutes() {
             val result = authService.register(request)
 
             result.fold(
-                onSuccess = { user ->
-                    call.respond(ApiResponse(success = true, data = user))
+                onSuccess = { (user, token) ->
+                    call.respond(
+                        ApiResponse(
+                            success = true,
+                            data = LoginResponse(user = user, token = token)
+                        )
+                    )
                 },
                 onFailure = { error ->
                     val statusCode = when {
-                        error.message?.contains("email already exists", ignoreCase = true) == true -> 
+                        error.message?.contains("email already exists", ignoreCase = true) == true ->
                             HttpStatusCode.Conflict
                         error.message?.contains("required", ignoreCase = true) == true ||
                         error.message?.contains("valid", ignoreCase = true) == true ||
                         error.message?.contains("characters", ignoreCase = true) == true ||
-                        error.message?.contains("long", ignoreCase = true) == true -> 
+                        error.message?.contains("long", ignoreCase = true) == true ->
                             HttpStatusCode.BadRequest
                         else -> HttpStatusCode.BadRequest
                     }
-                    
+
                     val errorCode = when {
-                        error.message?.contains("email already exists", ignoreCase = true) == true -> 
+                        error.message?.contains("email already exists", ignoreCase = true) == true ->
                             "EMAIL_ALREADY_EXISTS"
                         error.message?.contains("required", ignoreCase = true) == true ||
                         error.message?.contains("valid", ignoreCase = true) == true ||
                         error.message?.contains("characters", ignoreCase = true) == true ||
-                        error.message?.contains("long", ignoreCase = true) == true -> 
+                        error.message?.contains("long", ignoreCase = true) == true ->
                             "VALIDATION_ERROR"
                         else -> "REGISTRATION_FAILED"
                     }
-                    
+
                     call.respond(
                         status = statusCode,
-                        ApiResponse<User>(
+                        ApiResponse<LoginResponse>(
                             success = false,
                             error = ErrorResponse(
                                 code = errorCode,
@@ -142,6 +148,40 @@ fun Route.authRoutes() {
                     call.respond(
                         status = HttpStatusCode.Unauthorized,
                         ApiResponse<User>(
+                            success = false,
+                            error = ErrorResponse(
+                                code = "INVALID_TOKEN",
+                                message = "Invalid authentication token"
+                            )
+                        )
+                    )
+                }
+            }
+
+            delete("/me") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+
+                if (userId != null) {
+                    val deleted = authService.deleteAccount(userId)
+                    if (deleted) {
+                        call.respond(ApiResponse<String?>(success = true, data = null))
+                    } else {
+                        call.respond(
+                            status = HttpStatusCode.NotFound,
+                            ApiResponse<String?>(
+                                success = false,
+                                error = ErrorResponse(
+                                    code = "DELETE_FAILED",
+                                    message = "User not found or could not be deleted"
+                                )
+                            )
+                        )
+                    }
+                } else {
+                    call.respond(
+                        status = HttpStatusCode.Unauthorized,
+                        ApiResponse<String?>(
                             success = false,
                             error = ErrorResponse(
                                 code = "INVALID_TOKEN",

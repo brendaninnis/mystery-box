@@ -10,6 +10,7 @@ import io.ktor.server.auth.jwt.jwt
 
 fun Application.configureAuthentication() {
     val authService = DependencyInjection.authService
+    val userRepository = DependencyInjection.userRepository
 
     install(Authentication) {
         jwt("auth-jwt") {
@@ -21,9 +22,17 @@ fun Application.configureAuthentication() {
                     .build()
             )
             validate { credential ->
-                val userId = authService.validateToken(credential.payload.getClaim("userId").asString())
-                if (userId != null) {
-                    JWTPrincipal(credential.payload)
+                // The JWT is already verified by the verifier above
+                // Check that the userId claim exists and user still exists in database
+                val userId = credential.payload.getClaim("userId")?.asString()
+                if (!userId.isNullOrBlank()) {
+                    // Verify user still exists in database (handles deleted users)
+                    val userExists = userRepository.findById(userId) != null
+                    if (userExists) {
+                        JWTPrincipal(credential.payload)
+                    } else {
+                        null // User was deleted, reject token
+                    }
                 } else {
                     null
                 }

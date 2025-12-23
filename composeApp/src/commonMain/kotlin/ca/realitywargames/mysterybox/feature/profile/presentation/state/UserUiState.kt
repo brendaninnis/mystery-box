@@ -8,7 +8,8 @@ data class UserUiState(
     val currentUser: User? = null,
     val isLoggedIn: Boolean = false,
     val authState: AsyncState = AsyncState(),
-    val updatePrefsState: AsyncState = AsyncState()
+    val updatePrefsState: AsyncState = AsyncState(),
+    val deleteAccountState: AsyncState = AsyncState()
 )
 
 

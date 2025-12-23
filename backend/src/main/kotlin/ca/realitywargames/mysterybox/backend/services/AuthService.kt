@@ -16,16 +16,32 @@ class AuthService(
     private val userRepository: UserRepository,
     private val config: ApplicationConfig
 ) {
+    private val isDevelopment = config.propertyOrNull("ktor.development")?.getString()?.toBoolean() ?: false
 
     val jwtSecret = config.propertyOrNull("jwt.secret")?.getString()
-        ?: config.property("jwt.default.secret").getString()
+        ?: if (isDevelopment) {
+            config.property("jwt.default.secret").getString()
+        } else {
+            throw IllegalStateException("JWT_SECRET must be set in production")
+        }
+
     val jwtIssuer = config.propertyOrNull("jwt.issuer")?.getString()
-        ?: config.property("jwt.default.issuer").getString()
+        ?: if (isDevelopment) {
+            config.property("jwt.default.issuer").getString()
+        } else {
+            throw IllegalStateException("JWT_ISSUER must be set in production")
+        }
+
     val jwtAudience = config.propertyOrNull("jwt.audience")?.getString()
-        ?: config.property("jwt.default.audience").getString()
+        ?: if (isDevelopment) {
+            config.property("jwt.default.audience").getString()
+        } else {
+            throw IllegalStateException("JWT_AUDIENCE must be set in production")
+        }
+
     val algorithm = Algorithm.HMAC256(jwtSecret)
 
-    suspend fun register(request: RegisterRequest): Result<User> {
+    suspend fun register(request: RegisterRequest): Result<Pair<User, String>> {
         // Validate request
         val validationResults = RegisterValidator.validate(request)
         if (!validationResults.isValid()) {
@@ -49,7 +65,9 @@ class AuthService(
             name = request.name.trim()
         )
 
-        return Result.success(user)
+        // Generate JWT token so user is logged in after registration
+        val token = generateToken(user)
+        return Result.success(Pair(user, token))
     }
 
     suspend fun login(request: LoginRequest): Result<Pair<User, String>> {
@@ -72,13 +90,17 @@ class AuthService(
         return userRepository.findById(userId)
     }
 
+    suspend fun deleteAccount(userId: String): Boolean {
+        return userRepository.deleteUser(userId)
+    }
+
     private fun generateToken(user: User): String {
         return JWT.create()
             .withAudience(jwtAudience)
             .withIssuer(jwtIssuer)
             .withClaim("userId", user.id)
             .withClaim("email", user.email)
-            .withExpiresAt(Date(System.currentTimeMillis() + 86400000)) // 24 hours
+            .withExpiresAt(Date(System.currentTimeMillis() + 2592000000L)) // 30 days
             .sign(algorithm)
     }
 

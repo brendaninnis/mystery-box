@@ -5,6 +5,7 @@ sealed interface UserSideEffect {
     data class ShowToast(val message: String) : UserSideEffect
     data object LoginSucceeded : UserSideEffect
     data object RegistrationSucceeded : UserSideEffect
+    data object AccountDeleted : UserSideEffect
 }
 
 

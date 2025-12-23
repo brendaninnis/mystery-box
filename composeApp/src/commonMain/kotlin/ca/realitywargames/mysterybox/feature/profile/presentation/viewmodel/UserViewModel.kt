@@ -24,6 +24,7 @@ class UserViewModel : MviViewModel<UserUiState, UserAction, UserSideEffect>() {
             is UserAction.CheckCurrentUser -> checkCurrentUser()
             is UserAction.UpdatePreferences -> updateUserPreferences(action.preferences)
             is UserAction.ClearError -> clearError()
+            is UserAction.DeleteAccount -> deleteAccount()
         }
     }
 
@@ -96,5 +97,28 @@ class UserViewModel : MviViewModel<UserUiState, UserAction, UserSideEffect>() {
 
     private fun clearError() {
         updateState { copy(authState = authState.copy(error = null)) }
+    }
+
+    private fun deleteAccount() {
+        launchAsync {
+            executeWithErrorHandling(
+                updateLoadingState = { loading ->
+                    uiState.value.copy(deleteAccountState = uiState.value.deleteAccountState.copy(isLoading = loading))
+                },
+                onError = { error ->
+                    uiState.value.copy(deleteAccountState = uiState.value.deleteAccountState.copy(error = error))
+                }
+            ) {
+                repository.deleteAccount()
+                updateState {
+                    copy(
+                        currentUser = null,
+                        isLoggedIn = false,
+                        deleteAccountState = deleteAccountState.copy(isLoading = false, error = null)
+                    )
+                }
+                emitSideEffect(UserSideEffect.AccountDeleted)
+            }
+        }
     }
 }
